@@ -1,0 +1,16 @@
+{
+  "name": "advent-of-code",
+  "version": "1.0.0",
+  "description": "Advent of Code solutions",
+  "dependencies": {
+    "immutable": "^3.7.6",
+    "js-md5": "^0.3.0",
+    "ramda": "^0.18.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mikael Pajunen",
+  "license": "MIT"
+}
