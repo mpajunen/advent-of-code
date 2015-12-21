@@ -1,7 +1,6 @@
 "use strict"
 
 const fs = require('fs')
-const R = require('ramda')
 
 const utils = require('./utils.js')
 
