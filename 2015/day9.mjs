@@ -1,8 +1,8 @@
 "use strict"
 
-const fs = require('fs')
+import fs from 'fs'
 
-const utils = require('./utils.js')
+import * as utils from './utils'
 
 const input = fs.readFileSync('input/day9.txt', 'utf8')
 

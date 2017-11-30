@@ -1,7 +1,6 @@
 "use strict"
 
-const R = require('ramda')
-
+import { default as R } from 'ramda'
 
 const getOtherValues = (list, index) =>
     list.slice(0, index).concat(list.slice(index + 1))
@@ -11,7 +10,7 @@ const getPermutationAmount = amounts => perm => perm
     .slice(0, -1)
     .reduce(sum)
 
-const getPermutations = list => list
+export const getPermutations = list => list
     .reduce(permute, [])
 
 const permute = (res, value, index, list) => {
@@ -31,13 +30,13 @@ const permute = (res, value, index, list) => {
 const sum = (sum, value) => sum + value
 
 
-exports.getNodes = R.pipe(
+export const getNodes = R.pipe(
     R.map(R.props(['from', 'to'])),
     R.flatten,
     R.uniq
 )
 
-exports.getAmounts = (places, routes) => {
+export const getAmounts = (places, routes) => {
     const emptyAmounts = places.map(() => [])
 
     return routes.reduce((amounts, {from, to, amount}) => {
@@ -51,12 +50,10 @@ exports.getAmounts = (places, routes) => {
     }, emptyAmounts)
 }
 
-exports.getPermutations = getPermutations
-
-exports.getCircularPermutations = list => getPermutations(list)
+export const getCircularPermutations = list => getPermutations(list)
     .map(perm => perm.concat([perm[0]]))
 
-exports.getPermutationMinMax = (perms, amounts) => {
+export const getPermutationMinMax = (perms, amounts) => {
     const permAmounts = perms.map(getPermutationAmount(amounts))
 
     return {
