@@ -12,8 +12,9 @@ def solve(string, offset):
 
 row = common.read_input(1)[0]
 
-print(solve(row, 1))
-# 997
+result1 = solve(row, 1)
+print(result1)
+assert result1 == 997
 
 
 def solve_halfway(string):
@@ -23,5 +24,6 @@ def solve_halfway(string):
 assert solve_halfway("1212") == 6
 
 
-print(solve_halfway(row))
-# 679
+result2 = solve_halfway(row)
+print(result2)
+assert result2 == 1358

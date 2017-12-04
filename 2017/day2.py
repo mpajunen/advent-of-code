@@ -15,8 +15,9 @@ def check_solve(lines):
 
 data = build(common.read_input(2))
 
-print(check_solve(data))
-# 45158
+result1 = check_solve(data)
+print(result1)
+assert result1 == 45158
 
 
 def line_div(line):
@@ -30,5 +31,6 @@ def div_solve(lines):
     return sum(map(line_div, lines))
 
 
-print(div_solve(data))
-# 294
+result2 = div_solve(data)
+print(result2)
+assert result2 == 294

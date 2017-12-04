@@ -15,8 +15,9 @@ def solve_unique(phrases):
 
 data = build(common.read_input(4))
 
-print(solve_unique(data))
-# 383
+result1 = solve_unique(data)
+print(result1)
+assert result1 == 383
 
 
 def sort_word(word):
@@ -31,4 +32,6 @@ def solve_no_anagrams(phrases):
     return len(list(filter(has_no_anagrams, phrases)))
 
 
-print(solve_no_anagrams(data))
+result2 = solve_no_anagrams(data)
+print(result2)
+assert result2 == 265

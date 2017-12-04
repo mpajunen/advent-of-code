@@ -28,8 +28,9 @@ assert solve_distance(12) == 3
 assert solve_distance(23) == 2
 assert solve_distance(1024) == 31
 
-print(solve_distance(search_square))
-# 480
+result1 = solve_distance(search_square)
+print(result1)
+assert result1 == 480
 
 
 stress_spiral = """
@@ -65,5 +66,6 @@ def stress(limit):
     return value
 
 
-print(stress(search_square))
-# 349975
+result2 = stress(search_square)
+print(result2)
+assert result2 == 349975
