@@ -1,8 +1,7 @@
 import common
 
-
-def build(lines):
-    return [list(line.split()) for line in lines]
+day = 4
+data = common.read_input(day)
 
 
 def has_unique_words(words):
@@ -12,8 +11,6 @@ def has_unique_words(words):
 def solve_unique(phrases):
     return len(list(filter(has_unique_words, phrases)))
 
-
-data = build(common.read_input(4))
 
 result1 = solve_unique(data)
 print(result1)

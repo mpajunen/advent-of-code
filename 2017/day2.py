@@ -1,8 +1,8 @@
 import common
 
 
-def build(lines):
-    return [list(map(int, line.split())) for line in lines]
+day = 2
+data = common.read_input(day)
 
 
 def checksum(line):
@@ -12,8 +12,6 @@ def checksum(line):
 def check_solve(lines):
     return sum(map(checksum, lines))
 
-
-data = build(common.read_input(2))
 
 result1 = check_solve(data)
 print(result1)
