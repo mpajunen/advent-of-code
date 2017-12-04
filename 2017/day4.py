@@ -9,7 +9,12 @@ def has_unique_words(words):
 
 
 def solve_unique(phrases):
-    return len(list(filter(has_unique_words, phrases)))
+    processed = common.process_table(
+        phrases,
+        check_row=has_unique_words,
+    )
+
+    return len(processed)
 
 
 result1 = solve_unique(data)
@@ -21,12 +26,14 @@ def sort_word(word):
     return ''.join(sorted(word))
 
 
-def has_no_anagrams(words):
-    return has_unique_words(list(map(sort_word, words)))
-
-
 def solve_no_anagrams(phrases):
-    return len(list(filter(has_no_anagrams, phrases)))
+    processed = common.process_table(
+        phrases,
+        modify=sort_word,
+        check_row=has_unique_words,
+    )
+
+    return len(processed)
 
 
 result2 = solve_no_anagrams(data)

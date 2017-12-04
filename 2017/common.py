@@ -24,3 +24,19 @@ def read_raw_input(day):
     with open(filename) as f:
         lines = f.read().splitlines()
     return lines
+
+
+def process_list(values, check=lambda v: True, modify=lambda v: v):
+    return list(map(modify, filter(check, values)))
+
+
+def process_table(
+        raw_rows,
+        check=lambda cell: True,
+        modify=lambda cell: cell,
+        check_row=lambda row: True,
+        modify_row=lambda row: row,
+):
+    rows = map(lambda cells: process_list(cells, check, modify), raw_rows)
+
+    return process_list(rows, check_row, modify_row)
