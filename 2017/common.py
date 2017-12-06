@@ -40,3 +40,28 @@ def process_table(
     rows = map(lambda cells: process_list(cells, check, modify), raw_rows)
 
     return process_list(rows, check_row, modify_row)
+
+
+# Tortoise and hare cycle detection
+# Adapted from https://en.wikipedia.org/wiki/Cycle_detection
+def tortoise_and_hare(step, start):
+    tortoise = step(start)
+    hare = step(step(start))
+    while tortoise != hare:
+        tortoise = step(tortoise)
+        hare = step(step(hare))
+
+    cycle_start = 0
+    tortoise = start
+    while tortoise != hare:
+        tortoise = step(tortoise)
+        hare = step(hare)
+        cycle_start += 1
+
+    cycle_length = 1
+    hare = step(tortoise)
+    while tortoise != hare:
+        hare = step(hare)
+        cycle_length += 1
+
+    return cycle_length, cycle_start
