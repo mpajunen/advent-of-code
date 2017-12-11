@@ -42,6 +42,10 @@ def process_table(
     return process_list(rows, check_row, modify_row)
 
 
+def segment_list(values, length):
+    return [values[i:i + length] for i in range(0, len(values), length)]
+
+
 # Tortoise and hare cycle detection
 # Adapted from https://en.wikipedia.org/wiki/Cycle_detection
 def tortoise_and_hare(step, start):
