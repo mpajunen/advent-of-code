@@ -1,4 +1,6 @@
+import copy
 import os
+import time
 
 
 def read_input(day, char_split=False):
@@ -40,6 +42,25 @@ def process_table(
     rows = map(lambda cells: process_list(cells, check, modify), raw_rows)
 
     return process_list(rows, check_row, modify_row)
+
+
+def solve_day(data, *parts):
+    for part in parts:
+        solve_part(copy.copy(data), part)
+
+
+def solve_part(data, part):
+    start_time = time.time()
+    solve, expected = part
+    result = solve(data)
+
+    print('')
+    print(result)
+    print('  @ %f seconds' % (time.time() - start_time))
+
+    if expected:
+        assert result == expected, 'Expected "%s" but the result was "%s".' % (expected, result)
+        print('  expected result')
 
 
 def segment_list(values, length):
