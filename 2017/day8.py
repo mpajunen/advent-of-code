@@ -1,14 +1,18 @@
 import common
 
-day = 8
-raw_data = common.read_input(day)
+
+def main():
+    raw_data = common.read_input(8)
+    instructions = create_instructions(raw_data)
+
+    common.solve_day(
+        instructions,
+        (solve, (2971, 4254)),
+    )
 
 
 def create_instructions(raw):
     return [(name, func, change, check) for name, func, change, _, *check in raw]
-
-
-data = create_instructions(raw_data)
 
 
 def check_check(registers, check):
@@ -30,7 +34,7 @@ def check_check(registers, check):
         print(operator)
 
 
-def solve1(instructions):
+def solve(instructions):
     registers = {name: 0 for name, _, _, _ in instructions}
     highest = 0
 
@@ -48,18 +52,5 @@ def solve1(instructions):
     return max(registers.values()), highest
 
 
-result1 = solve1(data)
-print(result1)
-# assert result1 == 0
-
-
-def solve2(instructions):
-    registers = {name: 0 for name, _, _, _ in instructions}
-    result = len(registers)
-
-    return result
-
-
-result2 = solve2(data)
-# print(result2)
-# assert result2 == 0
+if __name__ == "__main__":
+    main()

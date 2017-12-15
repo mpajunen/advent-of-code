@@ -1,8 +1,16 @@
-import common
 from collections import Counter
+import common
 
-day = 7
-data = common.read_input(day)
+
+def main():
+    raw_data = common.read_input(7)
+    program_map = build_programs(raw_data)
+
+    common.solve_day(
+        program_map,
+        (solve1, 'qibuqqg'),
+        (solve2, 1079),
+    )
 
 
 def build_programs(raw):
@@ -17,13 +25,6 @@ def solve1(programs):
     roots = programs.keys() - all_children
 
     return list(roots)[0]
-
-
-program_map = build_programs(data)
-
-result1 = solve1(program_map)
-print(result1)
-assert result1 == 'qibuqqg'
 
 
 def get_totals(programs):
@@ -57,6 +58,5 @@ def solve2(programs):
     return programs[source][0] + (mode - total)
 
 
-result2 = solve2(program_map)
-print(result2)
-assert result2 == 1079
+if __name__ == "__main__":
+    main()

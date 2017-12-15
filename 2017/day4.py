@@ -1,7 +1,14 @@
 import common
 
-day = 4
-data = common.read_input(day)
+
+def main():
+    data = common.read_input(4)
+
+    common.solve_day(
+        data,
+        (solve_unique, 383),
+        (solve_no_anagrams, 265),
+    )
 
 
 def has_unique_words(words):
@@ -15,11 +22,6 @@ def solve_unique(phrases):
     )
 
     return len(processed)
-
-
-result1 = solve_unique(data)
-print(result1)
-assert result1 == 383
 
 
 def sort_word(word):
@@ -36,6 +38,5 @@ def solve_no_anagrams(phrases):
     return len(processed)
 
 
-result2 = solve_no_anagrams(data)
-print(result2)
-assert result2 == 265
+if __name__ == "__main__":
+    main()

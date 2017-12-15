@@ -1,6 +1,17 @@
 import math
 
-search_square = 347991
+import common
+
+
+def main():
+    search_square = 347991
+
+    common.solve_day(
+        search_square,
+        (solve_distance, 480),
+        (stress, 349975),
+    )
+
 
 original_spiral = """
 17  16  15  14  13
@@ -23,14 +34,9 @@ def solve_distance(square):
     return axis_distance + ring
 
 
-# assert solve_distance(1) == 0
 assert solve_distance(12) == 3
 assert solve_distance(23) == 2
 assert solve_distance(1024) == 31
-
-result1 = solve_distance(search_square)
-print(result1)
-assert result1 == 480
 
 
 stress_spiral = """
@@ -66,6 +72,5 @@ def stress(limit):
     return value
 
 
-result2 = stress(search_square)
-print(result2)
-assert result2 == 349975
+if __name__ == "__main__":
+    main()

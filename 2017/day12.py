@@ -1,17 +1,22 @@
 import common
 
-day = 12
-raw_data = common.read_raw_input(day)
+
+def main():
+    raw_data = common.read_raw_input(12)
+    data = common.process_list(
+        raw_data,
+        modify=build_neighbors
+    )
+
+    common.solve_day(
+        data,
+        (solve1, 169),
+        (solve2, 179),
+    )
 
 
 def build_neighbors(row):
     return [int(n) for n in row.split(' <-> ')[1].split(', ')]
-
-
-data = common.process_list(
-    raw_data,
-    modify=build_neighbors
-)
 
 
 def find_group(start, neighbors):
@@ -29,11 +34,6 @@ def solve1(neighbors):
     zero_group = find_group(0, neighbors)
 
     return len(zero_group)
-
-
-result1 = solve1(data)
-print(result1)
-assert result1 == 169
 
 
 def find_groups(start, neighbors):
@@ -55,6 +55,5 @@ def solve2(neighbors):
     return len(groups)
 
 
-result2 = solve2(data)
-print(result2)
-assert result2 == 179
+if __name__ == "__main__":
+    main()

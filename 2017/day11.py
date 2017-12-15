@@ -1,7 +1,18 @@
 import common
 
-day = 11
-raw_data = common.read_input(day)
+
+def main():
+    raw_data = common.read_input(11).split(',')
+    data = common.process_list(
+        raw_data,
+        modify=lambda x: flat_hex_units[x],
+    )
+
+    common.solve_day(
+        data,
+        (solve, (794, 1524)),
+    )
+
 
 flat_hex_units = {
     'n': (0, -1),
@@ -11,11 +22,6 @@ flat_hex_units = {
     'sw': (-1, 1),
     'nw': (-1, 0),
 }
-
-data = common.process_list(
-    raw_data.split(','),
-    modify=lambda x: flat_hex_units[x],
-)
 
 
 def distance(vec):
@@ -46,9 +52,5 @@ def solve(incoming):
     return dist, max_dist
 
 
-result1, result2 = solve(data)
-print(result1)
-assert result1 == 794
-
-print(result2)
-assert result2 == 1524
+if __name__ == "__main__":
+    main()

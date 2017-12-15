@@ -1,7 +1,13 @@
 import common
 
-day = 9
-raw_data = common.read_input(day, True)
+
+def main():
+    data = common.read_input(9, True)
+
+    common.solve_day(
+        data,
+        (solve, (17390, 7825)),
+    )
 
 
 def remove_ignored(incoming):
@@ -38,9 +44,6 @@ def remove_garbage(incoming):
     return out, count
 
 
-data, garbage_count = remove_garbage(remove_ignored(raw_data))
-
-
 def solve1(incoming):
     score = 0
     depth = 0
@@ -55,10 +58,11 @@ def solve1(incoming):
     return score
 
 
-result1 = solve1(data)
-print(result1)
-assert result1 == 17390
+def solve(raw_data):
+    data, garbage_count = remove_garbage(remove_ignored(raw_data))
 
-result2 = garbage_count
-print(result2)
-assert result2 == 7825
+    return solve1(data), garbage_count
+
+
+if __name__ == "__main__":
+    main()

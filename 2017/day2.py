@@ -1,8 +1,14 @@
 import common
 
 
-day = 2
-data = common.read_input(day)
+def main():
+    data = common.read_input(2)
+
+    common.solve_day(
+        data,
+        (check_solve, 45158),
+        (div_solve, 294),
+    )
 
 
 def checksum(line):
@@ -11,11 +17,6 @@ def checksum(line):
 
 def check_solve(lines):
     return sum(map(checksum, lines))
-
-
-result1 = check_solve(data)
-print(result1)
-assert result1 == 45158
 
 
 def line_div(line):
@@ -29,6 +30,5 @@ def div_solve(lines):
     return sum(map(line_div, lines))
 
 
-result2 = div_solve(data)
-print(result2)
-assert result2 == 294
+if __name__ == "__main__":
+    main()

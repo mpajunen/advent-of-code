@@ -1,9 +1,15 @@
 import operator
-
 import common
 
-day = 10
-raw_data = common.read_input(day)
+
+def main():
+    data = common.read_input(10)
+
+    common.solve_day(
+        data,
+        (solve1, 1935),
+        (solve2, 'dc7e7dee710d4c7201ce42713e6b8359'),
+    )
 
 
 def knot(lengths, element_count=256, iterations=1):
@@ -34,11 +40,6 @@ def solve1(incoming):
     return elements[0] * elements[1]
 
 
-result1 = solve1(raw_data)
-print(result1)
-assert result1 == 1935
-
-
 def dense(sparse):
     result = 0
 
@@ -62,6 +63,5 @@ def solve2(incoming):
     return ''.join(packed)
 
 
-result2 = solve2(raw_data)
-print(result2)
-assert result2 == 'dc7e7dee710d4c7201ce42713e6b8359'
+if __name__ == "__main__":
+    main()

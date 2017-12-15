@@ -1,19 +1,22 @@
 import common
 
-day = 1
-data = common.read_input(day, char_split=True)
 
-def solve(digits, offset):
+def main():
+    data = common.read_input(1, char_split=True)
+
+    common.solve_day(
+        data,
+        (solve, 997),
+        (solve_halfway, 1358),
+    )
+
+
+def solve(digits, offset=1):
     next_digits = digits[offset:] + digits[:offset]
     pairs = zip(digits, next_digits)
     matches = [i for (i, j) in pairs if i == j]
 
     return sum(matches)
-
-
-result1 = solve(data, 1)
-print(result1)
-assert result1 == 997
 
 
 def solve_halfway(digits):
@@ -22,7 +25,5 @@ def solve_halfway(digits):
 
 assert solve_halfway([1, 2, 1, 2]) == 6
 
-
-result2 = solve_halfway(data)
-print(result2)
-assert result2 == 1358
+if __name__ == "__main__":
+    main()

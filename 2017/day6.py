@@ -1,7 +1,13 @@
 import common
 
-day = 6
-data = common.read_input(day)
+
+def main():
+    data = common.read_input(6)
+
+    common.solve_day(
+        data,
+        (solve, (3156, 1610)),
+    )
 
 
 def distribute(position):
@@ -16,12 +22,17 @@ def distribute(position):
     return new_position
 
 
-(length, start) = common.tortoise_and_hare(distribute, data)
+def solve(data):
+    (length, start) = common.tortoise_and_hare(distribute, data)
 
-result1 = start + length
-print(result1)
-assert result1 == 3156
+    return length + start, length
 
-result2 = length
-print(result2)
-assert result2 == 1610
+
+def get_start(data):
+    (length, _) = common.tortoise_and_hare(distribute, data)
+
+    return length
+
+
+if __name__ == "__main__":
+    main()
