@@ -19,38 +19,44 @@ def build_neighbors(row):
     return [int(n) for n in row.split(' <-> ')[1].split(', ')]
 
 
-def find_group(start, neighbors):
+def find_group(start, find_neighbors):
     prev_length = 0
     group = {start}
 
     while len(group) != prev_length:
         prev_length = len(group)
-        group |= {n for g in group for n in neighbors[g]}
+        group |= find_neighbors(group)
 
     return group
 
 
-def solve1(neighbors):
-    zero_group = find_group(0, neighbors)
-
-    return len(zero_group)
-
-
-def find_groups(start, neighbors):
+def find_groups(start, find_neighbors):
     items = start.copy()
     groups = []
 
     while len(items) != 0:
-        group = find_group(items.pop(), neighbors)
+        group = find_group(items.pop(), find_neighbors)
         items -= group
         groups.append(group)
 
     return groups
 
 
+def solve1(neighbors):
+    def find_neighbors(group):
+        return {n for g in group for n in neighbors[g]}
+
+    zero_group = find_group(0, find_neighbors)
+
+    return len(zero_group)
+
+
 def solve2(neighbors):
+    def find_neighbors(group):
+        return {n for g in group for n in neighbors[g]}
+
     items = set(range(0, len(neighbors)))
-    groups = find_groups(items, neighbors)
+    groups = find_groups(items, find_neighbors)
 
     return len(groups)
 
