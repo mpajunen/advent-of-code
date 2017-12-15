@@ -46,10 +46,10 @@ def dense(sparse):
     for num in sparse:
         result = operator.xor(result, num)
 
-    return hex(result)[2:].rjust(2, '0')
+    return result
 
 
-def solve2(incoming):
+def knot_bytes(incoming):
     data = common.process_list(
         list(incoming),
         modify=ord,
@@ -58,9 +58,14 @@ def solve2(incoming):
     elements = knot(data, iterations=64)
 
     segments = common.segment_list(elements, 16)
-    packed = list(map(dense, segments))
 
-    return ''.join(packed)
+    return list(map(dense, segments))
+
+
+def solve2(incoming):
+    hexed = [hex(v)[2:].rjust(2, '0') for v in knot_bytes(incoming)]
+
+    return ''.join(hexed)
 
 
 if __name__ == "__main__":
