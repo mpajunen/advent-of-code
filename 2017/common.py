@@ -70,21 +70,21 @@ def segment_list(values, length):
 # Tortoise and hare cycle detection
 # Adapted from https://en.wikipedia.org/wiki/Cycle_detection
 def tortoise_and_hare(step, start):
-    tortoise = step(start)
-    hare = step(step(start))
+    tortoise = step(copy.copy(start))
+    hare = step(step(copy.copy(start)))
     while tortoise != hare:
         tortoise = step(tortoise)
         hare = step(step(hare))
 
     cycle_start = 0
-    tortoise = start
+    tortoise = copy.copy(start)
     while tortoise != hare:
         tortoise = step(tortoise)
         hare = step(hare)
         cycle_start += 1
 
     cycle_length = 1
-    hare = step(tortoise)
+    hare = step(copy.copy(tortoise))
     while tortoise != hare:
         hare = step(hare)
         cycle_length += 1
