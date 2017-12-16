@@ -1,4 +1,5 @@
-import common
+import common.cycle as cycle
+import common.day as common
 
 
 def main():
@@ -23,13 +24,13 @@ def distribute(position):
 
 
 def solve(data):
-    (length, start) = common.tortoise_and_hare(distribute, data)
+    (length, start) = cycle.tortoise_and_hare(distribute, data)
 
     return length + start, length
 
 
 def get_start(data):
-    (length, _) = common.tortoise_and_hare(distribute, data)
+    (length, _) = cycle.tortoise_and_hare(distribute, data)
 
     return length
 

@@ -22,7 +22,7 @@ def read_input(day, char_split=False):
 
 
 def read_raw_input(day):
-    filename = os.path.join(os.path.dirname(__file__), 'input/day{0}.txt'.format(day))
+    filename = os.path.join(os.path.dirname(__file__), '../input/day{0}.txt'.format(day))
     with open(filename) as f:
         lines = f.read().splitlines()
     return lines
@@ -61,32 +61,3 @@ def solve_part(data, part):
     if expected:
         assert result == expected, 'Expected "%s" but the result was "%s".' % (expected, result)
         print('  expected result')
-
-
-def segment_list(values, length):
-    return [values[i:i + length] for i in range(0, len(values), length)]
-
-
-# Tortoise and hare cycle detection
-# Adapted from https://en.wikipedia.org/wiki/Cycle_detection
-def tortoise_and_hare(step, start):
-    tortoise = step(copy.copy(start))
-    hare = step(step(copy.copy(start)))
-    while tortoise != hare:
-        tortoise = step(tortoise)
-        hare = step(step(hare))
-
-    cycle_start = 0
-    tortoise = copy.copy(start)
-    while tortoise != hare:
-        tortoise = step(tortoise)
-        hare = step(hare)
-        cycle_start += 1
-
-    cycle_length = 1
-    hare = step(copy.copy(tortoise))
-    while tortoise != hare:
-        hare = step(hare)
-        cycle_length += 1
-
-    return cycle_length, cycle_start

@@ -1,6 +1,6 @@
 import math
 
-import common
+import common.day as common
 
 
 def main():

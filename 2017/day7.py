@@ -1,5 +1,6 @@
 from collections import Counter
-import common
+
+import common.day as common
 
 
 def main():

@@ -1,5 +1,6 @@
 import operator
-import common
+import common.collection as collection
+import common.day as common
 
 
 def main():
@@ -57,7 +58,7 @@ def knot_bytes(incoming):
 
     elements = knot(data, iterations=64)
 
-    segments = common.segment_list(elements, 16)
+    segments = collection.segment_list(elements, 16)
 
     return list(map(dense, segments))
 

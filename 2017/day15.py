@@ -1,4 +1,4 @@
-import common
+import common.day as common
 
 factors = {'A': 16807, 'B': 48271}
 divider = 2147483647

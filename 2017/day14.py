@@ -1,4 +1,4 @@
-import common
+import common.day as common
 import day10
 import day12
 
