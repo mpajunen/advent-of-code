@@ -1,6 +1,17 @@
 import copy
 
 
+def detect_simple(step, start):
+    current = step(copy.copy(start))
+    cycle_length = 1
+
+    while current != start:
+        current = step(current)
+        cycle_length += 1
+
+    return cycle_length
+
+
 # Tortoise and hare cycle detection
 # Adapted from https://en.wikipedia.org/wiki/Cycle_detection
 def tortoise_and_hare(step, start):
