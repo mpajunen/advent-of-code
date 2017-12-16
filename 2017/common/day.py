@@ -3,7 +3,7 @@ import os
 import time
 
 
-def read_input(day, char_split=False):
+def read_input(day, char_split=False, splitter=None):
     def handle_value(raw):
         try:
             return int(raw)
@@ -11,7 +11,7 @@ def read_input(day, char_split=False):
             return raw
 
     def handle_line(raw):
-        split = list(raw) if char_split else raw.split()
+        split = list(raw) if char_split else raw.split(splitter)
         processed = list(map(handle_value, split))
 
         return processed[0] if len(processed) == 1 else processed

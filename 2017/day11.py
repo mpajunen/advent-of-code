@@ -2,7 +2,7 @@ import common.day as common
 
 
 def main():
-    raw_data = common.read_input(11).split(',')
+    raw_data = common.read_input(11, splitter=',')
     data = common.process_list(
         raw_data,
         modify=lambda x: flat_hex_units[x],

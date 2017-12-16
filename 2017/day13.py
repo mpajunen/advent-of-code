@@ -2,11 +2,7 @@ import common.day as common
 
 
 def main():
-    raw_data = common.read_raw_input(13)
-    data = common.process_list(
-        raw_data,
-        modify=lambda row: [int(n) for n in row.split(': ')]
-    )
+    data = common.read_input(13, splitter=': ')
 
     common.solve_day(
         data,
