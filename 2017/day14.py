@@ -1,6 +1,7 @@
 import common.day as common
 import day10
 import day12
+from common.grid_square import adjacent_main
 from common.string import bin_byte, cat
 
 
@@ -35,20 +36,9 @@ def get_flag_lists(incoming):
     return all_flags
 
 
-unit_vectors = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-
-
 def find_groups(items, flags):
     def find_neighbors(group):
-        neighbors = set()
-        for (x, y) in group:
-            for (dx, dy) in unit_vectors:
-                tx, ty = x + dx, y + dy
-
-                if 0 <= tx < 128 and 0 <= ty < 128 and flags[ty][tx]:
-                    neighbors.add((tx, ty))
-
-        return neighbors
+        return {n for point in group for n in adjacent_main(point) if flags.get(n)}
 
     return day12.find_groups(items, find_neighbors)
 

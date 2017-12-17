@@ -1,6 +1,7 @@
 import math
 
 import common.day as common
+from common.grid_square import adjacent_all, move
 
 
 def main():
@@ -29,7 +30,7 @@ def solve_distance(square):
     ring = (ring_side - 1) // 2
     inside_values = (ring_side - 2) ** 2
     ring_values = square - inside_values
-    axis_distance = abs((-ring + ring_values) % ring)
+    axis_distance = abs((ring_values - ring) % ring)
 
     return axis_distance + ring
 
@@ -37,7 +38,6 @@ def solve_distance(square):
 assert solve_distance(12) == 3
 assert solve_distance(23) == 2
 assert solve_distance(1024) == 31
-
 
 stress_spiral = """
 147  142  133  122   59
@@ -49,26 +49,30 @@ stress_spiral = """
 
 
 def next_spiral_position(position):
-    x, y, _ = position
-    if x > 0 and x > abs(y):
-        return x, y + 1, _
-    if y > 0 and abs(x - 1) <= y:
-        return x - 1, y, _
-    if x < 0 and abs(x) >= abs(y - 1):
-        return x, y - 1, _
+    x, y = position
+
+    if x > abs(y):
+        direction = 'n'
+    elif y >= abs(x - 1):
+        direction = 'w'
+    elif abs(x) >= abs(y - 1):
+        direction = 's'
     else:
-        return x + 1, y, _
+        direction = 'e'
+
+    return move(position, direction)
 
 
 def stress(limit):
+    position = 0, 0
     value = 1
-    position = (0, 0, value)  # x, y, value
-    positions = [position]
+    values = {position: value}
+
     while value < limit:
         position = next_spiral_position(position)
-        adjacent = [v for (x, y, v) in positions if abs(x - position[0]) <= 1 and abs(y - position[1]) <= 1]
-        value = sum(adjacent)
-        positions.append((position[0], position[1], value))
+        value = sum([values.get(a, 0) for a in adjacent_all(position)])
+        values[position] = value
+
     return value
 
 
