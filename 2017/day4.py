@@ -1,4 +1,5 @@
 import common.day as common
+from common.string import cat
 
 
 def main():
@@ -25,7 +26,7 @@ def solve_unique(phrases):
 
 
 def sort_word(word):
-    return ''.join(sorted(word))
+    return cat(sorted(word))
 
 
 def solve_no_anagrams(phrases):

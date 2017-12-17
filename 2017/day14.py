@@ -1,6 +1,7 @@
 import common.day as common
 import day10
 import day12
+from common.string import bin_byte, cat
 
 
 def main():
@@ -26,8 +27,7 @@ def get_flag_lists(incoming):
 
     for i in range(128):
         row = day10.knot_bytes(incoming + '-' + str(i))
-        binary = [bin(n)[2:].rjust(8, '0') for n in row]
-        chars = ''.join(binary)
+        chars = cat(map(bin_byte, row))
         flags = [c == '1' for c in list(chars)]
 
         all_flags.append(flags)

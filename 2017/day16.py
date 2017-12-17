@@ -2,6 +2,7 @@ import string
 
 import common.cycle as cycle
 import common.day as day
+from common.string import cat
 
 programs_start = list(string.ascii_lowercase[:16])
 
@@ -55,7 +56,7 @@ def make_moves(start, moves):
 def solve1(incoming):
     programs = make_moves(programs_start, incoming)
 
-    return ''.join(programs)
+    return cat(programs)
 
 
 def solve2(incoming):
@@ -66,7 +67,7 @@ def solve2(incoming):
     for _ in range(iterations):
         programs = make_moves(programs, incoming)
 
-    return ''.join(programs)
+    return cat(programs)
 
 
 if __name__ == "__main__":

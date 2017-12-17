@@ -1,6 +1,8 @@
 import operator
+
 import common.collection as collection
 import common.day as common
+from common.string import cat, hex_byte
 
 
 def main():
@@ -64,9 +66,9 @@ def knot_bytes(incoming):
 
 
 def solve2(incoming):
-    hexed = [hex(v)[2:].rjust(2, '0') for v in knot_bytes(incoming)]
+    hexed = map(hex_byte, knot_bytes(incoming))
 
-    return ''.join(hexed)
+    return cat(hexed)
 
 
 if __name__ == "__main__":
