@@ -1,7 +1,7 @@
 import common.day as common
 import day10
-import day12
 from common.grid_square import adjacent_main
+from common.group import find_all
 from common.string import bin_byte, cat
 
 
@@ -36,13 +36,6 @@ def get_flag_lists(incoming):
     return all_flags
 
 
-def find_groups(items, flags):
-    def find_neighbors(group):
-        return {n for point in group for n in adjacent_main(point) if flags.get(n)}
-
-    return day12.find_groups(items, find_neighbors)
-
-
 def solve2(incoming):
     flags = get_flag_lists(incoming)
 
@@ -53,7 +46,10 @@ def solve2(incoming):
             if flag:
                 all_true.add((x, y))
 
-    groups = find_groups(all_true, flags)
+    def find_neighbors(group):
+        return {n for point in group for n in adjacent_main(point) if flags.get(n)}
+
+    groups = find_all(all_true, find_neighbors)
 
     result = len(groups)
 
