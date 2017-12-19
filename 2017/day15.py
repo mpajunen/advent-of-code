@@ -1,12 +1,13 @@
 import common.day as common
 
-factors = {'A': 16807, 'B': 48271}
+fa, fb = 16807, 48271
 divider = 2147483647
+mask = 2 ** 16 - 1
 
 
 def main():
     raw_data = common.read_input(15)
-    data = {generator: start for (_, generator, _, _, start) in raw_data}
+    data = [row.pop() for row in raw_data]
 
     common.solve_day(
         data,
@@ -16,43 +17,37 @@ def main():
 
 
 def solve1(incoming):
-    mask = 2 ** 16 - 1
+    same = get_matches(incoming, 40000000)
 
-    a, b = incoming.get('A'), incoming.get('B')
-    fa, fb = factors.get('A'), factors.get('B')
-
-    result = 0
-
-    for _ in range(0, 40000000):
-        if a & mask == b & mask:
-            result += 1
-        a = (a * fa) % divider
-        b = (b * fb) % divider
-
-    return result
+    return len(same)
 
 
 def solve2(incoming):
-    mask = 2 ** 16 - 1
+    same = get_matches(incoming, 5000000, (4, 8))
 
-    a, b = incoming.get('A'), incoming.get('B')
-    fa, fb = factors.get('A'), factors.get('B')
+    return len(same)
 
-    result = 0
 
-    for _ in range(0, 5000000):
-        if a & mask == b & mask:
-            result += 1
+def get_matches(initial, limit, multiples=(1, 1)):
+    a, b = initial
+    ma, mb = multiples
 
-        a = (a * fa) % divider
-        while a % 4 != 0:
-            a = (a * fa) % divider
+    pairs = zip(
+        generate(a, fa, limit, ma),
+        generate(b, fb, limit, mb),
+    )
 
-        b = (b * fb) % divider
-        while b % 8 != 0:
-            b = (b * fb) % divider
+    return [a for a, b in pairs if (a - b) & mask == 0]
 
-    return result
+
+def generate(start, factor, limit, multiple):
+    value = start
+    for _ in range(0, limit):
+        while True:
+            value = (value * factor) % divider
+            if value % multiple == 0:
+                yield value
+                break
 
 
 if __name__ == "__main__":
