@@ -1,5 +1,5 @@
 import common.day as common
-from common.grid_hex import flat_distance, flat_move
+from common.grid_hex import flat_move, step_distance
 
 
 def main():
@@ -18,7 +18,7 @@ def solve(incoming):
 
     for direction in incoming:
         position = flat_move(position, direction)
-        dist = flat_distance(position)
+        dist = step_distance(position)
         max_dist = max(dist, max_dist)
 
     return dist, max_dist

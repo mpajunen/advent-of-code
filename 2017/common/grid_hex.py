@@ -31,19 +31,14 @@ def flat_adjacent(point):
     return [add(point, u) for u in flat_units.values()]
 
 
-def flat_distance(target, start=(0, 0)):
-    dq, dr = q(target) - q(start), r(target) - r(start)
-    aq, ar = abs(dq), abs(dr)
-
-    # Find sectors where a single step can bring us
-    # towards the target on both q and r axes.
-    if dq > 0 > dr or dr > 0 > dq:
-        return max(aq, ar)
-    else:
-        return aq + ar
-
-
 def flat_move(point, direction, distance=1):
     dq, dr = flat_units[direction]
 
     return q(point) + dq * distance, r(point) + dr * distance
+
+
+def step_distance(a, b=(0, 0)):
+    dq, dr, dqr = q(a) - q(b), r(a) - r(b),  q(a) + r(a) - q(b) - r(b)
+    aq, ar, aqr = abs(dq), abs(dr), abs(dqr)
+
+    return (aq + ar + aqr) // 2
