@@ -1,13 +1,12 @@
 import common.day as day
 from common.matrix import flip_vertical, get_rotations
-from common.string import cat
 
 
 def main():
     raw_data = day.read_input(21, splitter=' => ')
     data = day.process_table(
         raw_data,
-        modify=lambda v: tuple(v.split('/')),
+        modify=lambda v: create_pattern(v.split('/')),
     )
 
     day.solve_day(
@@ -15,6 +14,10 @@ def main():
         (solve1, 194),
         (solve2, 2536879),
     )
+
+
+def create_pattern(rows):
+    return tuple([tuple(row) for row in rows])
 
 
 def solve1(incoming): return solve(incoming, 5)
@@ -25,7 +28,7 @@ def solve2(incoming): return solve(incoming, 18)
 
 def solve(rules, iterations):
     output_map = create_output_map(rules)
-    pixels = ('.#.', '..#', '###')
+    pixels = [list(row) for row in ['.#.', '..#', '###']]
 
     for _ in range(0, iterations):
         pixels = enhance_detail(output_map, pixels)
@@ -50,26 +53,26 @@ def create_blocks(pixels, size):
     block_side = range(0, len(pixels), size)
 
     def get_row(rows):
-        return [tuple([row[j:j + size] for row in rows])
+        return [tuple([tuple(row[j:j + size]) for row in rows])
                 for j in block_side]
 
     return [get_row(pixels[i:i + size]) for i in block_side]
 
 
 def combine_blocks(block_table, size):
-    return [cat([b[i] for b in blocks])
+    return [[pixel for block in blocks for pixel in block[i]]
             for blocks in block_table
             for i in range(size)]
 
 
 def create_output_map(patterns):
-    return {permutation: out
+    return {permutation: create_pattern(out)
             for (in_pattern, out) in patterns
             for permutation in pattern_permutations(in_pattern)}
 
 
 def pattern_permutations(pattern):
-    rotations = [tuple(map(lambda row: cat(row), r)) for r in get_rotations(pattern)]
+    rotations = [tuple(r) for r in get_rotations(pattern)]
 
     return set(rotations + [flip_vertical(r) for r in rotations])
 
