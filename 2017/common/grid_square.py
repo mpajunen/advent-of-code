@@ -11,6 +11,19 @@ class Dir(IntEnum):
     W = 7
     NW = 8
 
+    def is_main(self):
+        return self % 2 == 1
+
+    def turn(self, toward):
+        return Dir((self - 1 + toward) % 8 + 1)  # Magic constants, fuck yeah
+
+
+class Turn(IntEnum):
+    No = 0
+    Right = 2
+    Around = 4
+    Left = 6
+
 
 units_main = {
     Dir.N: (0, 1),
