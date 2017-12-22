@@ -1,15 +1,29 @@
+from enum import IntEnum
+
+
+class Dir(IntEnum):
+    N = 1
+    NE = 2
+    E = 3
+    SE = 4
+    S = 5
+    SW = 6
+    W = 7
+    NW = 8
+
+
 units_main = {
-    'n': (0, 1),
-    'e': (1, 0),
-    's': (0, -1),
-    'w': (-1, 0),
+    Dir.N: (0, 1),
+    Dir.E: (1, 0),
+    Dir.S: (0, -1),
+    Dir.W: (-1, 0),
 }
 
 units_intermediate = {
-    'ne': (1, 1),
-    'se': (1, -1),
-    'sw': (-1, -1),
-    'nw': (-1, 1),
+    Dir.NE: (1, 1),
+    Dir.SE: (1, -1),
+    Dir.SW: (-1, -1),
+    Dir.NW: (-1, 1),
 }
 
 units_all = {**units_main, **units_intermediate}

@@ -1,7 +1,7 @@
 import string
 
 import common.day as day
-from common.grid_square import build_char_grid, get_path, is_opposite, move, units_main
+from common.grid_square import Dir, build_char_grid, get_path, is_opposite, move, units_main
 from common.string import cat
 
 
@@ -18,7 +18,7 @@ def solve(incoming):
     grid = build_char_grid(incoming)
 
     position = [(x, y) for (x, y) in grid if y == 0].pop()
-    direction = 's'
+    direction = Dir.S
 
     path = get_path(get_step(grid), position, direction)
 

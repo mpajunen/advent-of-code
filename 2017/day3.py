@@ -1,7 +1,7 @@
 import math
 
 import common.day as common
-from common.grid_square import adjacent_all, move
+from common.grid_square import Dir, adjacent_all, move
 
 
 def main():
@@ -52,13 +52,13 @@ def next_spiral_position(position):
     x, y = position
 
     if x > abs(y):
-        direction = 'n'
+        direction = Dir.N
     elif y >= abs(x - 1):
-        direction = 'w'
+        direction = Dir.W
     elif abs(x) >= abs(y - 1):
-        direction = 's'
+        direction = Dir.S
     else:
-        direction = 'e'
+        direction = Dir.E
 
     return move(position, direction)
 
