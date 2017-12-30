@@ -1,0 +1,14 @@
+A
+12425180
+A 0 1 right B
+A 1 0 right F
+B 0 0 left B
+B 1 1 left C
+C 0 1 left D
+C 1 0 right C
+D 0 1 left E
+D 1 1 right A
+E 0 1 left F
+E 1 0 left D
+F 0 1 right A
+F 1 0 left E
