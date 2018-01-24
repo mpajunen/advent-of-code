@@ -1,7 +1,7 @@
 import string
 
 import common.day as day
-from common.grid_square import Dir, build_char_grid, get_path, is_opposite, move, units_main
+from common.grid_square import Dir, Turn, build_char_grid, get_path, move, units_main
 from common.string import cat
 
 
@@ -28,12 +28,8 @@ def solve(incoming):
 
 
 def get_step(grid):
-    def get_directions(direction):
-        x, y = [d for d in units_main if d != direction and not is_opposite(d, direction)]
-
-        return direction, x, y  # Try moving to the original direction first, then try 90 degree turns.
-
-    possibilities = {d: get_directions(d) for d in units_main}
+    # Try moving to the original direction first, then try 90 degree turns.
+    possibilities = {d: [d, d.turn(Turn.Left), d.turn(Turn.Right)] for d in units_main}
 
     def step(position, direction):
         for new_direction in possibilities[direction]:

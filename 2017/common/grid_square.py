@@ -57,7 +57,10 @@ default_ignored = [' ']
 
 def build_char_grid(rows, ignored=default_ignored):
     # South = down = unit vector (0, -1)
-    return {(j, -i): v for i, row in enumerate(rows) for j, v in enumerate(row) if v not in ignored}
+    return {(j, -i): v
+            for i, row in enumerate(rows)
+            for j, v in enumerate(row)
+            if v not in ignored}
 
 
 def get_path(step, position, direction):
