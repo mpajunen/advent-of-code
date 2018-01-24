@@ -1,13 +1,13 @@
 from collections import Counter
 
-import common.day as common
+import common.day as day
 
 
 def main():
-    raw_data = common.read_input(7)
+    raw_data = day.read_input(7)
     program_map = build_programs(raw_data)
 
-    common.solve_day(
+    day.solve_day(
         program_map,
         (solve1, 'qibuqqg'),
         (solve2, 1079),

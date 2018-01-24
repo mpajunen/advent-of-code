@@ -1,10 +1,10 @@
-import common.day as common
+import common.day as day
 
 
 def main():
-    data = common.read_input(2)
+    data = day.read_input(2)
 
-    common.solve_day(
+    day.solve_day(
         data,
         (check_solve, 45158),
         (div_solve, 294),

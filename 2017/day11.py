@@ -1,11 +1,11 @@
-import common.day as common
+import common.day as day
 from common.grid_hex import flat_move, step_distance
 
 
 def main():
-    data = common.read_input(11, splitter=',')
+    data = day.read_input(11, splitter=',')
 
-    common.solve_day(
+    day.solve_day(
         data,
         (solve, (794, 1524)),
     )

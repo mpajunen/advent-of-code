@@ -1,13 +1,13 @@
 import math
 
-import common.day as common
+import common.day as day
 from common.grid_square import Dir, adjacent_all, move
 
 
 def main():
     search_square = 347991
 
-    common.solve_day(
+    day.solve_day(
         search_square,
         (solve_distance, 480),
         (stress, 349975),

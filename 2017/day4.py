@@ -1,11 +1,11 @@
-import common.day as common
+import common.day as day
 from common.string import cat
 
 
 def main():
-    data = common.read_input(4)
+    data = day.read_input(4)
 
-    common.solve_day(
+    day.solve_day(
         data,
         (solve_unique, 383),
         (solve_no_anagrams, 265),
@@ -17,7 +17,7 @@ def has_unique_words(words):
 
 
 def solve_unique(phrases):
-    processed = common.process_table(
+    processed = day.process_table(
         phrases,
         check_row=has_unique_words,
     )
@@ -30,7 +30,7 @@ def sort_word(word):
 
 
 def solve_no_anagrams(phrases):
-    processed = common.process_table(
+    processed = day.process_table(
         phrases,
         modify=sort_word,
         check_row=has_unique_words,

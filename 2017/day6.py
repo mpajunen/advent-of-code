@@ -1,11 +1,11 @@
 import common.cycle as cycle
-import common.day as common
+import common.day as day
 
 
 def main():
-    data = common.read_input(6)
+    data = day.read_input(6)
 
-    common.solve_day(
+    day.solve_day(
         data,
         (solve, (3156, 1610)),
     )

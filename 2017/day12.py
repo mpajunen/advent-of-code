@@ -1,15 +1,15 @@
-import common.day as common
+import common.day as day
 from common.group import find, find_all
 
 
 def main():
-    raw_data = common.read_raw_input(12)
-    data = common.process_list(
+    raw_data = day.read_raw_input(12)
+    data = day.process_list(
         raw_data,
         modify=build_neighbors
     )
 
-    common.solve_day(
+    day.solve_day(
         data,
         (solve1, 169),
         (solve2, 179),

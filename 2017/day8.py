@@ -1,11 +1,11 @@
-import common.day as common
+import common.day as day
 
 
 def main():
-    raw_data = common.read_input(8)
+    raw_data = day.read_input(8)
     instructions = create_instructions(raw_data)
 
-    common.solve_day(
+    day.solve_day(
         instructions,
         (solve, (2971, 4254)),
     )

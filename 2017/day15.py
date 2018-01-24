@@ -1,4 +1,4 @@
-import common.day as common
+import common.day as day
 
 fa, fb = 16807, 48271
 divider = 2147483647
@@ -6,10 +6,10 @@ mask = 2 ** 16 - 1
 
 
 def main():
-    raw_data = common.read_input(15)
+    raw_data = day.read_input(15)
     data = [row.pop() for row in raw_data]
 
-    common.solve_day(
+    day.solve_day(
         data,
         (solve1, 577),
         (solve2, 316),
