@@ -1,5 +1,3 @@
-import math
-
 import common.day as day
 from common.grid_square import Dir, adjacent_all, move
 
@@ -14,7 +12,7 @@ def main():
     )
 
 
-original_spiral = """
+""" Original spiral
 17  16  15  14  13
 18   5   4   3  12
 19   6   1   2  11
@@ -23,23 +21,31 @@ original_spiral = """
 """
 
 
+def find_ring_side(square):
+    for ring_side in range(1, 10 ** 999, 2):
+        if ring_side ** 2 >= square:
+            return ring_side
+
+
 def solve_distance(square):
-    ring_side = math.ceil(math.sqrt(square))
-    if ring_side % 2 == 0:
-        ring_side += 1
+    ring_side = find_ring_side(square)
     ring = (ring_side - 1) // 2
     inside_values = (ring_side - 2) ** 2
-    ring_values = square - inside_values
-    axis_distance = abs((ring_values - ring) % ring)
+    ring_steps = square - inside_values
+    axis_distance = abs(ring_steps - ring) % (2 * ring)
 
     return axis_distance + ring
 
 
+assert solve_distance(2) == 1
+assert solve_distance(3) == 2
+assert solve_distance(9) == 2
+assert solve_distance(10) == 3
 assert solve_distance(12) == 3
 assert solve_distance(23) == 2
 assert solve_distance(1024) == 31
 
-stress_spiral = """
+""" Stress spiral
 147  142  133  122   59
 304    5    4    2   57
 330   10    1    1   54
