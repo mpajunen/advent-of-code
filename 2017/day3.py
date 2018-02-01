@@ -70,14 +70,14 @@ def next_spiral_position(position):
 
 
 def stress(limit):
+    values = {}
     position = 0, 0
     value = 1
-    values = {position: value}
 
     while value < limit:
+        values[position] = value
         position = next_spiral_position(position)
         value = sum([values.get(a, 0) for a in adjacent_all(position)])
-        values[position] = value
 
     return value
 

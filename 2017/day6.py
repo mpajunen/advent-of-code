@@ -17,8 +17,8 @@ def distribute(position):
     max_val = position[max_pos]
 
     new_position = position[:max_pos] + [0] + position[(max_pos + 1):]
-    for k in range(max_pos + 1, max_val + max_pos + 1):
-        new_position[k % position_count] += 1
+    for k in range(max_val):
+        new_position[(k + max_pos + 1) % position_count] += 1
 
     return new_position
 
@@ -27,12 +27,6 @@ def solve(data):
     (length, start) = cycle.tortoise_and_hare(distribute, data)
 
     return length + start, length
-
-
-def get_start(data):
-    (length, _) = cycle.tortoise_and_hare(distribute, data)
-
-    return length
 
 
 if __name__ == "__main__":
