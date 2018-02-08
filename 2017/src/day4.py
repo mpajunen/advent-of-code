@@ -17,12 +17,7 @@ def has_unique_words(words):
 
 
 def solve_unique(phrases):
-    processed = day.process_table(
-        phrases,
-        check_row=has_unique_words,
-    )
-
-    return len(processed)
+    return sum(1 for row in phrases if has_unique_words(row))
 
 
 def sort_word(word):
@@ -30,13 +25,7 @@ def sort_word(word):
 
 
 def solve_no_anagrams(phrases):
-    processed = day.process_table(
-        phrases,
-        modify=sort_word,
-        check_row=has_unique_words,
-    )
-
-    return len(processed)
+    return solve_unique([[sort_word(word) for word in row] for row in phrases])
 
 
 if __name__ == "__main__":
