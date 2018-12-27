@@ -1,5 +1,8 @@
 import * as common from './common'
 
+export const manhattan = ([x1, y1]) => ([x2, y2]) =>
+  Math.abs(x1 - x2) + Math.abs(y1 - y2)
+
 export function createGrid(getValue, width, height = undefined) {
   const createRow = i =>
     Array.from({ length: width },(_, j) => getValue([i, j]))
