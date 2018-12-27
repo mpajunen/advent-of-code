@@ -74,6 +74,9 @@ export const range = (from, to) =>
 export const sum = values =>
   values.reduce((a, b) => a + b, 0)
 
+export const unique = values =>
+  [...new Set(values).values()]
+
 export class DefaultDict {
   constructor(getDefault) {
     return new Proxy({}, {
