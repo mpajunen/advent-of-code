@@ -1,4 +1,5 @@
 import * as common from './common'
+import CycleList from './CycleList'
 
 const readInput = () => {
   const [row] = common.readDayRows(9)
@@ -12,54 +13,31 @@ const readInput = () => {
 const { playerCount, lastMarble } = readInput()
 
 const SPECIAL_TRIGGER = 23
-const SPECIAL_MOVEMENT = -7
-
-const specialSteps = common.range(SPECIAL_MOVEMENT, 0)
-
-const addAfter = (marble, prev) => {
-  const next = prev.next
-  const active = { marble, prev, next }
-
-  prev.next = active
-  next.prev = active
-
-  return active
-}
-
-const remove = node => {
-  const { prev, next } = node
-  prev.next = next
-  next.prev = prev
-
-  return next
-}
+const SPECIAL_MOVEMENT = 7
 
 const placeMarbles = (players, finalMarble) => {
   const scores = []
   let marble = 0
 
-  let head = { marble }
-  head.next = head
-  head.prev = head
+  const cycle = new CycleList([marble])
 
   while (marble < finalMarble) {
     marble += 1
 
     if (marble % SPECIAL_TRIGGER === 0) {
-      specialSteps.forEach(() => {
-        head = head.prev
-      })
+      cycle.backward(SPECIAL_MOVEMENT)
 
       const player = marble % players
-      scores[player] = (scores[player] || 0) + marble + head.marble
+      scores[player] = (scores[player] || 0) + marble + cycle.head.value
 
-      head = remove(head)
+      cycle.remove()
     } else {
-      head = addAfter(marble, head.next)
+      cycle.forward()
+      cycle.add(marble)
     }
   }
 
-  return { head, scores }
+  return { cycle, scores }
 }
 
 const highScore = scores => Math.max(...Object.values(scores))
