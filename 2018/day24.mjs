@@ -52,17 +52,14 @@ const getPowerful = units => {
   return faster[0]
 }
 
-const getTarget = (targets, attacker) => {
-  const weak = targets.filter(u => u.weak.includes(attacker.attackType))
+const getTarget = (options, attacker) => {
+  const weak = options.filter(u => u.weak.includes(attacker.attackType))
   const mostDamage = weak.length > 0
     ? weak
-    : targets.filter(u => !u.immune.includes(attacker.attackType))
+    : options.filter(u => !u.immune.includes(attacker.attackType))
 
   return getPowerful(mostDamage)
 }
-
-const getEnemies = (units, unit) =>
-  units.filter(u => u.side !== unit.side && u.count > 0)
 
 const createAttacks = units => {
   const attackers = []
@@ -70,8 +67,9 @@ const createAttacks = units => {
 
   while (attackers.length < units.length) {
     const attacker = getPowerful(units.filter(unit => !attackers.includes(unit)))
-    const enemies = getEnemies(units, attacker).filter(unit => !targets.includes(unit))
-    const target = getTarget(enemies, attacker)
+    const options = units.filter(u => u.side !== attacker.side)
+      .filter(unit => !targets.includes(unit))
+    const target = getTarget(options, attacker)
 
     attackers.push(attacker)
     targets.push(target ? target : undefined)
