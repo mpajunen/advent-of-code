@@ -45,6 +45,11 @@ export const emptyArray = (length, getValue = () => 0) =>
 export const filterMap = (func, values) =>
   values.map(func).filter(value => value !== undefined)
 
+export const findFactors = num =>
+  range(1, Math.floor(Math.sqrt(num)))
+    .filter(n => num % n === 0)
+    .reduce((acc, n) => [...acc, n, num / n], [])
+
 export const findIndices = (func, values) =>
   filterMap((item, index) => func(item, index) ? index : undefined, values)
 
