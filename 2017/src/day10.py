@@ -19,9 +19,9 @@ def solve1(incoming):
         modify=int,
     )
 
-    elements = knot(data)
+    [first, second, *_] = knot(data)
 
-    return elements[0] * elements[1]
+    return first * second
 
 
 def solve2(incoming):

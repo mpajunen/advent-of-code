@@ -2,7 +2,7 @@ import common.day as day
 
 fa, fb = 16807, 48271
 divider = 2147483647
-mask = 2 ** 16 - 1
+mask = 2 ** 16
 
 
 def main():
@@ -17,13 +17,13 @@ def main():
 
 
 def solve1(incoming):
-    same = get_matches(incoming, 40000000)
+    same = get_matches(incoming, 40_000_000)
 
     return len(same)
 
 
 def solve2(incoming):
-    same = get_matches(incoming, 5000000, (4, 8))
+    same = get_matches(incoming, 5_000_000, (4, 8))
 
     return len(same)
 
@@ -37,7 +37,7 @@ def get_matches(initial, limit, multiples=(1, 1)):
         generate(b, fb, limit, mb),
     )
 
-    return [a for a, b in pairs if (a - b) & mask == 0]
+    return [a for a, b in pairs if (a - b) % mask == 0]
 
 
 def generate(start, factor, limit, multiple):

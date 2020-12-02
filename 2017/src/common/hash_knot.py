@@ -8,7 +8,7 @@ def knot(lengths, element_count=256, iterations=1):
     position = 0
     elements = list(range(0, element_count))
 
-    for i in range(iterations):
+    for _ in range(iterations):
         for length in lengths:
             glued = elements[position:] + elements[:position]
             revved = glued[:length][::-1] + glued[length:]

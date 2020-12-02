@@ -17,19 +17,20 @@ def create_instructions(raw):
 
 def check_check(registers, check):
     name, operator, value = check
+    reg_value = registers[name]
 
     if operator == '==':
-        return registers[name] == value
+        return reg_value == value
     elif operator == '>=':
-        return registers[name] >= value
+        return reg_value >= value
     elif operator == '<=':
-        return registers[name] <= value
+        return reg_value <= value
     elif operator == '>':
-        return registers[name] > value
+        return reg_value > value
     elif operator == '<':
-        return registers[name] < value
+        return reg_value < value
     elif operator == '!=':
-        return registers[name] != value
+        return reg_value != value
     else:
         print(operator)
 

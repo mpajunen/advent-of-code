@@ -22,8 +22,8 @@ def get_score(layers):
 
 
 def is_caught(layers, start):
-    for d, s in layers:
-        if is_at_zero(s, d + start):
+    for depth, size in layers:
+        if is_at_zero(size, depth + start):
             return True
 
     return False
