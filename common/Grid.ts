@@ -1,20 +1,13 @@
 import * as common from './common'
 
-export const add = ([xa, ya]) => ([xb, yb]) => [xb + xa, yb + ya]
+export type CoordinatePair = [number, number]
 
-export const manhattan = ([x1, y1]) => ([x2, y2]) =>
-  Math.abs(x1 - x2) + Math.abs(y1 - y2)
+export type Callback<Value, Result> = (value: Value, coordinates: CoordinatePair) => Result
 
-export function createGrid(getValue, width, height = undefined) {
-  const createRow = i =>
-    Array.from({ length: width },(_, j) => getValue([i, j]))
-  const values = common.emptyArray(height || width, createRow)
+export default class Grid<T extends number | string> {
+  data: T[][]
 
-  return new Grid(values)
-}
-
-export default class Grid {
-  constructor(values) {
+  constructor(values: T[][]) {
     this.data = values
   }
 
@@ -27,7 +20,7 @@ export default class Grid {
   }
 
   // NOTE: Mutates!
-  set([i, j], value) {
+  set([i, j]: CoordinatePair, value: T) {
     this.data[j][i] = value
   }
 
@@ -68,7 +61,7 @@ export default class Grid {
     return { max, point }
   }
 
-  findPlace(func) {
+  findPlace(func: Callback<T, boolean>): CoordinatePair {
     for (let j = 0; j < this.data.length; j++) {
       const row = this.data[j]
       for (let i = 0; i < row.length; i++) {
@@ -81,7 +74,16 @@ export default class Grid {
     return undefined
   }
 
-  map(func) {
+  forEach(func: Callback<T, void>): void {
+    for (let j = 0; j < this.data.length; j++) {
+      const row = this.data[j]
+      for (let i = 0; i < row.length; i++) {
+        func(row[i], [i, j])
+      }
+    }
+  }
+
+  map<NewT extends number | string>(func: Callback<T, NewT>): Grid<NewT> {
     const values = this.data
       .map((row, j) => row.map((value, i) => func(value, [i, j])))
 
@@ -129,7 +131,16 @@ export default class Grid {
     return common.arrayCounts(this.values().filter(v => v !== undefined))
   }
 
-  values() {
+  values(): T[] {
     return [].concat(...this.data)
+  }
+
+  entries(): [CoordinatePair, T][] {
+    const entries = []
+    this.forEach((value, pair) => {
+      entries.push([pair, value])
+    })
+
+    return entries
   }
 }
