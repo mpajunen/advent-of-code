@@ -1,0 +1,62 @@
+import * as common from '../common/common'
+import { Dir, Line, manhattan, Move, moveVec, origin, add, Vec2 } from '../common/Vec2'
+
+const getMoves = (row: string): Move[] =>
+  row.split(',').map(move => ({ dir: move[0] as Dir, length: parseInt(move.slice(1)) }))
+
+const move = (start: Vec2, move: Move): Vec2 => add(start, moveVec(move))
+
+const limit = (axis: keyof Vec2, dir: 'max' | 'min', [start, end]: Line) => Math[dir](start[axis], end[axis])
+
+const commonAxisValues = (axis: keyof Vec2, a: Line, b: Line): number[] =>
+  common.range(
+    Math.max(limit(axis, 'min', a), limit(axis, 'min', b)),
+    Math.min(limit(axis, 'max', a), limit(axis, 'max', b)) + 1,
+  )
+
+const intersection = (a: Line, b: Line): Vec2[] => {
+  const xCommon = commonAxisValues('x', a, b)
+  const yCommon = commonAxisValues('y', a, b)
+
+  return xCommon.flatMap(x => yCommon.flatMap(y => ({ x, y })))
+}
+
+const allCrossings = (a: Line[], b: Line[]) =>
+  a.flatMap(al => b.flatMap(bl => intersection(al, bl)))
+
+const lineIncludes = ([start, end]: Line, point: Vec2): boolean =>
+  manhattan(start, point) + manhattan(end, point) === manhattan(start, end)
+
+const movingDistances = (lines: Line[], crossings: Vec2[]): number[] => {
+  let distance = 0
+
+  const distances: number[] = common.emptyArray(crossings.length, () => common.LARGE_VALUE)
+
+  for (const [start, end] of lines) {
+    crossings.forEach((crossing, index) => {
+      if (lineIncludes([start, end], crossing)) {
+        distances[index] = Math.min(distances[index], manhattan(start, crossing) + distance)
+      }
+    })
+
+    distance += manhattan(start, end)
+  }
+
+  return distances
+}
+
+export default function day3(rows: string[]): [number, number] {
+  const moves = rows.map(getMoves)
+  const points = moves.map(m => common.steps(move, m, origin))
+  const lines = points.map(common.zipPairs)
+  const crossings = allCrossings(lines[0], lines[1]).slice(1) // Remove origin
+  const originDistances = crossings.map(c => manhattan(origin, c))
+
+  const distances = lines.map(l => movingDistances(l, crossings))
+  const totalDistances = common.zip(distances[0], distances[1]).map(common.sum)
+
+  return [
+    Math.min(...originDistances), // 266
+    Math.min(...totalDistances), // 19242
+  ]
+}
