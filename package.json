@@ -12,7 +12,8 @@
   },
   "devDependencies": {},
   "scripts": {
-    "run-day": "ts-node run-day.ts",
+    "run-day": "ts-node run.ts day",
+    "run-year": "ts-node run.ts year",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Mikael Pajunen",
