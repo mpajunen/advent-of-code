@@ -1,11 +1,4 @@
-import * as fs from 'fs'
-
 export const LARGE_VALUE = 999999999
-
-export const readDayRows = (year, day) =>
-  fs.readFileSync(`./${year}/input/day${day}.txt`, 'utf8')
-    .split('\n')
-    .filter(r => !!r)
 
 export const isNumeric = n => parseFloat(n).toString() === n
 
