@@ -11,5 +11,8 @@ export const findFactors = num =>
 
 export const isNumeric = n => parseFloat(n).toString() === n
 
+export const product = (values: number[]): number =>
+  values.reduce((a, b) => a * b, 1)
+
 export const sum = (values: number[]): number =>
   values.reduce((a, b) => a + b, 0)
