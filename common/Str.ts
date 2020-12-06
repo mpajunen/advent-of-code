@@ -2,6 +2,8 @@ import * as List from './List'
 
 export const alphabet = 'abcdefghijklmnopqrstuvwxyz'.split('')
 
+export const charCount = (char: string, text: string): number => text.split(char).length - 1
+
 export const charCounts = (s: string): Record<string, number> => List.counts(s.split(''))
 
 export const chunk = (chunkLength: number, s: string): string[] =>

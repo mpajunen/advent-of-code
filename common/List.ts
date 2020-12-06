@@ -36,6 +36,9 @@ export const indicesOf = <T>(search: T, values: T[]): number[] =>
 export const intersection = <T>(values: T[], compare: T[]): T[] =>
   values.filter(v => compare.includes(v))
 
+export const isSorted = <T extends number | string>(list: T[]): boolean =>
+  zipPairs(list).every(([a, b]) => a <= b)
+
 export const maxBy = <T>(accessor: (v: T) => number, values: T[]): T[] => {
   const comparisons = values.map(accessor)
   const max = Math.max(...comparisons)
