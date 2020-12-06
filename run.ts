@@ -1,7 +1,8 @@
 import { readFileSync } from 'fs'
 import { List } from './common'
 
-type Day = (rows: string[]) => [unknown, unknown]
+type Answer = number | string
+type Day = (rows: string[]) => [Answer, Answer, Answer | undefined, Answer | undefined]
 
 const readDayRows = (year, day) =>
   readFileSync(`./${year}/input/day${day}.txt`, 'utf8')
@@ -10,14 +11,21 @@ const readDayRows = (year, day) =>
 
 const getCode = async (year: number, day: number): Promise<Day> => (await import(`./${year}/day${day}`)).default
 
+const printResult = (result: Answer, expected: Answer) => {
+  console.log(result)
+  if (expected && result !== expected) {
+    console.log(`Expected ${expected}, got ${result}!`)
+  }
+}
+
 const runDay = async (day = new Date().getDate(), year = new Date().getFullYear()) => {
   const input = readDayRows(year, day)
   const code = await getCode(year, day)
 
-  const [result1, result2] = code(input)
+  const [result1, result2, expected1, expected2] = code(input)
 
-  console.log(result1)
-  console.log(result2)
+  printResult(result1, expected1)
+  printResult(result2, expected2)
 }
 
 const runYear = async (year = new Date().getFullYear()) => {
