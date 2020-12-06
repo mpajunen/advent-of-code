@@ -67,6 +67,20 @@ export const sortBy = <T, K extends number | string>(accessor: (item: T) => K, i
   return items.sort(compare)
 }
 
+export const splitBy = <T>(splitter: (value: T) => boolean, values: T[]): T[][] => {
+  const all = [[]]
+
+  values.forEach(value => {
+    if (splitter(value)) {
+      all.push([])
+    } else {
+      all[all.length - 1].push(value)
+    }
+  })
+
+  return all
+}
+
 export const steps = <State, Mod>(step: (state: State, mod: Mod) => State, mods: Mod[], initial: State): State[] => {
   const states: State[] = [initial]
 
