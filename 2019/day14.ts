@@ -1,5 +1,3 @@
-import * as common from '../common/common'
-
 type ResourceCount = { resource: string, count: number }
 type Reaction = { inputs: ResourceCount[], output: ResourceCount }
 type Reactions = Record<string, Reaction>

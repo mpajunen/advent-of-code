@@ -1,4 +1,4 @@
-import * as common from '../common/common'
+import { Input, List, Num } from '../common'
 
 type Vec3 = { x: number, y: number, z: number }
 type Moon = { id: number, position: Vec3, velocity: Vec3 }
@@ -31,17 +31,17 @@ const applyVelocity = (moons: Moon[]): Moon[] =>
   moons.map(({ id, position, velocity }) => ({
     id,
     position: sum(position, velocity),
-    velocity
+    velocity,
   }))
 
 const step = (moons: Moon[]): Moon[] => applyVelocity(applyGravity(moons))
 const steps = (count: number, moons: Moon[]): Moon[] =>
-  common.range(0, count).reduce(step, moons)
+  List.range(0, count).reduce(step, moons)
 
 const energy = ({ position, velocity }: Moon): number => magnitude(position) * magnitude(velocity)
 
 const getFactors = (value: number): number[] => {
-  for (const factor of common.range(2, Math.sqrt(value) + 1)) {
+  for (const factor of List.range(2, Math.sqrt(value) + 1)) {
     if (value % factor === 0) {
       return [factor, ...getFactors(value / factor)]
     }
@@ -51,7 +51,7 @@ const getFactors = (value: number): number[] => {
 }
 
 const getFactorCounts = (value: number): Record<number, number> =>
-  common.arrayCounts(getFactors(value))
+  List.counts(getFactors(value))
 
 const getMaxCounts = (allCounts: Record<number, number>[]): Record<number, number> => {
   const maxCounts = {}
@@ -85,13 +85,13 @@ const findAxisCycle = (initial: Moon[], axis: keyof Vec3): number => {
 
 export default function day12(rows: string[]): [unknown, unknown] {
   const moons: Moon[] = rows
-    .map(common.parseByPattern('<x=%i, y=%i, z=%i>'))
+    .map(Input.parseByPattern('<x=%i, y=%i, z=%i>'))
     .map(([x, y, z]) => ({ x, y, z }))
     .map((position, key) => ({ id: key, position, velocity: initialVelocity }))
 
   const moonsAfter = steps(1000, moons)
 
-  const totalEnergy = common.sum(moonsAfter.map(energy))
+  const totalEnergy = Num.sum(moonsAfter.map(energy))
 
   const cycles = axes.map(axis => findAxisCycle(moons, axis))
 

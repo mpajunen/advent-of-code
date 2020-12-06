@@ -1,12 +1,11 @@
-import * as common from '../common/common'
-import { findGroupMin } from '../common/common'
-import Grid, { CoordinatePair } from '../common/Grid'
+import { List, Str } from '../common'
+import { CoordinatePair, Grid } from '../common/Grid'
 
 const tiles = {
   wall: '#',
   passage: '.',
-  keys: common.alphabet,
-  doors: common.alphabet.map(letter => letter.toUpperCase()),
+  keys: Str.alphabet,
+  doors: Str.alphabet.map(letter => letter.toUpperCase()),
   entrance: '@',
 } as const
 
@@ -88,6 +87,17 @@ const findDistances = (maze: Maze, state: State, position: CoordinatePair): Grid
   return distances
 }
 
+const findGroupMin = <T, Group extends number | string>(
+  getGroup: (item: T) => Group,
+  accessor: (v: T) => number,
+  items: T[],
+): T[] => {
+  const groups = List.groupBy(getGroup, items)
+  const groupValues: T[][] = Object.values(groups)
+
+  return groupValues.map(group => List.minBy(accessor, group)[0])
+}
+
 function findOptimalOption(maze: Maze, states: State[]): State {
   const options = states.flatMap(findNextOptions(maze))
   if (options.length === 0) {
@@ -104,7 +114,7 @@ const findNextOptions = (maze: Maze) => (state: State): State[] => {
   const allDistances = state.positions.map(p => findDistances(maze, state, p))
 
   return allDistances.flatMap((distances, robotIndex) =>
-    common.filterMap(([position, key]) => {
+    List.filterMap(([position, key]) => {
       const distance = distances.get(position)
       if (state.collected.includes(key) || distance < 0) {
         return undefined
@@ -119,7 +129,7 @@ const findNextOptions = (maze: Maze) => (state: State): State[] => {
         distance: state.distance + distance,
         route: `${state.route}${key}`,
       }
-    }, maze.targets)
+    }, maze.targets),
   )
 }
 

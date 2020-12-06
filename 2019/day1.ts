@@ -1,4 +1,4 @@
-import * as common from '../common/common'
+import { Num } from '../common'
 
 const getBaseFuel = (mass: number) => Math.trunc(mass / 3) - 2
 
@@ -11,8 +11,8 @@ const getFuel = (mass: number) => {
 export default function day1(rows: string[]): [unknown, unknown] {
   const masses = rows.map(row => parseInt(row))
 
-  const result1 = common.sum(masses.map(getBaseFuel))
-  const result2 = common.sum(masses.map(getFuel))
+  const result1 = Num.sum(masses.map(getBaseFuel))
+  const result2 = Num.sum(masses.map(getFuel))
 
   return [
     result1, // 3337766

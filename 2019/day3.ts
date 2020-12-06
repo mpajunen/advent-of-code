@@ -1,5 +1,5 @@
-import * as common from '../common/common'
-import { Dir, Line, manhattan, Move, moveVec, origin, add, Vec2 } from '../common/Vec2'
+import { List, Num } from '../common'
+import { add, Dir, Line, manhattan, Move, moveVec, origin, Vec2 } from '../common/Vec2'
 
 const getMoves = (row: string): Move[] =>
   row.split(',').map(move => ({ dir: move[0] as Dir, length: parseInt(move.slice(1)) }))
@@ -9,7 +9,7 @@ const move = (start: Vec2, move: Move): Vec2 => add(start, moveVec(move))
 const limit = (axis: keyof Vec2, dir: 'max' | 'min', [start, end]: Line) => Math[dir](start[axis], end[axis])
 
 const commonAxisValues = (axis: keyof Vec2, a: Line, b: Line): number[] =>
-  common.range(
+  List.range(
     Math.max(limit(axis, 'min', a), limit(axis, 'min', b)),
     Math.min(limit(axis, 'max', a), limit(axis, 'max', b)) + 1,
   )
@@ -30,7 +30,7 @@ const lineIncludes = ([start, end]: Line, point: Vec2): boolean =>
 const movingDistances = (lines: Line[], crossings: Vec2[]): number[] => {
   let distance = 0
 
-  const distances: number[] = common.emptyArray(crossings.length, () => common.LARGE_VALUE)
+  const distances: number[] = List.empty(crossings.length, () => Num.LARGE_VALUE)
 
   for (const [start, end] of lines) {
     crossings.forEach((crossing, index) => {
@@ -47,13 +47,13 @@ const movingDistances = (lines: Line[], crossings: Vec2[]): number[] => {
 
 export default function day3(rows: string[]): [number, number] {
   const moves = rows.map(getMoves)
-  const points = moves.map(m => common.steps(move, m, origin))
-  const lines = points.map(common.zipPairs)
+  const points = moves.map(m => List.steps(move, m, origin))
+  const lines = points.map(List.zipPairs)
   const crossings = allCrossings(lines[0], lines[1]).slice(1) // Remove origin
   const originDistances = crossings.map(c => manhattan(origin, c))
 
   const distances = lines.map(l => movingDistances(l, crossings))
-  const totalDistances = common.zip(distances[0], distances[1]).map(common.sum)
+  const totalDistances = List.zip(distances[0], distances[1]).map(Num.sum)
 
   return [
     Math.min(...originDistances), // 266

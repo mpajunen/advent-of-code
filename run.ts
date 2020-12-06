@@ -1,5 +1,5 @@
 import { readFileSync } from 'fs'
-import { range } from './common/common'
+import { List } from './common'
 
 type Day = (rows: string[]) => [unknown, unknown]
 
@@ -23,7 +23,7 @@ const runDay = async (day = new Date().getDate(), year = new Date().getFullYear(
 const runYear = async (year = new Date().getFullYear()) => {
   const maxDay = year === new Date().getFullYear() ? new Date().getDate() : 25
 
-  for (const day of range(1, maxDay + 1)) {
+  for (const day of List.range(1, maxDay + 1)) {
     console.log(`${year}: Day ${day}`)
     await runDay(day, year)
   }

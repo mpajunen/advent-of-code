@@ -1,10 +1,10 @@
-import * as common from './common'
+import * as List from './List'
 
 export type CoordinatePair = [number, number]
 
 export type Callback<Value, Result> = (value: Value, coordinates: CoordinatePair) => Result
 
-export default class Grid<T extends number | string> {
+export class Grid<T extends number | string> {
   data: T[][]
 
   constructor(values: T[][]) {
@@ -128,7 +128,7 @@ export default class Grid<T extends number | string> {
   }
 
   valueCounts() {
-    return common.arrayCounts(this.values().filter(v => v !== undefined))
+    return List.counts(this.values().filter(v => v !== undefined))
   }
 
   values(): T[] {
