@@ -1,3 +1,6 @@
+export const chunk = <T>(values: T[], size: number): T[][] =>
+  range(0, values.length, size).map(start => values.slice(start, start + size))
+
 export const counts = <V extends number | string>(array: V[]): Record<V, number> => {
   const found: Partial<Record<V, number>> = {}
 
@@ -56,8 +59,37 @@ export const minBy = <T>(accessor: (v: T) => number, values: T[]): T[] => {
   return indicesOf(min, comparisons).map(i => values[i])
 }
 
+export const partition = <T>(accessor: (v: T) => boolean, values: T[]): [T[], T[]] => {
+  const groups = groupBy(v => accessor(v) ? 1 : 0, values)
+
+  return [groups[1], groups[0]]
+}
+
 export const range = (from: number, to: number, step = 1): number[] =>
   Array.from({ length: (to - from) / step }, (_, k) => (k * step) + from)
+
+type SequenceLength<T> = { value: T, length: number }
+
+export const sequenceLengths = <T>(values: T[]): SequenceLength<T>[] =>
+  sequences(values).map(seq => ({ value: seq[0], length: seq.length }))
+
+export const sequences = <T>(values: T[]): T[][] => {
+  const all = []
+
+  let previous = undefined
+
+  for (const value of values) {
+    if (value !== previous) {
+      all.push([])
+    }
+    all[all.length - 1].push(value)
+    previous = value
+  }
+
+  return all
+}
+
+export const sort = <T extends number | string>(items: T[]): T[] => sortBy(i => i, items)
 
 export const sortBy = <T, K extends number | string>(accessor: (item: T) => K, items: T[]): T[] => {
   const compare = (a: T, b: T) => {
@@ -67,7 +99,7 @@ export const sortBy = <T, K extends number | string>(accessor: (item: T) => K, i
     return ka < kb ? -1 : ka > kb ? 1 : 0
   }
 
-  return items.sort(compare)
+  return [...items].sort(compare)
 }
 
 export const splitBy = <T>(splitter: (value: T) => boolean, values: T[]): T[][] => {

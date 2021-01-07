@@ -1,6 +1,13 @@
-import { Grid, Input, Num, List, Str, Vec2 } from '../common'
+import { Grid, Input, Num, List, Loop, Str, Vec2 } from '../common'
+
+const getInput = (rows: string[]) => {
+
+  return rows
+}
 
 export default (rows: string[]) => {
+  const input = getInput(rows)
+
   const result1 = 0
   const result2 = 0
 

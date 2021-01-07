@@ -4,6 +4,18 @@ import { Vec2 } from './Vec2'
 type Mapper<Value, Result> = (value: Value, coordinates: Vec2) => Result
 type Reducer<Value, Result> = (acc: Result, value: Value, coordinates: Vec2) => Result
 
+export const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> => {
+  const combineRow = (grids: Grid<T>[]): T[][] => {
+    const [first, ...rest] = grids.map(g => g.rows())
+
+    return rest.reduce(
+      (acc, rows) => acc.map((a, i) => [...a, ...rows[i]]),
+      first,
+    )
+  }
+
+  return new Grid(all.flatMap(combineRow))
+}
 
 export class Grid<T extends number | string> {
   data: T[][]
@@ -35,10 +47,34 @@ export class Grid<T extends number | string> {
     return this.data[y]
   }
 
+  columns(): T[][] {
+    return this.data[0].map((_, i) => this.column(i))
+  }
+
   column(index): T[] {
     const i = index < 0 ? this.data[0].length + index : index
 
     return this.data.map(row => row[i])
+  }
+
+  flipHorizontal(): Grid<T> {
+    return new Grid(this.data.map(r => [...r].reverse()))
+  }
+
+  flipVertical(): Grid<T> {
+    return new Grid([...this.data.reverse()])
+  }
+
+  transpose(): Grid<T> {
+    return new Grid(this.columns())
+  }
+
+  rotate(): Grid<T> {
+    return new Grid(this.columns().map(c => c.reverse()))
+  }
+
+  slice(start: number, end: number): Grid<T> {
+    return new Grid(this.rows().slice(start, end).map(r => r.slice(start, end)))
   }
 
   filter(func): Grid<T> {
