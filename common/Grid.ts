@@ -1,8 +1,9 @@
 import * as List from './List'
+import { Vec2 } from './Vec2'
 
-export type CoordinatePair = [number, number]
+type Mapper<Value, Result> = (value: Value, coordinates: Vec2) => Result
+type Reducer<Value, Result> = (acc: Result, value: Value, coordinates: Vec2) => Result
 
-export type Callback<Value, Result> = (value: Value, coordinates: CoordinatePair) => Result
 
 export class Grid<T extends number | string> {
   data: T[][]
@@ -11,49 +12,49 @@ export class Grid<T extends number | string> {
     this.data = values
   }
 
-  copy() {
+  copy(): Grid<T> {
     return this.map(value => value)
   }
 
-  get([i, j]) {
-    return this.data[j] ? this.data[j][i] : undefined
+  get({ x, y }: Vec2): T | undefined {
+    return this.data[y] ? this.data[y][x] : undefined
   }
 
   // NOTE: Mutates!
-  set([i, j]: CoordinatePair, value: T) {
-    this.data[j][i] = value
+  set({ x, y }: Vec2, value: T) {
+    this.data[y][x] = value
   }
 
-  rows() {
+  rows(): T[][] {
     return this.data
   }
 
-  row(index) {
-    const j = index < 0 ? this.data.length + index : index
+  row(index): T[] {
+    const y = index < 0 ? this.data.length + index : index
 
-    return this.data[j]
+    return this.data[y]
   }
 
-  column(index) {
+  column(index): T[] {
     const i = index < 0 ? this.data[0].length + index : index
 
     return this.data.map(row => row[i])
   }
 
-  filter(func) {
+  filter(func): Grid<T> {
     return this.map((value, point) => func(value, point) ? value : undefined)
   }
 
-  findMax() {
+  findMax(): { max: T, point: Vec2 } {
     let max = this.data[0][0]
-    let point = [0, 0]
+    let point = { x: 0, y: 0 }
 
-    for (let j = 0; j < this.data.length; j++) {
-      const row = this.data[j]
-      for (let i = 0; i < row.length; i++) {
-        if (max < row[i]) {
-          max = row[i]
-          point = [i, j]
+    for (let y = 0; y < this.data.length; y++) {
+      const row = this.data[y]
+      for (let x = 0; x < row.length; x++) {
+        if (max < row[x]) {
+          max = row[x]
+          point = { x, y }
         }
       }
     }
@@ -61,12 +62,12 @@ export class Grid<T extends number | string> {
     return { max, point }
   }
 
-  findPlace(func: Callback<T, boolean>): CoordinatePair {
-    for (let j = 0; j < this.data.length; j++) {
-      const row = this.data[j]
-      for (let i = 0; i < row.length; i++) {
-        if (func(row[i], [i, j])) {
-          return [i, j]
+  findPlace(func: Mapper<T, boolean>): Vec2 {
+    for (let y = 0; y < this.data.length; y++) {
+      const row = this.data[y]
+      for (let x = 0; x < row.length; x++) {
+        if (func(row[x], { x, y })) {
+          return { x, y }
         }
       }
     }
@@ -74,60 +75,57 @@ export class Grid<T extends number | string> {
     return undefined
   }
 
-  forEach(func: Callback<T, void>): void {
-    for (let j = 0; j < this.data.length; j++) {
-      const row = this.data[j]
-      for (let i = 0; i < row.length; i++) {
-        func(row[i], [i, j])
+  forEach(func: Mapper<T, void>): void {
+    for (let y = 0; y < this.data.length; y++) {
+      const row = this.data[y]
+      for (let x = 0; x < row.length; x++) {
+        func(row[x], { x, y })
       }
     }
   }
 
-  map<NewT extends number | string>(func: Callback<T, NewT>): Grid<NewT> {
-    const values = this.data
-      .map((row, j) => row.map((value, i) => func(value, [i, j])))
+  map<NewT extends number | string>(func: Mapper<T, NewT>): Grid<NewT> {
+    const values = this.data.map((row, y) => row.map((value, x) => func(value, { x, y })))
 
     return new Grid(values)
   }
 
-  mapMutate(func) {
-    for (let j = 0; j < this.data.length; j++) {
-      const row = this.data[j]
-      for (let i = 0; i < row.length; i++) {
-        row[i] = func(row[i], [i, j])
+  mapMutate(func: Mapper<T, T>): void {
+    for (let y = 0; y < this.data.length; y++) {
+      const row = this.data[y]
+      for (let x = 0; x < row.length; x++) {
+        row[x] = func(row[x], { x, y })
       }
     }
   }
 
-  mapPart(func, [startX, startY], [endX, endY]) {
-    const changeRow = (row, j) =>
-      row.map((value, i) => i >= startY && i < endY ? func(value, [i, j]) : value)
-    const change = (row, j) =>
-      j >= startX && j < endX ? changeRow(row, j) : row
+  mapPart(func: Mapper<T, T>, start: Vec2, end: Vec2): Grid<T> {
+    const changeRow = (row, y) =>
+      row.map((value, x) => x >= start.y && y < start.y ? func(value, { x, y }) : value)
+    const change = (row, y) =>
+      y >= start.y && y < end.y ? changeRow(row, y) : row
 
     return new Grid(this.data.map(change))
   }
 
-  reduce(func, initial) {
+  reduce<U>(func: Reducer<T, U>, initial: U): U {
     let acc = initial
 
-    for (let j = 0; j < this.data.length; j++) {
-      const row = this.data[j]
-      for (let i = 0; i < row.length; i++) {
-        acc = func(acc, row[i], [i, j])
+    for (let y = 0; y < this.data.length; y++) {
+      const row = this.data[y]
+      for (let x = 0; x < row.length; x++) {
+        acc = func(acc, row[x], { x, y })
       }
     }
 
     return acc
   }
 
-  stringGrid() {
-    return this.data
-      .map(row => row.join(''))
-      .join('\n')
+  stringGrid(): string {
+    return this.data.map(row => row.join('')).join('\n')
   }
 
-  valueCounts() {
+  valueCounts(): Record<T, number> {
     return List.counts(this.values().filter(v => v !== undefined))
   }
 
@@ -135,7 +133,7 @@ export class Grid<T extends number | string> {
     return [].concat(...this.data)
   }
 
-  entries(): [CoordinatePair, T][] {
+  entries(): [Vec2, T][] {
     const entries = []
     this.forEach((value, pair) => {
       entries.push([pair, value])

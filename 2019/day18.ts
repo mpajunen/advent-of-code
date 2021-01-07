@@ -1,5 +1,5 @@
-import { List, Str } from '../common'
-import { CoordinatePair, Grid } from '../common/Grid'
+import { List, Str, Vec2 } from '../common'
+import { Grid } from '../common/Grid'
 
 const tiles = {
   wall: '#',
@@ -13,13 +13,13 @@ const tiles = {
 
 type Maze = {
   grid: Grid<string>
-  targets: [CoordinatePair, string][]
+  targets: [Vec2.Vec2, string][]
 }
 
 type State = {
   collected: string
   distance: number
-  positions: CoordinatePair[]
+  positions: Vec2.Vec2[]
   route: string
 }
 
@@ -46,13 +46,7 @@ const buildInitial = (rows: string[]) => {
   return { maze, state }
 }
 
-const getAdjacent = ([x, y]: CoordinatePair): CoordinatePair[] =>
-  [[x, y - 1], [x, y + 1], [x - 1, y], [x + 1, y]]
-
-const getDiagonal = ([x, y]: CoordinatePair): CoordinatePair[] =>
-  [[x - 1, y - 1], [x + 1, y + 1], [x - 1, y + 1], [x + 1, y - 1]]
-
-const findDistances = (maze: Maze, state: State, position: CoordinatePair): Grid<number> => {
+const findDistances = (maze: Maze, state: State, position: Vec2.Vec2): Grid<number> => {
   const getInitial = (tile: string): SpecialDistance =>
     tile === '#' ? BLOCKED :
       tile === '.' ? OPEN :
@@ -61,7 +55,7 @@ const findDistances = (maze: Maze, state: State, position: CoordinatePair): Grid
 
   const distances = maze.grid.map<number>(getInitial)
 
-  let next: CoordinatePair[] = [position]
+  let next: Vec2.Vec2[] = [position]
   let distance = 0
 
   while (next.length > 0) {
@@ -77,7 +71,7 @@ const findDistances = (maze: Maze, state: State, position: CoordinatePair): Grid
       distances.set(p, distance)
 
       if (value === OPEN) {
-        next.push(...getAdjacent(p))
+        next.push(...Vec2.adjacent(p))
       }
     })
 
@@ -105,8 +99,7 @@ function findOptimalOption(maze: Maze, states: State[]): State {
   }
 
   const optimalOptions = findGroupMin(o => o.collected, o => o.distance, options)
-// console.log(options.length, optimalOptions.length)
-//   console.log(optimalOptions)
+
   return findOptimalOption(maze, optimalOptions)
 }
 
@@ -135,9 +128,9 @@ const findNextOptions = (maze: Maze) => (state: State): State[] => {
 
 const buildModified = (maze: Maze, state: State) => {
   const grid = maze.grid.copy()
-  getAdjacent(state.positions[0]).forEach(p => grid.set(p, tiles.wall))
+  Vec2.adjacent(state.positions[0]).forEach(p => grid.set(p, tiles.wall))
 
-  const positions = getDiagonal(state.positions[0])
+  const positions = Vec2.diagonal(state.positions[0])
 
   return {
     maze: { ...maze, grid },
