@@ -131,6 +131,13 @@ export const steps = <State, Mod>(step: (state: State, mod: Mod) => State, mods:
 export const unique = <T>(values: T[]): T[] =>
   Array.from(new Set(values))
 
+export const windowed = <T>(windowSize: number, values: T[]): T[][] => {
+  const starts = range(0, values.length - windowSize + 1)
+  const offsets = range(0, windowSize)
+
+  return starts.map(start => offsets.map(offset => values[start + offset]))
+}
+
 export const zip = <A, B>(a: A[], b: B[]): [A, B][] =>
   a.slice(0, b.length).map((aValue, i) => [aValue, b[i]])
 
