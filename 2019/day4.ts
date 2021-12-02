@@ -16,7 +16,7 @@ const isMatch = (checks: Check[]) => (num: number): boolean => {
 }
 
 export default function day4([row]: string[]): [unknown, unknown] {
-  const [start, end] = Input.parseByPattern('%i-%i')(row)
+  const [start, end] = Input.parseByPattern<[number, number]>('%i-%i')(row)
 
   const numbers = List.range(start, end + 1)
 

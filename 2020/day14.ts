@@ -16,13 +16,13 @@ type State2 = {
   floatingMask: bigint
 }
 
-const parseMem = Input.parseByPattern('mem[%i] = %i')
+const parseMem = Input.parseByPattern<[number, number]>('mem[%i] = %i')
 
 const getMem = ([address, value]: [number, number]): Instruction =>
   ({ kind: 'mem', address, value })
 
 const read = (row: string): Instruction =>
-  row.startsWith('mask') ? { kind: 'mask', mask: row.slice(7) } : getMem(parseMem(row) as any)
+  row.startsWith('mask') ? { kind: 'mask', mask: row.slice(7) } : getMem(parseMem(row))
 
 const step1 = (prev: State1, i: Instruction): State1 => {
   switch (i.kind) {
