@@ -4,6 +4,7 @@
   "description": "Advent of Code solutions",
   "dependencies": {
     "@types/node": "^16.11.11",
+    "immer": "^9.0.7",
     "immutable": "^4.0.0",
     "js-md5": "^0.7.2",
     "ramda": "^0.27.1",
