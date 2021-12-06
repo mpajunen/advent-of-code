@@ -57,6 +57,15 @@ export class Grid<T extends number | string> {
     return this.data.map(row => row[i])
   }
 
+  diagonals(): T[][] {
+    const size = this.data[0].length
+
+    return [
+      this.data[0].map((_, i) => this.data[i][i]),
+      this.data[0].map((_, i) => this.data[size - i - 1][i]),
+    ]
+  }
+
   flipHorizontal(): Grid<T> {
     return new Grid(this.data.map(r => [...r].reverse()))
   }

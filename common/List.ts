@@ -14,6 +14,9 @@ export const counts = <V extends number | string>(array: V[]): Record<V, number>
 export const empty = (length, getValue = (key: number) => 0) =>
   Array.from({ length }, (_, key) => getValue(key))
 
+export const exclude = <T>(values: T[], exclusion: T[]): T[] =>
+  values.filter(v => !exclusion.includes(v))
+
 export const filterMap = <In, Out>(func: (value: In, index: number) => Out | undefined, values: In[]): Out[] =>
   values.map(func).filter(value => value !== undefined)
 
