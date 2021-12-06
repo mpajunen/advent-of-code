@@ -1,6 +1,7 @@
 export { DefaultDict } from './DefaultDict'
 export * as Grid from './Grid'
 export * as Input from './Input'
+export { Line } from './Line'
 export * as List from './List'
 export * as Loop from './Loop'
 export * as Num from './Num'
