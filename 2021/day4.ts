@@ -1,9 +1,9 @@
-import { Grid, List, Num } from '../common'
+import { Grid, List, Num, Str } from '../common'
 
 const getInput = (rows: string[]) => {
   const [first, ...rest] = List.splitBy((row) => row === '', rows)
   const draws = allDraws(first[0].split(',').map(Number))
-  const boards = rest.map(board => new Grid.Grid(board.map(row => row.split(' ').filter(v => v !== '').map(Number))))
+  const boards = rest.map(board => new Grid.Grid(board.map(row => Str.words(row).map(Number))))
 
   return { draws, boards }
 }

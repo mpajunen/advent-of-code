@@ -4,6 +4,8 @@ export const LARGE_VALUE = 999999999
 
 export const digits = (n: number): number[] => String(n).split('').map(c => parseInt(c))
 
+export const fromDigits = (digits: number[]): number => Number(digits.join(''))
+
 export const fibonacci = (n: number): number => n < 2 ? 1 : n * fibonacci(n - 1)
 
 export const findFactors = num =>
