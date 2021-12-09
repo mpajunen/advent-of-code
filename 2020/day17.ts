@@ -1,4 +1,4 @@
-import { Grid, List, Num, Vec2 } from '../common'
+import { List, Num } from '../common'
 
 type Cell = 1 | 0
 type Dimension = 1 | 2 | 3 | 4

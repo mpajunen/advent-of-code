@@ -1,4 +1,4 @@
-import { Grid, Input, Num, List, Str, Vec2 } from '../common'
+import { List, Num } from '../common'
 
 type Operator = '+' | '*'
 
@@ -55,8 +55,6 @@ const evalNew = (expr: ExprList): number => {
 
 export default (rows: string[]) => {
   const expressions = rows.map(buildExpr)
-
-  // const foo = rows.map(eval)
 
   const result1 = Num.sum(expressions.map(evalExpr))
   const result2 = Num.sum(expressions.map(evalNew))

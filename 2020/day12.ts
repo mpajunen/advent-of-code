@@ -1,4 +1,4 @@
-import { Grid, Input, Num, List, Str, Vec2 } from '../common'
+import * as Vec2 from '../common/Vec2'
 
 type Act = Vec2.Dir | Vec2.TurnDir | 'F'
 type Ship = { position: Vec2.Vec2, facing: Vec2.Dir }
