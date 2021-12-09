@@ -7,7 +7,7 @@ const getInput = (rows: string[]) => rows.map(parse).map(([x1, y1, x2, y2]) => (
   to: { x: x2, y: y2 },
 }))
 
-const pointString = ({ x, y }: Vec2.Vec2): string => [x, y].join(',')
+const pointString = ({ x, y }: Vec2): string => [x, y].join(',')
 
 const intersectCount = (lines: Line[]): number => {
   const allPoints = lines.flatMap(Line.points)

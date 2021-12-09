@@ -5,13 +5,13 @@ enum Square { floor = '.', empty = 'L', occupied = '#' }
 type Data = Grid<Square>
 type Step = (grid: Data) => Data
 
-type GetNear = (grid: Data, pos: Vec2.Vec2) => Square[]
+type GetNear = (grid: Data, pos: Vec2) => Square[]
 
 const getAdjacent: GetNear = (grid, position) =>
   Vec2.allAdjacent(position).map(pos => grid.get(pos)).filter(v => v !== undefined)
 
 const getVisible: GetNear = (grid, pair) => {
-  const one = (position: Vec2.Vec2, direction: Vec2.Vec2): Square | undefined => {
+  const one = (position: Vec2, direction: Vec2): Square | undefined => {
     const next = Vec2.add(position, direction)
     const square = grid.get(next)
 

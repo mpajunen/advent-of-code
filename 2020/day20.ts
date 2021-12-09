@@ -99,7 +99,7 @@ const formImage = (tiles: Tile[], borders: Borders[], [first]: Borders[]) => {
 }
 
 const getSingleMonsterCount = (values: Values): number => {
-  const isInPos = (v, pos: Vec2.Vec2): 1 | 0 =>
+  const isInPos = (v, pos: Vec2): 1 | 0 =>
     SEA_MONSTER.every(monster => values.get(Vec2.add(pos, monster)) === '#') ? 1 : 0
 
   return values.map(isInPos).valueCounts()[1]

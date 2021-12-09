@@ -12,13 +12,13 @@ const tiles = {
 
 type Maze = {
   grid: Grid<string>
-  targets: [Vec2.Vec2, string][]
+  targets: [Vec2, string][]
 }
 
 type State = {
   collected: string
   distance: number
-  positions: Vec2.Vec2[]
+  positions: Vec2[]
   route: string
 }
 
@@ -45,7 +45,7 @@ const buildInitial = (rows: string[]) => {
   return { maze, state }
 }
 
-const findDistances = (maze: Maze, state: State, position: Vec2.Vec2): Grid<number> => {
+const findDistances = (maze: Maze, state: State, position: Vec2): Grid<number> => {
   const getInitial = (tile: string): SpecialDistance =>
     tile === '#' ? BLOCKED :
       tile === '.' ? OPEN :
@@ -54,7 +54,7 @@ const findDistances = (maze: Maze, state: State, position: Vec2.Vec2): Grid<numb
 
   const distances = maze.grid.map<number>(getInitial)
 
-  let next: Vec2.Vec2[] = [position]
+  let next: Vec2[] = [position]
   let distance = 0
 
   while (next.length > 0) {
