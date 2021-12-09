@@ -5,7 +5,7 @@ const getInput = (rows: string[]) => rows.map(r => r.split('').map(Number))
 const getCommonValue = (column: number[]) => Num.sum(column) >= column.length / 2 ? 1 : 0
 
 const findCommon = (most: boolean, rows: number[][], index = 0): number[] => {
-  const column = new Grid.Grid(rows).column(index)
+  const column = new Grid(rows).column(index)
   const common = getCommonValue(column)
 
   const remaining = rows.filter(row => (row[index] === common) === most)
@@ -18,7 +18,7 @@ const decimal = (bits: number[]): number => parseInt(bits.join(''), 2)
 export default (rows: string[]) => {
   const input = getInput(rows)
 
-  const columns = new Grid.Grid(input).columns()
+  const columns = new Grid(input).columns()
 
   const gamma = columns.map(getCommonValue)
   const epsilon = columns.map(column => getCommonValue(column) ? 0 : 1)

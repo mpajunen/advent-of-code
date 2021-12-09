@@ -1,16 +1,16 @@
 import { Grid, List, Num, Vec2 } from '../common'
 
-const getInput = (rows: string[]) => new Grid.Grid(rows.map(r => r.split('').map(Number)))
+const getInput = (rows: string[]) => new Grid(rows.map(r => r.split('').map(Number)))
 
 type Entry = [Vec2.Vec2, number]
 
-const adjacent = (grid: Grid.Grid<number>, source: Vec2.Vec2): Entry[] =>
+const adjacent = (grid: Grid<number>, source: Vec2.Vec2): Entry[] =>
   Vec2.adjacent(source).map((p): Entry => [p, grid.get(p)]).filter(([, value]) => value !== undefined)
 
-const findLow = (grid: Grid.Grid<number>): Entry[] =>
+const findLow = (grid: Grid<number>): Entry[] =>
   grid.entries().filter(([position, value]) => adjacent(grid, position).every(([, a]) => a > value))
 
-const findBasin = (grid: Grid.Grid<number>) => (source: Vec2.Vec2): string[] => {
+const findBasin = (grid: Grid<number>) => (source: Vec2.Vec2): string[] => {
   const current = grid.get(source)
   const newParts = adjacent(grid, source)
     .filter(([, value]) => value > current && value < 9)

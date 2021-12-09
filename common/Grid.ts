@@ -4,7 +4,7 @@ import { Vec2 } from './Vec2'
 type Mapper<Value, Result> = (value: Value, coordinates: Vec2) => Result
 type Reducer<Value, Result> = (acc: Result, value: Value, coordinates: Vec2) => Result
 
-export const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> => {
+const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> => {
   const combineRow = (grids: Grid<T>[]): T[][] => {
     const [first, ...rest] = grids.map(g => g.rows())
 
@@ -19,6 +19,8 @@ export const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> =>
 
 export class Grid<T extends number | string> {
   data: T[][]
+
+  static combine = combine
 
   constructor(values: T[][]) {
     this.data = values

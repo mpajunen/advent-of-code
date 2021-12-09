@@ -2,7 +2,7 @@ import { Grid, List, Vec2 } from '../common'
 
 enum Square { floor = '.', empty = 'L', occupied = '#' }
 
-type Data = Grid.Grid<Square>
+type Data = Grid<Square>
 type Step = (grid: Data) => Data
 
 type GetNear = (grid: Data, pos: Vec2.Vec2) => Square[]
@@ -51,7 +51,7 @@ const stepUntil = (start: Data, step: Step) => {
 }
 
 export default (rows: string[]) => {
-  const original = new Grid.Grid(rows.map(r => r.split('') as Square[]))
+  const original = new Grid(rows.map(r => r.split('') as Square[]))
 
   const result1 = getCount(stepUntil(original, createStep(4, getAdjacent)))
   const result2 = getCount(stepUntil(original, createStep(5, getVisible)))

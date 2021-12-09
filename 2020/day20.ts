@@ -1,7 +1,7 @@
 import { Grid, List, Num, Vec2 } from '../common'
 
 type Value = '.' | '#'
-type Values = Grid.Grid<Value>
+type Values = Grid<Value>
 
 type Tile = { id: number, grid: Values }
 
@@ -10,15 +10,15 @@ const SEA_MONSTER_IMAGE =
 #    ##    ##    ###
  #  #  #  #  #  #   `
 
-const SEA_MONSTER = new Grid.Grid<'#' | ' '>(
+const SEA_MONSTER = new Grid<'#' | ' '>(
   SEA_MONSTER_IMAGE.split('\n').map(row => row.split('') as any[])
 )
   .entries()
   .filter(([, value]) => value === '#')
   .map(([location]) => location)
 
-const getTile = (rows: string[]): Grid.Grid<Value> =>
-  new Grid.Grid(rows.map(r => r.split('') as Value[]))
+const getTile = (rows: string[]): Grid<Value> =>
+  new Grid(rows.map(r => r.split('') as Value[]))
 
 const getInput = (rows: string[]) =>
   List.splitBy(r => r === '', rows).map(tileRows => {

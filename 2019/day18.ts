@@ -1,5 +1,4 @@
-import { List, Str, Vec2 } from '../common'
-import { Grid } from '../common/Grid'
+import { Grid, List, Str, Vec2 } from '../common'
 
 const tiles = {
   wall: '#',

@@ -13,7 +13,7 @@ const unitValues = Object.values(units)
 
 type Dir = keyof typeof units
 type BlackValue = 0 | 1
-type Data = Grid.Grid<BlackValue>
+type Data = Grid<BlackValue>
 
 const parseRow = (row: string) => Array.from(row.match(/(se|sw|ne|nw|e|w)/g)) as Dir[]
 
@@ -26,7 +26,7 @@ const OFFSET = { x: SIZE / 2, y: SIZE / 2 }
 const getGrid = (tiles: Vec2.Vec2[]) => {
   const row: BlackValue[] = new Array(SIZE).fill(0)
   const rows: BlackValue[][] = new Array(SIZE).fill(row).map(() => [...row])
-  const grid = new Grid.Grid(rows)
+  const grid = new Grid(rows)
 
   const offsetTiles = tiles.map(t => Vec2.add(OFFSET, t))
 

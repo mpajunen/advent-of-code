@@ -3,7 +3,7 @@ import { Grid, List, Num, Str } from '../common'
 const getInput = (rows: string[]) => {
   const [first, ...rest] = List.splitBy((row) => row === '', rows)
   const draws = allDraws(first[0].split(',').map(Number))
-  const boards = rest.map(board => new Grid.Grid(board.map(row => Str.words(row).map(Number))))
+  const boards = rest.map(board => new Grid(board.map(row => Str.words(row).map(Number))))
 
   return { draws, boards }
 }
@@ -11,13 +11,13 @@ const getInput = (rows: string[]) => {
 const allDraws = (drawOrder: number[]): number[][] =>
   List.range(5, drawOrder.length).map(drawn => drawOrder.slice(0, drawn))
 
-const allLines = (board: Grid.Grid<number>): number[][] => [
+const allLines = (board: Grid<number>): number[][] => [
   ...board.rows(),
   ...board.columns(),
   ...board.diagonals(),
 ]
 
-const score = (draws: number[][]) => (board: Grid.Grid<number>) => {
+const score = (draws: number[][]) => (board: Grid<number>) => {
   const lines = allLines(board)
 
   for (const draw of draws) {
