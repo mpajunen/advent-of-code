@@ -36,6 +36,8 @@ export const groupBy = <T, K extends number | string>(getGroup: (item: T) => K, 
   return groups
 }
 
+export const includes = <T>(list: T[], value: unknown): value is T => list.includes(value as T)
+
 export const indicesOf = <T>(search: T, values: T[]): number[] =>
   filterMap((value, index) => value === search ? index : undefined, values)
 
