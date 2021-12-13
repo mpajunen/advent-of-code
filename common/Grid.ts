@@ -4,13 +4,13 @@ import { Vec2 } from './Vec2'
 type Mapper<Value, Result> = (value: Value, coordinates: Vec2) => Result
 type Reducer<Value, Result> = (acc: Result, value: Value, coordinates: Vec2) => Result
 
-type CreateParams<T> = Vec2 & { getValue: (position: Vec2) => T }
+type GetValue<T> = (coordinates: Vec2) => T
 
-const create = <T extends number | string>(create: CreateParams<T>): Grid<T> => {
-  const row = Array.from({ length: create.x }, () => undefined)
+const create = <T extends number | string>(size: Vec2, getValue: GetValue<T>): Grid<T> => {
+  const row = Array.from({ length: size.x })
   const rows = Array.from(
-    { length: create.y },
-    (_, y) => row.map((_, x) => create.getValue({ x, y })),
+    { length: size.y },
+    (_, y) => row.map((_, x) => getValue({ x, y })),
   )
 
   return new Grid(rows)
