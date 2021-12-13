@@ -4,6 +4,18 @@ import { Vec2 } from './Vec2'
 type Mapper<Value, Result> = (value: Value, coordinates: Vec2) => Result
 type Reducer<Value, Result> = (acc: Result, value: Value, coordinates: Vec2) => Result
 
+type CreateParams<T> = Vec2 & { getValue: (position: Vec2) => T }
+
+const create = <T extends number | string>(create: CreateParams<T>): Grid<T> => {
+  const row = Array.from({ length: create.x }, () => undefined)
+  const rows = Array.from(
+    { length: create.y },
+    (_, y) => row.map((_, x) => create.getValue({ x, y })),
+  )
+
+  return new Grid(rows)
+}
+
 const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> => {
   const combineRow = (grids: Grid<T>[]): T[][] => {
     const [first, ...rest] = grids.map(g => g.rows())
@@ -20,6 +32,7 @@ const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> => {
 export class Grid<T extends number | string> {
   data: T[][]
 
+  static create = create
   static combine = combine
 
   constructor(values: T[][]) {

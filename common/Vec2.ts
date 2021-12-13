@@ -41,6 +41,9 @@ export const add = (a: Vec2, b: Vec2): Vec2 =>
 export const angle = ({ x, y }: Vec2): number =>
   x === 0 && y === 0 ? Number.NaN : Math.atan2(y, x) / Math.PI * 180
 
+export const equal = (a: Vec2) => (b: Vec2): boolean =>
+  a.x === b.x && a.y === b.y
+
 export const manhattan = (a: Vec2, b: Vec2): number =>
   Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
 
