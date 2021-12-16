@@ -2,14 +2,15 @@ import { List, Num } from '../common'
 
 type Bit = 0 | 1
 
-const toBits = (num: number): Bit[] => [num & 8, num & 4, num & 2, num & 1].map(v => v ? 1 : 0)
+const toBits = (num: number): Bit[] =>
+  [num & 8, num & 4, num & 2, num & 1].map(v => v ? 1 : 0)
 
 const fromBits = (bits: Bit[]): number => parseInt(bits.join(''), 2)
 
 const getInput = ([row]: string[]) =>
   row.split('').map(v => parseInt(v, 16)).flatMap(toBits)
 
-const readPackets = (bits: Bit[]) => {
+const readPackets = (bits: Bit[]): Packet[] => {
   let index = 0
 
   const consume = (length: number) => {
@@ -17,32 +18,33 @@ const readPackets = (bits: Bit[]) => {
     index += length
     return result
   }
+  const readInt = (length: number) => fromBits(consume(length))
+
+  const readLiteral = () => {
+    const chunks = []
+    while (true) {
+      const [groupBit, ...dataBits] = consume(5)
+      chunks.push(dataBits)
+      if (groupBit === 0) {
+        break
+      }
+    }
+
+    return fromBits(chunks.flat())
+  }
+
+  const readOperands = () =>
+    readInt(1) === 0
+      ? readPackets(consume(readInt(15)))
+      : List.range(0, readInt(11)).map(readPacket)
 
   const readPacket = (): Packet => {
-    const version = fromBits(consume(3))
-    const typeId = fromBits(consume(3)) as Packet['typeId']
+    const version = readInt(3)
+    const typeId = readInt(3) as Packet['typeId']
 
-    if (typeId === 4) {
-      const chunks = []
-      while (true) {
-        const [groupBit, ...dataBits] = consume(5)
-        chunks.push(dataBits)
-        if (groupBit === 0) {
-          break
-        }
-      }
-      const literal = fromBits(chunks.flat())
-
-      return { version, typeId, literal }
-    } else {
-      const [lengthTypeId] = consume(1)
-      const size = fromBits(consume(lengthTypeId === 0 ? 15 : 11))
-      const subPackets = lengthTypeId === 0
-        ? readPackets(consume(size))
-        : List.range(0, size).map(readPacket)
-
-      return { version, typeId, subPackets }
-    }
+    return typeId === 4
+      ? { version, typeId, literal: readLiteral() }
+      : { version, typeId, operands: readOperands() }
   }
 
   const packets = []
@@ -53,10 +55,11 @@ const readPackets = (bits: Bit[]) => {
 }
 
 type OperatorId = 0 | 1 | 2 | 3 | 5 | 6 | 7
-type Packet = { version: number } & ({ typeId: 4, literal: number } | { typeId: OperatorId, subPackets: Packet[] })
+type Packet = { version: number }
+  & ({ typeId: 4, literal: number } | { typeId: OperatorId, operands: Packet[] })
 
 const sumVersions = (p: Packet): number =>
-  p.version + (p.typeId === 4 ? 0 : Num.sum(p.subPackets.map(sumVersions)))
+  p.version + (p.typeId === 4 ? 0 : Num.sum(p.operands.map(sumVersions)))
 
 const operators: Record<OperatorId, (values: number[]) => number> = {
   0: Num.sum,
@@ -69,7 +72,7 @@ const operators: Record<OperatorId, (values: number[]) => number> = {
 }
 
 const calculate = (p: Packet): number =>
-  p.typeId === 4 ? p.literal : operators[p.typeId](p.subPackets.map(calculate))
+  p.typeId === 4 ? p.literal : operators[p.typeId](p.operands.map(calculate))
 
 export default (rows: string[]) => {
   const input = getInput(rows)
