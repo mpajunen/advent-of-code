@@ -1,4 +1,4 @@
-import { Grid, Input, Num, List, Loop, Str, Vec2 } from '../common'
+import { Counts, Grid, Input, Num, Line, List, Loop, Str, Vec2 } from '../common'
 
 const getInput = (rows: string[]) => {
 

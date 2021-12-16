@@ -1,5 +1,6 @@
 import * as Vec2Base from './Vec2'
 
+export { Counts } from './Counts'
 export { DefaultDict } from './DefaultDict'
 export { Grid } from './Grid'
 export * as Input from './Input'
