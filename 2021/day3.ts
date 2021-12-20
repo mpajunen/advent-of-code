@@ -1,10 +1,12 @@
 import { Grid, Num } from '../common'
 
-const getInput = (rows: string[]) => rows.map(r => r.split('').map(Number))
+const getInput = (rows: string[]) =>
+  rows.map(r => r.split('').map(Number)) as Num.Bit[][]
 
-const getCommonValue = (column: number[]) => Num.sum(column) >= column.length / 2 ? 1 : 0
+const getCommonValue = (column: Num.Bit[]) =>
+  Num.sum(column) >= column.length / 2 ? 1 : 0
 
-const findCommon = (most: boolean, rows: number[][], index = 0): number[] => {
+const findCommon = (most: boolean, rows: Num.Bit[][], index = 0): Num.Bit[] => {
   const column = new Grid(rows).column(index)
   const common = getCommonValue(column)
 
@@ -12,8 +14,6 @@ const findCommon = (most: boolean, rows: number[][], index = 0): number[] => {
 
   return remaining.length === 1 ? remaining[0] : findCommon(most, remaining, index + 1)
 }
-
-const decimal = (bits: number[]): number => parseInt(bits.join(''), 2)
 
 export default (rows: string[]) => {
   const input = getInput(rows)
@@ -26,8 +26,8 @@ export default (rows: string[]) => {
   const oxygen = findCommon(true, input)
   const co2 = findCommon(false, input)
 
-  const result1 = decimal(gamma) * decimal(epsilon)
-  const result2 = decimal(oxygen) * decimal(co2)
+  const result1 = Num.fromBits(gamma) * Num.fromBits(epsilon)
+  const result2 = Num.fromBits(oxygen) * Num.fromBits(co2)
 
   return [result1, result2, 2498354, 3277956]
 }

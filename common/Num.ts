@@ -1,8 +1,12 @@
 import * as List from './List'
 
+export type Bit = 0 | 1
+
 export const LARGE_VALUE = 999999999
 
 export const digits = (n: number): number[] => String(n).split('').map(c => parseInt(c))
+
+export const fromBits = (bits: Bit[]): number => parseInt(bits.join(''), 2)
 
 export const fromDigits = (digits: number[]): number => Number(digits.join(''))
 

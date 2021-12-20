@@ -1,16 +1,12 @@
 import { List, Num } from '../common'
 
-type Bit = 0 | 1
-
-const toBits = (num: number): Bit[] =>
+const toBits = (num: number): Num.Bit[] =>
   [num & 8, num & 4, num & 2, num & 1].map(v => v ? 1 : 0)
-
-const fromBits = (bits: Bit[]): number => parseInt(bits.join(''), 2)
 
 const getInput = ([row]: string[]) =>
   row.split('').map(v => parseInt(v, 16)).flatMap(toBits)
 
-const readPackets = (bits: Bit[]): Packet[] => {
+const readPackets = (bits: Num.Bit[]): Packet[] => {
   let index = 0
 
   const consume = (length: number) => {
@@ -18,7 +14,7 @@ const readPackets = (bits: Bit[]): Packet[] => {
     index += length
     return result
   }
-  const readInt = (length: number) => fromBits(consume(length))
+  const readInt = (length: number) => Num.fromBits(consume(length))
 
   const readLiteral = () => {
     const chunks = []
@@ -30,7 +26,7 @@ const readPackets = (bits: Bit[]): Packet[] => {
       }
     }
 
-    return fromBits(chunks.flat())
+    return Num.fromBits(chunks.flat())
   }
 
   const readOperands = () =>
