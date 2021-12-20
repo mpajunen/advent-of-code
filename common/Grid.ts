@@ -181,6 +181,8 @@ export class Grid<T extends number | string> {
     return acc
   }
 
+  size = (): Vec2 => ({ x: this.data[0].length, y: this.data.length })
+
   stringGrid(): string {
     return this.data.map(row => row.join('')).join('\n')
   }

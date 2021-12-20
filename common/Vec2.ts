@@ -44,6 +44,8 @@ export const angle = ({ x, y }: Vec2): number =>
 export const equal = (a: Vec2) => (b: Vec2): boolean =>
   a.x === b.x && a.y === b.y
 
+export const fromTuple = ([x, y]: number[]): Vec2 => ({ x, y })
+
 export const manhattan = (a: Vec2, b: Vec2): number =>
   Math.abs(a.x - b.x) + Math.abs(a.y - b.y)
 
