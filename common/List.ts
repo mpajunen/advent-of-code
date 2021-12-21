@@ -67,7 +67,7 @@ export const minBy = <T>(accessor: (v: T) => number, values: T[]): T[] => {
 export const partition = <T>(accessor: (v: T) => boolean, values: T[]): [T[], T[]] => {
   const groups = groupBy(v => accessor(v) ? 1 : 0, values)
 
-  return [groups[1], groups[0]]
+  return [groups[1] ?? [], groups[0] ?? []]
 }
 
 export const range = (from: number, to: number, step = 1): number[] =>
