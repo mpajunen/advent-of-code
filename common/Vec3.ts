@@ -5,7 +5,7 @@ export const origin: Vec3 = { x: 0, y: 0, z: 0 }
 type Axis = keyof Vec3
 type Dir = Axis | `-${Axis}`
 
-const axes = ['x', 'y', 'z'] as const
+export const axes = ['x', 'y', 'z'] as const
 
 type Rotation = [Dir, Dir, Dir]
 
