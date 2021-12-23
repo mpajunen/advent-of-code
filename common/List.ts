@@ -36,7 +36,7 @@ export const groupBy = <T, K extends number | string>(getGroup: (item: T) => K, 
   return groups
 }
 
-export const includes = <T>(list: T[], value: unknown): value is T => list.includes(value as T)
+export const includes = <T>(list: Readonly<T[]>, value: unknown): value is T => list.includes(value as T)
 
 export const indicesOf = <T>(search: T, values: T[]): number[] =>
   filterMap((value, index) => value === search ? index : undefined, values)
@@ -135,6 +135,12 @@ export const steps = <State, Mod>(step: (state: State, mod: Mod) => State, mods:
 
 export const unique = <T>(values: T[]): T[] =>
   Array.from(new Set(values))
+
+export const until = <T>(values: T[], condition: (value: T) => boolean) => {
+  const index = values.findIndex(condition)
+
+  return index === -1 ? values : values.slice(0, index)
+}
 
 export const windowed = <T>(windowSize: number, values: T[]): T[][] => {
   const starts = range(0, values.length - windowSize + 1)
