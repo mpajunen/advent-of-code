@@ -2,7 +2,7 @@ import * as List from './List'
 
 export type Bit = 0 | 1
 
-export const LARGE_VALUE = 999999999
+export const LARGE_VALUE = Number.MAX_SAFE_INTEGER
 
 export const digits = (n: number): number[] => String(n).split('').map(c => parseInt(c))
 
