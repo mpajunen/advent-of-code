@@ -27,26 +27,13 @@ const getInput = (rows: string[]) =>
     .map(chunk => chunk.join('\n'))
     .map(Input.parseByPattern<Params>(CHUNK_TEMPLATE))
 
-type Variables = Partial<Record<'w' | 'x' | 'y' | 'z', number>>
-
-const runChunk = (params: Params, { w, x = 0, y = 0, z = 0 }: Variables, input: number): number => {
-  w = input
-  x = x * 0
-  x = x + z
-  x = x % 26
+const runChunk = (params: Params, z: number, input: number): number => {
+  let x = z % 26 + params[1]
   z = Math.trunc(z / params[0])
-  x = x + params[1]
-  x = x === w ? 1 : 0
-  x = x === 0 ? 1 : 0
-  y = y * 0
-  y = y + 25
-  y = y * x
-  y = y + 1
+  x = x === input ? 0 : 1
+  let y = (25 * x) + 1
   z = z * y
-  y = y * 0
-  y = y + w
-  y = y + params[2]
-  y = y * x
+  y = (input + params[2]) * x
   z = z + y
 
   return z
@@ -64,7 +51,7 @@ const runChunkStates = (params: Params, states: States, kind: 'max' | 'min'): St
   for (const [zBefore, digits] of states.entries()) {
     const base = digits * 10
     for (const digit of DIGIT_OPTIONS) {
-      const zAfter = runChunk(params, { z: zBefore }, digit)
+      const zAfter = runChunk(params, zBefore, digit)
 
       newStates.set(zAfter, compare(newStates.get(zAfter) ?? baseValue, base + digit))
     }
