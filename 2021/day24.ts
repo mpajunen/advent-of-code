@@ -30,11 +30,9 @@ const getInput = (rows: string[]) =>
 const runChunk = (params: Params, z: number, input: number): number => {
   let x = z % 26 + params[1]
   z = Math.trunc(z / params[0])
-  x = x === input ? 0 : 1
-  let y = (25 * x) + 1
-  z = z * y
-  y = (input + params[2]) * x
-  z = z + y
+  if (x !== input) {
+    z = z * 26 + input + params[2]
+  }
 
   return z
 }
