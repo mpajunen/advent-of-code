@@ -1,9 +1,10 @@
-import { Input, Num, Vec3 } from '../common'
+import { Input, List, Num, Vec3 } from '../common'
 
 const parse = Input.parseByPattern('%w x=%i..%i,y=%i..%i,z=%i..%i')
 
 type Cuboid = [Vec3, Vec3]
 type Step = { to: 'on' | 'off', area: Cuboid }
+type State = { on: Cuboid[], off: Cuboid[] }
 
 const getInput = (rows: string[]) =>
   rows.map(parse).map(([to, ...limits]) => {
@@ -13,90 +14,51 @@ const getInput = (rows: string[]) =>
     return { to, area } as Step
   })
 
-type Slice = [number, number]
-type Intersection = { axis: keyof Vec3, outside: Slice[], inside: Slice[] }
-
-const nonEmptySlice = ([min, max]: Slice) => min <= max
-
-const axisIntersections = (a: Cuboid, b: Cuboid, axis: keyof Vec3): Intersection => {
+const axisIntersection = (a: Cuboid, b: Cuboid, axis: keyof Vec3) => {
   const [aMin, aMax, bMin, bMax] = [...a, ...b].map(v => v[axis])
 
-  const before: Slice = [aMin, Math.min(aMax, bMin - 1)]
-  const after: Slice = [Math.max(aMin, bMax + 1), aMax]
-
-  const inside: Slice = [Math.max(aMin, bMin), Math.min(aMax, bMax)]
-
-  return { axis, outside: [before, after].filter(nonEmptySlice), inside: [inside].filter(nonEmptySlice) }
+  return [Math.max(aMin, bMin), Math.min(aMax, bMax)]
 }
 
-const allAxisIntersections = (a: Cuboid, b: Cuboid) =>
-  Vec3.axes.map(axis => axisIntersections(a, b, axis))
-
-const splitSlice = ([min, max]: Cuboid, [sliceMin, sliceMax]: Slice, axis: keyof Vec3): Cuboid => [
-  { ...min, [axis]: sliceMin },
-  { ...max, [axis]: sliceMax },
-]
-
-const split = (cuboid: Cuboid, intersection: Intersection): [Cuboid[], Cuboid[]] => {
-  const { axis } = intersection
-  const outside = intersection.outside.map(slice => splitSlice(cuboid, slice, axis))
-  const remaining = intersection.inside.map(slice => splitSlice(cuboid, slice, axis))
-
-  return [outside, remaining]
-}
-
-// Parts of a that are not in b
-const subtract = (a: Cuboid, b: Cuboid): Cuboid[] => {
-  const intersections = allAxisIntersections(a, b)
-
-  // a doesn't intersect b:
-  if (intersections.some(s => s.inside.length === 0)) {
-    return [a]
+const intersection = (a: Cuboid, b: Cuboid): Cuboid | undefined => {
+  const axes = Vec3.axes.map(axis => axisIntersection(a, b, axis))
+  if (axes.some(([min, max]) => max < min)) {
+    return undefined
   }
+  const [x, y, z] = axes
 
-  const intersection = intersections.find(i => i.outside.length > 0)
-  // a entirely inside b:
-  if (!intersection) {
-    return []
-  }
-
-  const [outside, remaining] = split(a, intersection)
-
-  return [...outside, ...remaining.flatMap(c => subtract(c, b))]
+  return [{ x: x[0], y: y[0], z: z[0] }, { x: x[1], y: y[1], z: z[1] }]
 }
 
-const subtractMany = (a: Cuboid, cuboids: Cuboid[]): Cuboid[] =>
-  cuboids.reduce((remaining, cuboid) => remaining.flatMap(r => subtract(r, cuboid)), [a])
+const intersections = (cuboid: Cuboid, list: Cuboid[]): Cuboid[] =>
+  List.filterMap(item => intersection(cuboid, item), list)
 
-type State = { on: Cuboid[], off: Cuboid[] }
+const addStep = ({ on, off }: State, { area, to }: Step): State => ({
+  on: [...on, ...intersections(area, off), ...(to === 'on' ? [area] : [])],
+  off: [...off, ...intersections(area, on)],
+})
 
-const addStep = (state: State, step: Step): State => {
-  const outsideLater = subtractMany(step.area, [...state.off, ...state.on])
-
-  return { ...state, [step.to]: [...state[step.to], ...outsideLater] }
-}
-
-const initialState: State = { on: [], off: [] }
-
-const solve = (steps: Step[]): State => steps.reverse().reduce(addStep, initialState)
+const solve = (steps: Step[]) => steps.reduce(addStep, { on: [], off: [] })
 
 const size = ([min, max]: Cuboid) =>
   Num.product(Vec3.axes.map(axis => max[axis] - min[axis] + 1))
-
 const totalSize = (cuboids: Cuboid[]) => Num.sum(cuboids.map(size))
+const totalOn = (state: State) => totalSize(state.on) - totalSize(state.off)
 
 const limits = [[-50, -50, -50], [50, 50, 50]].map(Vec3.fromTuple) as Cuboid
 
-const withinLimits = (cuboids: Cuboid[]) =>
-  size(limits) - totalSize(subtractMany(limits, cuboids))
+const withinLimits = (state: State) => ({
+  on: intersections(limits, state.on),
+  off: intersections(limits, state.off),
+})
 
 export default (rows: string[]) => {
   const input = getInput(rows)
 
   const solved = solve(input)
 
-  const result1 = withinLimits(solved.on)
-  const result2 = totalSize(solved.on)
+  const result1 = totalOn(withinLimits(solved))
+  const result2 = totalOn(solved)
 
   return [result1, result2, 547648, 1206644425246111]
 }
