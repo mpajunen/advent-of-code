@@ -1,7 +1,10 @@
+import * as CuboidBase from './Cuboid'
 import * as Vec2Base from './Vec2'
 import * as Vec3Base from './Vec3'
 
 export { Counts } from './Counts'
+export const Cuboid = CuboidBase
+export type Cuboid = CuboidBase.Cuboid
 export { DefaultDict } from './DefaultDict'
 export { Grid } from './Grid'
 export * as Input from './Input'
