@@ -1,4 +1,5 @@
 import * as CuboidBase from './Cuboid'
+import * as RangeBase from './Range'
 import * as Vec2Base from './Vec2'
 import * as Vec3Base from './Vec3'
 
@@ -12,6 +13,8 @@ export { Line } from './Line'
 export * as List from './List'
 export * as Loop from './Loop'
 export * as Num from './Num'
+export const Range = RangeBase
+export type Range = RangeBase.Range
 export * as Str from './Str'
 export const Vec2 = Vec2Base
 export type Vec2 = Vec2Base.Vec2

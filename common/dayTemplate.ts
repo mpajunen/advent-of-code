@@ -1,4 +1,4 @@
-import { Counts, Cuboid, Grid, Input, Num, Line, List, Loop, Str, Vec2, Vec3 } from '../common'
+import { Counts, Cuboid, Grid, Input, Num, Line, List, Loop, Range, Str, Vec2, Vec3 } from '../common'
 
 const getInput = (rows: string[]) => {
 
