@@ -6,7 +6,7 @@ type Day = (rows: string[]) => [Answer, Answer, Answer | undefined, Answer | und
 
 const readDayRows = (year, day) =>
   readFileSync(`./${year}/input/day${day}.txt`, 'utf8')
-    .trim()
+    .trimEnd()
     .split('\n')
 
 const getCode = async (year: number, day: number): Promise<Day> => (await import(`./${year}/day${day}`)).default

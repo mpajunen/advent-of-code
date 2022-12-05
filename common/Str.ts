@@ -18,7 +18,11 @@ export const map = (transform: (value: string) => number | string, str: string):
 export const replaceAll = (str: string, search: string, replacement: string) =>
   str.replace(new RegExp(search, 'g'), replacement)
 
+export const reverse = (s: string) => s.split('').reverse().join('')
+
 export const sort = (s: string) => s.split('').sort().join('')
+
+export const splitAt = (s: string, index: number) => [s.slice(0, index), s.slice(index)]
 
 export const splitIn = (s: string, chunkCount: number) => chunk(s.length / chunkCount, s)
 
