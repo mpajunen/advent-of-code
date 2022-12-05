@@ -3,8 +3,8 @@ import { Grid, List, Str, Vec2 } from '../common'
 const tiles = {
   wall: '#',
   passage: '.',
-  keys: Str.alphabet,
-  doors: Str.alphabet.map(letter => letter.toUpperCase()),
+  keys: Str.alphabet.split(''),
+  doors: Str.alphabet.toUpperCase().split(''),
   entrance: '@',
 } as const
 

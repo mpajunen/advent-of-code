@@ -39,9 +39,9 @@ const NUMBER_SEGMENTS = [
 const UNIQUE_LENGTHS = [2, 3, 4, 7] // 1, 4, 7, and 8
 
 const refine = (real: string) => (options: string[], compare: [string, string[]]): string[] => {
-  const commonCharCount = Str.intersection(real, compare[0]).length
+  const commonCharCount = Str.commonChars(real, compare[0]).length
 
-  return options.filter(o => compare[1].some(c => Str.intersection(c, o).length === commonCharCount))
+  return options.filter(o => compare[1].some(c => Str.commonChars(c, o).length === commonCharCount))
 }
 
 const solve = ([signal, output]: [string[], string[]]): number => {

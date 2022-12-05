@@ -45,7 +45,7 @@ export const intersection = <T>(values: T[], compare: T[]): T[] =>
   values.filter(v => compare.includes(v))
 
 export const intersectionOf = <T>([first, ...rest]: T[][]): T[] =>
-  rest.reduce(intersection, first)
+  rest.reduce(intersection, unique(first))
 
 export const isSorted = <T extends number | string>(list: T[]): boolean =>
   zipPairs(list).every(([a, b]) => a <= b)
