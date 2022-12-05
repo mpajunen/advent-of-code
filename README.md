@@ -9,3 +9,4 @@ Some solutions to [Advent of Code](https://adventofcode.com/) puzzles.
 - [2019, TypeScript](2019)
 - [2020, TypeScript](2020)
 - [2021, TypeScript](2021)
+- [2022, TypeScript](2022)
