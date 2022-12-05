@@ -1,7 +1,7 @@
 import { List, Vec3 } from '../common'
 
 const getInput = (rows: string[]) => {
-  const scanners = List.splitBy(r => r === '', rows)
+  const scanners = List.splitBy('', rows)
 
   return scanners.map(s => s.slice(1).map(Vec3.fromString)).map((beacons, id) => ({ id, beacons }))
 }

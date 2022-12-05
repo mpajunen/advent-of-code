@@ -107,11 +107,16 @@ export const sortBy = <T, K extends number | string>(accessor: (item: T) => K, i
   return [...items].sort(compare)
 }
 
-export const splitBy = <T>(splitter: (value: T) => boolean, values: T[]): T[][] => {
+type Splitter<T> = T | ((value: T) => boolean)
+type SplitValue = number | string | object
+
+export const splitBy = <T extends SplitValue>(splitter: Splitter<T>, values: T[]): T[][] => {
   const all = [[]]
 
+  const split = typeof splitter === 'function' ? splitter : (value: T) => value === splitter
+
   values.forEach(value => {
-    if (splitter(value)) {
+    if (split(value)) {
       all.push([])
     } else {
       all[all.length - 1].push(value)

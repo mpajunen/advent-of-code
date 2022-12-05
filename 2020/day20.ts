@@ -21,7 +21,7 @@ const getTile = (rows: string[]): Grid<Value> =>
   new Grid(rows.map(r => r.split('') as Value[]))
 
 const getInput = (rows: string[]) =>
-  List.splitBy(r => r === '', rows).map(tileRows => {
+  List.splitBy('', rows).map(tileRows => {
     const [first, ...rest] = tileRows
     const id = parseInt(first.slice(5, -1))
 

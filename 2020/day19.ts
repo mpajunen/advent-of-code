@@ -22,7 +22,7 @@ const getRule = (raw: string): Rule => {
 }
 
 const getIn = (rows: string[], fixedRules: string[] = []): Input => {
-  const [rawRules, messages] = List.splitBy(r => r === '', rows)
+  const [rawRules, messages] = List.splitBy('', rows)
   const ruleEntries = [rawRules, fixedRules].flat().map(row => {
     const [num, rest] = row.split(': ')
 

@@ -46,7 +46,7 @@ const evalExpr = (expr: ExprList): number => {
 const evalNew = (expr: ExprList): number => {
   const flattened: FlatList = expr.map(e => Array.isArray(e) ? evalNew(e) : e)
 
-  const parts = List.splitBy(e => e === '*', flattened)
+  const parts = List.splitBy('*', flattened)
 
   const partSums = parts.map(part => part.filter(n => typeof n === 'number')).map(Num.sum)
 

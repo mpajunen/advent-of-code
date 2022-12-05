@@ -3,7 +3,7 @@ import { Counts, List } from '../common'
 type Rule = [string, string]
 
 const getInput = (rows: string[]) => {
-  const [[template], rawRules] = List.splitBy(v => v === '', rows)
+  const [[template], rawRules] = List.splitBy('', rows)
 
   const rules = rawRules
     .map(r => r.split(' -> '))

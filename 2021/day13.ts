@@ -1,7 +1,7 @@
 import { Grid, Input, List, Vec2 } from '../common'
 
 const getInput = (rows: string[]) => {
-  const [dots, folds] = List.splitBy(v => v === '', rows)
+  const [dots, folds] = List.splitBy('', rows)
 
   return {
     dots: dots.map(d => d.split(',').map(Number)).map(([x, y]) => ({ x, y })),

@@ -9,7 +9,7 @@ type RawRule = [string, number, number, number, number]
 type Indices = { name: string, indices: number[] }
 
 const read = (rows: string[]): Input => {
-  const [rawRules, [, own], [, ...nearby]] = List.splitBy(r => r.length === 0, rows)
+  const [rawRules, [, own], [, ...nearby]] = List.splitBy('', rows)
 
   const parseRule = Input.parseByPattern('%w: %i-%i or %i-%i')
   const getRuleEntry = ([name, min1, max1, min2, max2]: RawRule): Rule => ({

@@ -1,7 +1,7 @@
 import { List } from '../common'
 
 const getPassports = (rows: string[]) => {
-  const all = List.splitBy(row => row === '', rows)
+  const all = List.splitBy('', rows)
 
   return all
     .map(p => p.flatMap(row => row.split(' ')))

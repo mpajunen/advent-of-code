@@ -4,8 +4,7 @@ type Decks = [number[], number[]]
 type Result = [number, number[]]
 
 const getInput = (rows: string[]) =>
-  List.splitBy(r => r === '', rows)
-    .map(l => l.slice(1).map(r => parseInt(r))) as Decks
+  List.splitBy('', rows).map(l => l.slice(1).map(r => parseInt(r))) as Decks
 
 const playTick = (decks: Decks, recursive: boolean): Decks => {
   const [card0, ...remaining0] = decks[0]
