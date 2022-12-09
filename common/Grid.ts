@@ -1,12 +1,14 @@
 import * as List from './List'
 import { Vec2 } from './Vec2'
 
-type Mapper<Value, Result> = (value: Value, coordinates: Vec2) => Result
-type Reducer<Value, Result> = (acc: Result, value: Value, coordinates: Vec2) => Result
+type Val = number | string
+
+type Mapper<Value extends Val, Result> = (value: Value, coordinates: Vec2, grid: Grid<Value>) => Result
+type Reducer<Value extends Val, Result> = (acc: Result, value: Value, coordinates: Vec2, grid: Grid<Value>) => Result
 
 type GetValue<T> = (coordinates: Vec2) => T
 
-const create = <T extends number | string>(size: Vec2, getValue: GetValue<T>): Grid<T> => {
+const create = <T extends Val>(size: Vec2, getValue: GetValue<T>): Grid<T> => {
   const row = Array.from({ length: size.x })
   const rows = Array.from(
     { length: size.y },
@@ -16,7 +18,7 @@ const create = <T extends number | string>(size: Vec2, getValue: GetValue<T>): G
   return new Grid(rows)
 }
 
-const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> => {
+const combine = <T extends Val>(all: Grid<T>[][]): Grid<T> => {
   const combineRow = (grids: Grid<T>[]): T[][] => {
     const [first, ...rest] = grids.map(g => g.rows())
 
@@ -29,7 +31,7 @@ const combine = <T extends number | string>(all: Grid<T>[][]): Grid<T> => {
   return new Grid(all.flatMap(combineRow))
 }
 
-export class Grid<T extends number | string> {
+export class Grid<T extends Val> {
   data: T[][]
 
   static create = create
@@ -101,8 +103,8 @@ export class Grid<T extends number | string> {
     return new Grid(this.rows().slice(start, end).map(r => r.slice(start, end)))
   }
 
-  filter(func): Grid<T> {
-    return this.map((value, point) => func(value, point) ? value : undefined)
+  filter(func: Mapper<T, boolean>): Grid<T> {
+    return this.map((value, point) => func(value, point, this) ? value : undefined)
   }
 
   findMax(): { max: T, point: Vec2 } {
@@ -126,7 +128,7 @@ export class Grid<T extends number | string> {
     for (let y = 0; y < this.data.length; y++) {
       const row = this.data[y]
       for (let x = 0; x < row.length; x++) {
-        if (func(row[x], { x, y })) {
+        if (func(row[x], { x, y }, this)) {
           return { x, y }
         }
       }
@@ -139,13 +141,13 @@ export class Grid<T extends number | string> {
     for (let y = 0; y < this.data.length; y++) {
       const row = this.data[y]
       for (let x = 0; x < row.length; x++) {
-        func(row[x], { x, y })
+        func(row[x], { x, y }, this)
       }
     }
   }
 
   map<NewT extends number | string>(func: Mapper<T, NewT>): Grid<NewT> {
-    const values = this.data.map((row, y) => row.map((value, x) => func(value, { x, y })))
+    const values = this.data.map((row, y) => row.map((value, x) => func(value, { x, y }, this)))
 
     return new Grid(values)
   }
@@ -154,14 +156,14 @@ export class Grid<T extends number | string> {
     for (let y = 0; y < this.data.length; y++) {
       const row = this.data[y]
       for (let x = 0; x < row.length; x++) {
-        row[x] = func(row[x], { x, y })
+        row[x] = func(row[x], { x, y }, this)
       }
     }
   }
 
   mapPart(func: Mapper<T, T>, start: Vec2, end: Vec2): Grid<T> {
     const changeRow = (row, y) =>
-      row.map((value, x) => x >= start.y && y < start.y ? func(value, { x, y }) : value)
+      row.map((value, x) => x >= start.y && y < start.y ? func(value, { x, y }, this) : value)
     const change = (row, y) =>
       y >= start.y && y < end.y ? changeRow(row, y) : row
 
@@ -174,7 +176,7 @@ export class Grid<T extends number | string> {
     for (let y = 0; y < this.data.length; y++) {
       const row = this.data[y]
       for (let x = 0; x < row.length; x++) {
-        acc = func(acc, row[x], { x, y })
+        acc = func(acc, row[x], { x, y }, this)
       }
     }
 
