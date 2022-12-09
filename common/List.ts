@@ -73,6 +73,25 @@ export const partition = <T>(accessor: (v: T) => boolean, values: T[]): [T[], T[
 export const range = (from: number, to: number, step = 1): number[] =>
   Array.from({ length: (to - from) / step }, (_, k) => (k * step) + from)
 
+export const repeat = <T>(value: T, count: number): T[] =>
+  new Array(count).fill(value)
+
+type Scanner<Accumulator, Item> = (value: Accumulator, item: Item) => Accumulator
+
+export const scan = <Accumulator, Item>(
+  initial: Accumulator,
+  items: Item[],
+  scanner: Scanner<Accumulator, Item>,
+): Accumulator[] => {
+  let value = initial
+
+  return items.map(item => {
+    value = scanner(value, item)
+
+    return value
+  })
+}
+
 type SequenceLength<T> = { value: T, length: number }
 
 export const sequenceLengths = <T>(values: T[]): SequenceLength<T>[] =>

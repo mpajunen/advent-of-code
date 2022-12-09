@@ -18,6 +18,8 @@ export const units: Record<Dir, Vec2> = {
   S: { x: 0, y: 1 },
 }
 
+export const screenUnits: Record<'U' | 'L' | 'R' | 'D', Vec2> = { U: units.N, L: units.W, R: units.E, D: units.S }
+
 const diagonalList: Vec2[] = [
   { x: -1, y: -1 },
   { x: -1, y: 1 },
