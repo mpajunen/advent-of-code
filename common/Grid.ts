@@ -103,6 +103,10 @@ export class Grid<T extends Val> {
     return new Grid(this.rows().slice(start, end).map(r => r.slice(start, end)))
   }
 
+  countBy(func: Mapper<T, boolean>): number {
+    return this.map((...params) => func(...params) ? 1 : 0).valueCounts()[1]
+  }
+
   filter(func: Mapper<T, boolean>): Grid<T> {
     return this.map((value, point) => func(value, point, this) ? value : undefined)
   }
