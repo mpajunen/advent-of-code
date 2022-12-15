@@ -2,6 +2,8 @@ import { add, Vec2 } from './Vec2'
 
 export type Line = { from: Vec2, to: Vec2 }
 
+const fromTuple = ([from, to]: [Vec2, Vec2]): Line => ({ from, to })
+
 const isHorizontal = (line: Line) => line.from.y === line.to.y
 const isVertical = (line: Line) => line.from.x === line.to.x
 const isAxial = (line: Line) => isHorizontal(line) || isVertical(line)
@@ -24,6 +26,7 @@ const points = ({ from, to }: Line): Vec2[] => {
 }
 
 export const Line = {
+  fromTuple,
   isHorizontal,
   isVertical,
   isAxial,
