@@ -187,7 +187,10 @@ export class Grid<T extends Val> {
     return acc
   }
 
-  size = (): Vec2 => ({ x: this.data[0].length, y: this.data.length })
+  size = (): Vec2 => ({
+    x: Math.max(...this.data.map(row => row.length)),
+    y: this.data.length,
+  })
 
   stringGrid(): string {
     return this.data.map(row => row.join('')).join('\n')
