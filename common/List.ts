@@ -53,6 +53,9 @@ export const intersects = <T>(values: T[], compare: T[]): boolean =>
 export const isSorted = <T extends number | string>(list: T[]): boolean =>
   zipPairs(list).every(([a, b]) => a <= b)
 
+export const mapBy = <T, K extends number | string>(items: T[], accessor: (item: T) => K): Partial<Record<K, T>> =>
+  Object.fromEntries(items.map(item => [accessor(item), item])) as Partial<Record<K, T>>
+
 export const maxBy = <T>(accessor: (v: T) => number, values: T[]): T[] => {
   const comparisons = values.map(accessor)
   const max = Math.max(...comparisons)
