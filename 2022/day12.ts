@@ -3,7 +3,7 @@ import { Grid, Input, Num, Str, Vec2 } from '../common'
 type Input = ReturnType<typeof getInput>
 
 const getInput = (rows: string[]) => {
-  const map = new Grid(rows.map(row => row.split('')))
+  const map = Grid.fromStrings(rows)
 
   const start = map.findPlace(cell => cell === 'S')
   const end = map.findPlace(cell => cell === 'E')

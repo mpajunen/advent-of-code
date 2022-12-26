@@ -8,7 +8,7 @@ const getInput = (rows: string[]) => {
 
   return {
     algorithm: algorithm.split('') as Pixel[],
-    image: new Grid(image.map(row => row.split(''))) as Image,
+    image: Grid.fromStrings<Pixel>(image),
   }
 }
 

@@ -4,9 +4,6 @@ type Cell = '>' | 'v' | '.'
 
 type GetCell = (position: Vec2) => Cell
 
-const getInput = (rows: string[]) =>
-  new Grid(rows.map(r => r.split('') as Cell[]))
-
 const stepEast = (grid: Grid<Cell>): Grid<Cell> => {
   const X_MAX = grid.size().x - 1
 
@@ -58,7 +55,7 @@ const stepsToStop = (start: Grid<Cell>): number => {
 }
 
 export default (rows: string[]) => {
-  const input = getInput(rows)
+  const input = Grid.fromStrings<Cell>(rows)
 
   const result1 = stepsToStop(input)
   const result2 = 0

@@ -10,22 +10,18 @@ const SEA_MONSTER_IMAGE =
 #    ##    ##    ###
  #  #  #  #  #  #   `
 
-const SEA_MONSTER = new Grid<'#' | ' '>(
-  SEA_MONSTER_IMAGE.split('\n').map(row => row.split('') as any[])
-)
+const SEA_MONSTER = Grid
+  .fromStrings<'#' | ' '>(SEA_MONSTER_IMAGE.split('\n'))
   .entries()
   .filter(([, value]) => value === '#')
   .map(([location]) => location)
-
-const getTile = (rows: string[]): Grid<Value> =>
-  new Grid(rows.map(r => r.split('') as Value[]))
 
 const getInput = (rows: string[]) =>
   List.splitBy('', rows).map(tileRows => {
     const [first, ...rest] = tileRows
     const id = parseInt(first.slice(5, -1))
 
-    return { id, grid: getTile(rest) }
+    return { id, grid: Grid.fromStrings<Value>(rest) }
   })
 
 type Borders = { id: number, borders: number[] }

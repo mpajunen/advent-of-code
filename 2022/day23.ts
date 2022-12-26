@@ -3,9 +3,6 @@ import { Dir } from '../common/Vec2'
 
 type Cell = '#' | '.'
 
-const getInput = (rows: string[]) =>
-  new Grid(rows.map(r => r.split('') as Cell[]))
-
 // Clockwise from north
 const units = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]].map(Vec2.fromTuple)
 const dirIndices = { N: 0, S: 4, W: 6, E: 2 }
@@ -99,7 +96,7 @@ const createLargeGrid = (base: Grid<Cell>) =>
   )
 
 export default (rows: string[]) => {
-  const grid = createLargeGrid(getInput(rows))
+  const grid = createLargeGrid(Grid.fromStrings<Cell>(rows))
 
   const result1 = getRegionSize(processRounds(grid.copy(), 10))
   const result2 = processRoundsUntilStop(grid.copy())

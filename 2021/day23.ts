@@ -19,7 +19,7 @@ const ROOM_COLUMNS = Object.values(TARGET_ROOM_X)
 const MOVE_COSTS = { A: 1, B: 10, C: 100, D: 1000 }
 
 const getInput = (rows: string[]) => {
-  const cells = new Grid(rows.map(r => r.split(''))).entries()
+  const cells = Grid.fromStrings(rows).entries()
 
   const hallway = cells.filter(isOpen).filter(([p]) => !ROOM_COLUMNS.includes(p.x))
   const rooms = cells.filter(isOccupied)

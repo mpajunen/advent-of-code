@@ -3,9 +3,6 @@ import { Grid, List, Vec2 } from '../common'
 type Blizzard = '>' | '<' | '^' | 'v'
 type Cell = Blizzard | '#' | '.'
 
-const getInput = (rows: string[]) =>
-  new Grid(rows.map(row => row.split('') as Cell[]))
-
 const BLIZZARDS = [
   { symbol: '<', axis: 'x', dir: 1 },
   { symbol: '>', axis: 'x', dir: -1 },
@@ -57,7 +54,7 @@ const findFastestPath = (map: Grid<Cell>, target: Vec2, state: State) => {
 }
 
 export default (rows: string[]) => {
-  const map = getInput(rows)
+  const map = Grid.fromStrings<Cell>(rows)
 
   const start = map.findPlace((cell, p) => cell === '.' && p.y === 0)
   const goal = map.findPlace((cell, p) => cell === '.' && p.y === map.size().y - 1)

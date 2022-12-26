@@ -51,7 +51,7 @@ const stepUntil = (start: Data, step: Step) => {
 }
 
 export default (rows: string[]) => {
-  const original = new Grid(rows.map(r => r.split('') as Square[]))
+  const original = Grid.fromStrings<Square>(rows)
 
   const result1 = getCount(stepUntil(original, createStep(4, getAdjacent)))
   const result2 = getCount(stepUntil(original, createStep(5, getVisible)))

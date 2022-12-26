@@ -21,7 +21,7 @@ const rockPatterns = `
 `.trim().split('\n')
 
 const rocks = List.splitBy('', rockPatterns)
-  .map(rows => new Grid(rows.reverse().map(row => row.split(''))))
+  .map(rows => Grid.fromStrings(rows.reverse()))
   .map(grid => grid.entries().flatMap<Vec2>(([position, value]) => value === '#' ? position : []))
 
 const WIDTH = 7

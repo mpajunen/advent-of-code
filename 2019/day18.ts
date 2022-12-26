@@ -29,7 +29,7 @@ const TARGET = -3
 type SpecialDistance = typeof OPEN | typeof BLOCKED | typeof TARGET
 
 const buildInitial = (rows: string[]) => {
-  const raw = new Grid<string>(rows.map(row => row.split('')))
+  const raw = Grid.fromStrings<string>(rows)
 
   const maze = {
     grid: raw.map(v => v === tiles.entrance ? tiles.passage : v),

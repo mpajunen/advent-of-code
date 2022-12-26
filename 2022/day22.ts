@@ -18,10 +18,7 @@ type Step = ReturnType<typeof getPath>[number]
 const getInput = (rows: string[]) => {
   const [map, [path]] = List.splitBy('', rows)
 
-  return {
-    map: new Grid(map.map(row => row.split(''))) as Map,
-    path: getPath(path),
-  }
+  return { map: Grid.fromStrings<Tile>(map), path: getPath(path) }
 }
 
 type Position = Vec2 & { facing: Dir }
@@ -50,8 +47,7 @@ const createFlatWrap = (map: Map): Wrap => {
   return p => ({ ...p, ...wrapAround(p) })
 }
 
-const sideGrid = (data: string) =>
-  new Grid(data.trim().split('\n').map(row => row.split('')))
+const sideGrid = (data: string) => Grid.fromStrings(data.trim().split('\n'))
 
 const exampleSides = sideGrid(`
 --1-

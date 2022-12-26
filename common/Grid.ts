@@ -31,11 +31,15 @@ const combine = <T extends Val>(all: Grid<T>[][]): Grid<T> => {
   return new Grid(all.flatMap(combineRow))
 }
 
+const fromStrings = <T extends string>(rows: string[]): Grid<T> =>
+  new Grid(rows.map(row => row.split('') as T[]))
+
 export class Grid<T extends Val> {
   data: T[][]
 
   static create = create
   static combine = combine
+  static fromStrings = fromStrings
 
   constructor(values: T[][]) {
     this.data = values
