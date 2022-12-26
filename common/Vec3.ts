@@ -39,6 +39,15 @@ export const fromString = (s: string): Vec3 => fromTuple(s.split(',').map(Number
 
 export const fromTuple = ([x, y, z]: number[]): Vec3 => ({ x, y, z })
 
+export const units: Vec3[] = [
+  [1, 0, 0],
+  [-1, 0, 0],
+  [0, 1, 0],
+  [0, -1, 0],
+  [0, 0, 1],
+  [0, 0, -1],
+].map(fromTuple)
+
 export const manhattan = (a: Vec3, b: Vec3): number =>
   Math.abs(a.x - b.x) + Math.abs(a.y - b.y) + Math.abs(a.z - b.z)
 
