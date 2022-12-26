@@ -200,6 +200,21 @@ export class Grid<T extends Val> {
     return List.counts(this.values().filter(v => v !== undefined))
   }
 
+  valuePlaces(value: T): Vec2[] {
+    const places = []
+
+    for (let y = 0; y < this.data.length; y++) {
+      const row = this.data[y]
+      for (let x = 0; x < row.length; x++) {
+        if (row[x] === value) {
+          places.push({ x, y })
+        }
+      }
+    }
+
+    return places
+  }
+
   values(): T[] {
     return [].concat(...this.data)
   }

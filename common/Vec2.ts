@@ -46,6 +46,8 @@ export const angle = ({ x, y }: Vec2): number =>
 export const equal = (a: Vec2) => (b: Vec2): boolean =>
   a.x === b.x && a.y === b.y
 
+export const fromString = (s: string): Vec2 => fromTuple(s.split(',').map(Number))
+
 export const fromTuple = ([x, y]: number[]): Vec2 => ({ x, y })
 
 export const manhattan = (a: Vec2, b: Vec2): number =>
@@ -65,6 +67,8 @@ export const turns: Record<TurnDir, Record<Dir, Dir>> = {
   L: { N: 'W', W: 'S', S: 'E', E: 'N' },
   R: { N: 'E', W: 'N', S: 'W', E: 'S' },
 }
+
+export const toString = ({ x, y }: Vec2): string => `${x},${y}`
 
 export const rotateDir = (base: Vec2, dir: TurnDir): Vec2 =>
   dir === 'L' ? { x: base.y, y: -base.x } : { x: -base.y, y: base.x }
