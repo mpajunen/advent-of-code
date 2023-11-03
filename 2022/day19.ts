@@ -46,7 +46,7 @@ const getGeodeMax = (timeMax: number) => (blueprint: Blueprint): number => {
       }
 
       RESOURCES.forEach(resource => {
-        s.resources[resource] += s.robots[resource] * minutes
+        s.resources[resource] += state.robots[resource] * minutes
       })
     })
 
