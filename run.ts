@@ -31,10 +31,23 @@ const runDay = async (day = new Date().getDate(), year = new Date().getFullYear(
 const runYear = async (year = new Date().getFullYear()) => {
   const maxDay = year === new Date().getFullYear() ? new Date().getDate() : 25
 
+  const yearStart = Date.now()
+
   for (const day of List.range(1, maxDay + 1)) {
+    console.log('----------------------------------------')
     console.log(`${year}: Day ${day}`)
+    const start = Date.now()
+
     await runDay(day, year)
+
+    const end = Date.now()
+    console.log(`Time: ${(end - start) / 1000} s`)
   }
+
+  const yearEnd = Date.now()
+  console.log('----------------------------------------')
+  console.log(`Total time: ${(yearEnd - yearStart) / 1000} s`)
+  console.log('----------------------------------------')
 }
 
 const run = async (mode: string, ...calendar: string[]) => {
