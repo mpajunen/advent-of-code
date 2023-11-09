@@ -4,7 +4,7 @@ const getInput = (rows: string[]) => {
   const [dots, folds] = List.splitBy('', rows)
 
   return {
-    dots: dots.map(d => d.split(',').map(Number)).map(([x, y]) => ({ x, y })),
+    dots: dots.map(Vec2.fromString),
     folds: folds.map(Input.parseByPattern<Fold>('fold along %w=%i')),
   }
 }
@@ -30,7 +30,7 @@ const solve = (initialDots: Vec2[], folds: Fold[]) => {
 export default (rows: string[]) => {
   const { dots, folds } = getInput(rows)
 
-  const result1 = solve(dots, [folds[0]]).valueCounts()['#']
+  const result1 = List.unique(foldDots(dots, folds[0]).map(Vec2.toString)).length
   const result2 = solve(dots, folds).stringGrid() // PERCGJPB
 
   return [result1, result2, 781, undefined]
