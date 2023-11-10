@@ -5,30 +5,35 @@ const getInput = (rows: string[]) => new Grid(rows.map(r => r.split('').map(Numb
 const createPaths = (size: number) =>
   Grid.create<number>({ x: size, y: size }, ({ x, y }) => x === 0 && y === 0 ? 0 : Num.LARGE_VALUE)
 
-const getAdjacent = (grid: Grid<number>, position: Vec2): number[] =>
-  Vec2.adjacent(position).map(pos => grid.get(pos)).filter(v => v !== undefined)
-
 const solve = (costs: Grid<number>): number => {
   const size = costs.row(0).length
   const paths = createPaths(size)
 
-  let changes = true
+  const positionsByCost: Record<number, Vec2[]> = { 0: [{ x: 0, y: 0 }] }
+  let currentCost = 0
+  let maxCost = 0
 
-  while (changes) {
-    changes = false
+  while (currentCost <= maxCost) {
+    const positions = positionsByCost[currentCost] ?? []
 
-    // Very naive and slow :)
-    paths.mapMutate((value, position) => {
-      const cost = costs.get(position)
-      const adjacent = getAdjacent(paths, position)
-      const newValue = Math.min(value, ...adjacent.map(a => a + cost))
+    for (const from of positions) {
+      for (const to of Vec2.adjacent(from)) {
+        const oldCost = paths.get(to)
+        if (!oldCost || oldCost !== Num.LARGE_VALUE) {
+          continue // If path cost is set, it's also optimal
+        }
 
-      if (newValue !== value) {
-        changes = true
+        const newCost = currentCost + costs.get(to)
+
+        paths.set(to, newCost)
+        positionsByCost[newCost] = positionsByCost[newCost] ?? []
+        positionsByCost[newCost].push(to)
+
+        maxCost = Math.max(maxCost, newCost)
       }
+    }
 
-      return newValue
-    })
+    currentCost += 1
   }
 
   return paths.get({ x: size - 1, y: size - 1 })
