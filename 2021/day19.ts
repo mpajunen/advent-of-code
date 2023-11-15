@@ -6,22 +6,26 @@ const getInput = (rows: string[]) => {
   return scanners.map(s => s.slice(1).map(Vec3.fromString)).map((beacons, id) => ({ id, beacons }))
 }
 
-type Scanner = { id: number, beacons: Vec3[] }
+type Scanner = { id: number, beacons: Vec3[], distances: number[][] }
 type Match = Scanner & { origin: Vec3 }
 
 const checkMatch = (match: Match, scanner: Scanner): Match | undefined => {
-  for (const rotation of Vec3.rotations) {
-    const rotated = scanner.beacons.map(beacon => Vec3.rotate(rotation, beacon))
+  for (const [matchIndex, matchDistances] of match.distances.entries()) {
+    for (const [scannerIndex, scannerDistances] of scanner.distances.entries()) {
+      if (List.intersection(matchDistances, scannerDistances).length < 12) {
+        continue
+      }
 
-    for (const a of match.beacons) {
-      for (const b of rotated) {
-        const origin = Vec3.subtract(a, b)
+      for (const rotation of Vec3.rotations) {
+        const rotated = scanner.beacons.map(beacon => Vec3.rotate(rotation, beacon))
+
+        const origin = Vec3.subtract(match.beacons[matchIndex], rotated[scannerIndex])
         const shifted = rotated.map(r => Vec3.add(r, origin))
 
         const matchingVectors = shifted.filter(s => match.beacons.some(m => Vec3.equal(m, s)))
 
         if (matchingVectors.length >= 12) {
-          return { id: scanner.id, beacons: shifted, origin }
+          return { ...scanner, beacons: shifted, origin }
         }
       }
     }
@@ -51,10 +55,18 @@ const findMatches = ([first, ...remaining]: Scanner[]): Match[] => {
 const largest = (matches: Match[]): number =>
   Math.max(...matches.flatMap(a => matches.map(b => Vec3.manhattan(a.origin, b.origin))))
 
+const buildScannerDistances = (scanner: Omit<Scanner, 'distances'>) =>
+  scanner.beacons.map(a => scanner.beacons.map(b => Vec3.manhattan(a, b)))
+
 export default (rows: string[]) => {
   const input = getInput(rows)
 
-  const matches = findMatches(input)
+  const withDistances = input.map(scanner => ({
+    ...scanner,
+    distances: buildScannerDistances(scanner),
+  }))
+
+  const matches = findMatches(withDistances)
 
   const allBeacons = matches.flatMap(m => m.beacons)
   const uniques = List.unique(allBeacons.map(Vec3.toString))
