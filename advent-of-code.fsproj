@@ -5,6 +5,7 @@
     <RootNamespace>advent_of_code</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="fs-common/DayUtils.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
