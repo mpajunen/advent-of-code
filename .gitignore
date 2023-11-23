@@ -1,3 +1,11 @@
+# Python
 __pycache__/
-/node_modules/
 /venv/
+
+# Node.js
+/node_modules/
+
+# F#
+/.config/
+/.vscode/
+/obj/
