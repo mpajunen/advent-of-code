@@ -154,18 +154,6 @@ export const splitBy = <T extends SplitValue>(splitter: Splitter<T>, values: T[]
   return all
 }
 
-export const steps = <State, Mod>(step: (state: State, mod: Mod) => State, mods: Mod[], initial: State): State[] => {
-  const states: State[] = [initial]
-
-  let current: State = initial
-  mods.forEach(mod => {
-    current = step(current, mod)
-    states.push(current)
-  })
-
-  return states
-}
-
 export const unique = <T>(values: T[]): T[] =>
   Array.from(new Set(values))
 
