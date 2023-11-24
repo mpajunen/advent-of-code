@@ -8,7 +8,7 @@ let allPairs (aAll: 'A seq) (bAll: 'B seq) : ('A * 'B) seq =
 
 let runProgram (program: int array) =
     let computer = IntCode.Computer program
-    computer.run ()
+    computer.run [||] |> ignore
 
     computer.state[0]
 
