@@ -7,6 +7,7 @@
   <ItemGroup>
     <Compile Include="fs-common/DayUtils.fs" />
     <Compile Include="fs-common/Vec2.fs" />
+    <Compile Include="2019/IntCode.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
