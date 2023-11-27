@@ -83,10 +83,18 @@ type Computer(program: int array) =
         | 8 -> this.readParams modes |> fun (a, b) -> (if a = b then 1 else 0) |> this.write
         | _ -> failwith <| sprintf $"Invalid instruction {instruction}."
 
+    member this.canRun() =
+        match this.state[this.ip] with
+        | 3 -> Array.length this.input > 0
+        | 99 -> false
+        | _ -> true
+
+    member this.isHalted = this.state[this.ip] = 99
+
     member this.run(input: int array) =
         this.input <- input
 
-        while this.state[this.ip] <> 99 do
+        while this.canRun () do
             this.execute ()
 
         this.output
