@@ -19,11 +19,17 @@ let extractParams () =
 
     year, day
 
-type SolveDay = array<string> -> int * int
+type SolveDay<'A1, 'A2> = array<string> -> 'A1 * 'A2 * 'A1 * 'A2
 
-let runDay (solve: SolveDay) =
+let runDay (solve: SolveDay<_, _>) =
     let year, day = extractParams()
 
-    let result1, result2 = readInput year day |> solve
+    let result1, result2, expected1, expected2 = readInput year day |> solve
 
-    printfn "%d, %d" result1 result2
+    printfn "%A" result1
+    if result1 <> expected1 then
+        printfn "Expected %A got %A!" expected1 result1
+
+    printfn "%A" result2
+    if result2 <> expected2 then
+        printfn "Expected %A got %A!" expected2 result2

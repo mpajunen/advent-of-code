@@ -34,6 +34,6 @@ let solve (input: string array) =
     let result1 = runModified program (12, 2)
     let result2 = findInput program |> (fun (a, b) -> 100 * a + b)
 
-    result1, result2
+    result1, result2, 4138687, 6635
 
 DayUtils.runDay solve

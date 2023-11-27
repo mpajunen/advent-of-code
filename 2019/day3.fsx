@@ -40,6 +40,6 @@ let solve (input: string array) =
     let result1 = intersections |> Array.map (Vec2.manhattan Vec2.origin) |> Array.min
     let result2 = intersections |> Array.map (stepsTo wires) |> Array.min
 
-    result1, result2
+    result1, result2, 266, 19242
 
 DayUtils.runDay solve

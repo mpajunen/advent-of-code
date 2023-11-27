@@ -22,6 +22,6 @@ let solve (input: string array) =
 
     let result2 = increasing |> Seq.where (hasSameDigits (fun n -> n = 2)) |> Seq.length
 
-    result1, result2
+    result1, result2, 945, 617
 
 DayUtils.runDay solve
