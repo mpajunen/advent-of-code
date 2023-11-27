@@ -69,6 +69,18 @@ type Computer(program: int array) =
         | 2 -> this.readParams modes |> fun (a, b) -> a * b |> this.write
         | 3 -> this.readInput () |> this.write
         | 4 -> this.readParam modes[0] |> this.writeOutput
+        | 5 ->
+            this.readParams modes
+            |> fun (a, b) ->
+                if a <> 0 then
+                    this.ip <- b
+        | 6 ->
+            this.readParams modes
+            |> fun (a, b) ->
+                if a = 0 then
+                    this.ip <- b
+        | 7 -> this.readParams modes |> fun (a, b) -> (if a < b then 1 else 0) |> this.write
+        | 8 -> this.readParams modes |> fun (a, b) -> (if a = b then 1 else 0) |> this.write
         | _ -> failwith <| sprintf $"Invalid instruction {instruction}."
 
     member this.run(input: int array) =
