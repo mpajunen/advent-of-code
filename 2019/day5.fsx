@@ -4,7 +4,7 @@
 #load "./IntCode.fs"
 
 let solve (input: string array) =
-    let program = input[0].Split "," |> Array.map int
+    let program = IntCode.parseProgram input[0]
 
     let result1 = IntCode.run program [|1|] |> Array.last
     let result2 = IntCode.run program [|5|] |> Array.last

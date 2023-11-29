@@ -4,6 +4,8 @@ type Mode =
     | Immediate
     | Position
 
+type Program = int array
+
 let private getMode (flag: int) =
     match flag with
     | 0 -> Position
@@ -16,7 +18,7 @@ let private getDigit num index =
 let private getModes (instruction: int) =
     [| 2; 3; 4 |] |> Array.map (getDigit instruction >> getMode)
 
-type Computer(program: int array) =
+type Computer(program: Program) =
     member val state = Array.copy program
     member val ip = 0 with get, set
 
@@ -98,6 +100,8 @@ type Computer(program: int array) =
             this.execute ()
 
         this.output
+
+let parseProgram (input: string) = input.Split "," |> Array.map int
 
 let run program input =
     Computer program |> fun c -> c.run input

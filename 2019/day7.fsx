@@ -29,7 +29,7 @@ let runPermutation program settings =
     state
 
 let solve (input: string array) =
-    let program = input[0].Split "," |> Array.map int
+    let program = IntCode.parseProgram input[0]
 
     let findMax settings =
         Seq.toList settings |> permute |> List.map (runPermutation program) |> List.max
