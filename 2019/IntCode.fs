@@ -19,7 +19,7 @@ let private getModes (instruction: int) =
     [| 2; 3; 4 |] |> Array.map (getDigit instruction >> getMode)
 
 type Computer(program: Program) =
-    member val state = Array.copy program
+    member val state = Array.indexed program |> Map with get, set
     member val ip = 0 with get, set
 
     member val input: int array = [||] with get, set
@@ -35,8 +35,11 @@ type Computer(program: Program) =
     member this.writeOutput value =
         this.output <- Array.append this.output [| value |]
 
+    member this.readMemory key =
+        Map.tryFind key this.state |> Option.defaultValue 0
+
     member this.read() =
-        let value = this.state[this.ip]
+        let value = this.readMemory this.ip
 
         this.ip <- this.ip + 1
 
@@ -45,7 +48,7 @@ type Computer(program: Program) =
     member this.readParam(mode: Mode) =
         match mode with
         | Immediate -> this.read ()
-        | Position -> this.state[this.read ()]
+        | Position -> this.read () |> this.readMemory
 
     member this.readParams(modes: Mode array) =
         (this.readParam modes[0], this.readParam modes[1])
@@ -61,7 +64,7 @@ type Computer(program: Program) =
     member this.write value =
         let target = this.read ()
 
-        this.state[target] <- value
+        this.state <- Map.add target value this.state
 
     member this.execute() =
         let (instruction, modes) = this.readInstruction ()
