@@ -3,6 +3,7 @@ module IntCode
 type Mode =
     | Immediate
     | Position
+    | Relative
 
 type Program = int64 array
 
@@ -10,6 +11,7 @@ let private getMode (flag: int) =
     match flag with
     | 0 -> Position
     | 1 -> Immediate
+    | 2 -> Relative
     | _ -> failwith <| sprintf $"Invalid mode flag {flag}."
 
 let private getDigit num index =
@@ -21,6 +23,7 @@ let private getModes (instruction: int) =
 type Computer(program: Program) =
     member val state = Array.indexed program |> Array.map (fun (k, v) -> int64 k, v) |> Map with get, set
     member val ip = 0L with get, set
+    member val relativeBase = 0L with get, set
 
     member val input: int64 array = [||] with get, set
     member val output: int64 array = [||] with get, set
@@ -49,6 +52,7 @@ type Computer(program: Program) =
         match mode with
         | Immediate -> this.read ()
         | Position -> this.read () |> this.readMemory
+        | Relative -> this.read () + this.relativeBase |> this.readMemory
 
     member this.readParams(modes: Mode array) =
         (this.readParam modes[0], this.readParam modes[1])
@@ -61,8 +65,12 @@ type Computer(program: Program) =
 
         opCode, paramModes
 
-    member this.write value =
-        let target = this.read ()
+    member this.write (mode: Mode) value =
+        let target =
+            match mode with
+            | Immediate -> failwith <| sprintf "Can't write in immediate mode."
+            | Position -> this.read ()
+            | Relative -> this.read () + this.relativeBase
 
         this.state <- Map.add target value this.state
 
@@ -70,9 +78,9 @@ type Computer(program: Program) =
         let (instruction, modes) = this.readInstruction ()
 
         match instruction with
-        | 1 -> this.readParams modes |> fun (a, b) -> a + b |> this.write
-        | 2 -> this.readParams modes |> fun (a, b) -> a * b |> this.write
-        | 3 -> this.readInput () |> this.write
+        | 1 -> this.readParams modes |> fun (a, b) -> a + b |> this.write modes[2]
+        | 2 -> this.readParams modes |> fun (a, b) -> a * b |> this.write modes[2]
+        | 3 -> this.readInput () |> this.write modes[0]
         | 4 -> this.readParam modes[0] |> this.writeOutput
         | 5 ->
             this.readParams modes
@@ -84,8 +92,13 @@ type Computer(program: Program) =
             |> fun (a, b) ->
                 if a = 0 then
                     this.ip <- b
-        | 7 -> this.readParams modes |> fun (a, b) -> (if a < b then 1L else 0L) |> this.write
-        | 8 -> this.readParams modes |> fun (a, b) -> (if a = b then 1L else 0L) |> this.write
+        | 7 ->
+            this.readParams modes
+            |> fun (a, b) -> (if a < b then 1L else 0L) |> this.write modes[2]
+        | 8 ->
+            this.readParams modes
+            |> fun (a, b) -> (if a = b then 1L else 0L) |> this.write modes[2]
+        | 9 -> this.readParam modes[0] |> fun v -> this.relativeBase <- this.relativeBase + v
         | _ -> failwith <| sprintf $"Invalid instruction {instruction}."
 
     member this.canRun() =
