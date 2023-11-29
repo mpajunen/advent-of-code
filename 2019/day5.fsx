@@ -9,6 +9,6 @@ let solve (input: string array) =
     let result1 = IntCode.run program [|1|] |> Array.last
     let result2 = IntCode.run program [|5|] |> Array.last
 
-    result1, result2, 13787043, 3892695
+    result1, result2, 13787043L, 3892695L
 
 DayUtils.runDay solve

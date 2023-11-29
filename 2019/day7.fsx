@@ -21,7 +21,7 @@ let runStep state (amp: IntCode.Computer) = amp.run [| state |] |> Array.last
 let runPermutation program settings =
     let amps = List.map (createAmp program) settings
 
-    let mutable state = 0
+    let mutable state = 0L
 
     while not amps[0].isHalted do
         state <- List.fold runStep state amps
@@ -37,6 +37,6 @@ let solve (input: string array) =
     let result1 = findMax { 0..4 }
     let result2 = findMax { 5..9 }
 
-    result1, result2, 30940, 76211147
+    result1, result2, 30940L, 76211147L
 
 DayUtils.runDay solve

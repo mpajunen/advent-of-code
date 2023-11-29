@@ -4,7 +4,7 @@ type Mode =
     | Immediate
     | Position
 
-type Program = int array
+type Program = int64 array
 
 let private getMode (flag: int) =
     match flag with
@@ -19,11 +19,11 @@ let private getModes (instruction: int) =
     [| 2; 3; 4 |] |> Array.map (getDigit instruction >> getMode)
 
 type Computer(program: Program) =
-    member val state = Array.indexed program |> Map with get, set
-    member val ip = 0 with get, set
+    member val state = Array.indexed program |> Array.map (fun (k, v) -> int64 k, v) |> Map with get, set
+    member val ip = 0L with get, set
 
-    member val input: int array = [||] with get, set
-    member val output: int array = [||] with get, set
+    member val input: int64 array = [||] with get, set
+    member val output: int64 array = [||] with get, set
 
     member this.readInput() =
         let value = this.input[0]
@@ -41,7 +41,7 @@ type Computer(program: Program) =
     member this.read() =
         let value = this.readMemory this.ip
 
-        this.ip <- this.ip + 1
+        this.ip <- this.ip + 1L
 
         value
 
@@ -54,7 +54,7 @@ type Computer(program: Program) =
         (this.readParam modes[0], this.readParam modes[1])
 
     member this.readInstruction() =
-        let value = this.read ()
+        let value = this.read () |> int
         let opCode = value % 100
 
         let paramModes = getModes value
@@ -84,19 +84,19 @@ type Computer(program: Program) =
             |> fun (a, b) ->
                 if a = 0 then
                     this.ip <- b
-        | 7 -> this.readParams modes |> fun (a, b) -> (if a < b then 1 else 0) |> this.write
-        | 8 -> this.readParams modes |> fun (a, b) -> (if a = b then 1 else 0) |> this.write
+        | 7 -> this.readParams modes |> fun (a, b) -> (if a < b then 1L else 0L) |> this.write
+        | 8 -> this.readParams modes |> fun (a, b) -> (if a = b then 1L else 0L) |> this.write
         | _ -> failwith <| sprintf $"Invalid instruction {instruction}."
 
     member this.canRun() =
-        match this.state[this.ip] with
+        match int this.state[this.ip] with
         | 3 -> Array.length this.input > 0
         | 99 -> false
         | _ -> true
 
     member this.isHalted = this.state[this.ip] = 99
 
-    member this.run(input: int array) =
+    member this.run(input: int64 array) =
         this.input <- input
 
         while this.canRun () do
@@ -104,7 +104,7 @@ type Computer(program: Program) =
 
         this.output
 
-let parseProgram (input: string) = input.Split "," |> Array.map int
+let parseProgram (input: string) = input.Split "," |> Array.map int64
 
 let run program input =
     Computer program |> fun c -> c.run input

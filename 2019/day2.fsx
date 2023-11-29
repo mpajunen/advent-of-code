@@ -12,18 +12,18 @@ let runProgram (program: IntCode.Program) =
 
     computer.state[0]
 
-let modifyProgram ((noun, verb): int * int) (program: IntCode.Program) =
+let modifyProgram ((noun, verb): int64 * int64) (program: IntCode.Program) =
     let copy = Array.copy program
     copy[1] <- noun
     copy[2] <- verb
 
     copy
 
-let runModified (program: IntCode.Program) (input: int * int) =
+let runModified (program: IntCode.Program) (input: int64 * int64) =
     program |> modifyProgram input |> runProgram
 
 let findInput (program: IntCode.Program) =
-    let inputRange = { 0..99 }
+    let inputRange = { 0L..99L }
 
     allPairs inputRange inputRange
     |> Seq.find (fun pair -> runModified program pair = 19690720)
@@ -32,8 +32,8 @@ let solve (input: string array) =
     let program = IntCode.parseProgram input[0]
 
     let result1 = runModified program (12, 2)
-    let result2 = findInput program |> (fun (a, b) -> 100 * a + b)
+    let result2 = findInput program |> (fun (a, b) -> 100L * a + b)
 
-    result1, result2, 4138687, 6635
+    result1, result2, 4138687L, 6635L
 
 DayUtils.runDay solve
