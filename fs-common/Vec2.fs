@@ -42,31 +42,97 @@ module Line =
                 None
         | (_, _) -> None
 
-
 type Dir =
     | Down
     | Left
     | Right
     | Up
 
+type Turn =
+    | Left
+    | Right
+
 type Move = { Dir: Dir; Steps: int }
 
 module Move =
     let findDir (dir: char) =
         match dir with
-        | 'D' -> Down
-        | 'L' -> Left
-        | 'R' -> Right
-        | 'U' -> Up
+        | 'D' -> Dir.Down
+        | 'L' -> Dir.Left
+        | 'R' -> Dir.Right
+        | 'U' -> Dir.Up
         | _ -> raise <| new System.Exception(sprintf "Invalid direction %c." dir)
 
     let unit (dir: Dir) =
         match dir with
-        | Down -> { X = 0; Y = 1 }
-        | Left -> { X = -1; Y = 0 }
-        | Right -> { X = 1; Y = 0 }
-        | Up -> { X = 0; Y = -1 }
+        | Dir.Down -> { X = 0; Y = 1 }
+        | Dir.Left -> { X = -1; Y = 0 }
+        | Dir.Right -> { X = 1; Y = 0 }
+        | Dir.Up -> { X = 0; Y = -1 }
 
     let private moveVec (move: Move) = multiply (unit move.Dir) move.Steps
 
     let apply (point: Vec) (move: Move) = add point <| moveVec move
+
+    let private directions = [ Dir.Up; Dir.Right; Dir.Down; Dir.Left ]
+
+    let private turn_ offset from =
+        List.findIndex (fun d -> d = from) directions
+        |> fun index -> directions[(index + offset + directions.Length) % directions.Length]
+
+    let turn from =
+        function
+        | Turn.Left -> turn_ -1 from
+        | Turn.Right -> turn_ 1 from
+
+    let turnLeft = turn_ -1
+
+    let turnRight = turn_ 1
+
+type Actor = { Position: Vec; Facing: Dir }
+
+module Actor =
+    let turn (turn: Turn) (actor: Actor) =
+        { actor with
+            Facing = Move.turn actor.Facing turn }
+
+    let forward (actor: Actor) =
+        { actor with
+            Position = add actor.Position <| Move.unit actor.Facing }
+
+
+type Area = { Min: Vec; Max: Vec }
+
+module Area =
+    let getLimits (vectors: Vec seq) : Area =
+        let allX = vectors |> Seq.map (fun v -> v.X)
+        let allY = vectors |> Seq.map (fun v -> v.Y)
+
+        { Min = { X = Seq.min allX; Y = Seq.min allY }
+          Max = { X = Seq.max allX; Y = Seq.max allY } }
+
+type Grid<'a> = 'a array2d
+
+module Grid =
+    let fromSparseMap (defaultValue: 'a) (source: Map<Vec, 'a>) : Grid<'a> =
+        let limits = Map.keys source |> Area.getLimits
+
+        let rows = (limits.Max.Y - limits.Min.Y + 1)
+        let columns = (limits.Max.X - limits.Min.X + 1)
+
+        let getPosition row col : Vec =
+            { X = col - limits.Min.X
+              Y = row - limits.Min.Y }
+
+        let getCell row col =
+            Map.tryFind (getPosition row col) source |> Option.defaultValue defaultValue
+
+        Array2D.init rows columns getCell
+
+    let toString (grid: Grid<'a>) : string =
+        let rowToString row =
+            [| for col in 0 .. Array2D.length2 grid - 1 -> string grid.[row, col] |]
+            |> String.concat ""
+
+        [| for row in 0 .. Array2D.length1 grid - 1 -> rowToString row |]
+        |> String.concat "\n"
