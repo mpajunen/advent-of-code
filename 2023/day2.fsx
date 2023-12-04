@@ -28,7 +28,7 @@ let isPossibleGame (game: Game) =
 let getGamePower (game: Game) =
     game.Grabs
     |> Array.collect id
-    |> Array.groupBy (fun (_, color) -> color)
+    |> Array.groupBy snd
     |> Array.map (snd >> Array.map fst >> Array.max)
     |> Array.fold (*) 1
 
