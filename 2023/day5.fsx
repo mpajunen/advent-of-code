@@ -2,16 +2,10 @@
 
 #load "../fs-common/DayUtils.fs"
 
-let split input =
-    let mutable sects: string array array = [| [||] |]
-
-    for row in input do
-        if String.length row = 0 then
-            sects <- Array.append sects [| [||] |]
-        else
-            sects[sects.Length - 1] <- Array.append sects[sects.Length - 1] [| row |]
-
-    sects
+let rec split splitter (input: 'a array) =
+    match Array.tryFindIndex splitter input with
+    | Some n -> input[.. n - 1] :: split splitter input[n + 1 ..]
+    | None -> [ input ]
 
 type Formula =
     { Destination: int64
@@ -33,10 +27,10 @@ let parseMap (rows: string array) =
     |> Array.toList
 
 let parseInput (input: string array) =
-    let sections = split input
+    let sections = input |> split (fun s -> s.Length = 0)
 
     let seeds = sections[0].[0].Split(": ").[1].Split " " |> Array.map int64
-    let maps = sections[1..] |> Array.map parseMap |> Array.toList
+    let maps = sections[1..] |> List.map parseMap
 
     seeds, maps
 
