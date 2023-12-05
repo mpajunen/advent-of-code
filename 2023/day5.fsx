@@ -10,6 +10,16 @@ let rec split splitter (input: 'a array) =
 type Range = { Start: int64; End: int64 }
 type Formula = { Range: Range; Shift: int64 }
 
+let rangeOption (s, e) =
+    if s < e then Some { Start = s; End = e } else None
+
+let compareRanges (a: Range) (b: Range) =
+    let before = min a.Start b.Start, min a.End b.Start // a before b
+    let intersection = max a.Start b.Start, min a.End b.End
+    let after = max a.Start b.End, max a.End b.End // a after b
+
+    [ intersection ] |> List.choose rangeOption, [ before; after ] |> List.choose rangeOption
+
 let parseFormula (row: string) =
     row.Split " "
     |> Array.map int64
@@ -37,47 +47,21 @@ let moveRange (formula: Formula) (range: Range) =
     { Start = range.Start + formula.Shift
       End = range.End + formula.Shift }
 
-let applyFormula (range: Range) (formula: Formula) =
-    let before =
-        if range.Start < formula.Range.Start then
-            Some
-                { Start = range.Start
-                  End = min range.End formula.Range.Start }
-        else
-            None
+let applyFormula (formula: Formula) (range: Range) =
+    let inside, outside = compareRanges range formula.Range
 
-    let commonStart = max range.Start formula.Range.Start
-    let commonEnd = min range.End formula.Range.End
+    inside |> List.map (moveRange formula), outside
 
-    let common =
-        if commonEnd > commonStart then
-            Some { Start = commonStart; End = commonEnd }
-        else
-            None
-        |> Option.map (moveRange formula)
-
-    let after =
-        if commonEnd < range.End then
-            Some
-                { Start = max commonEnd range.Start
-                  End = range.End }
-        else
-            None
-
-    List.choose id [ before; common ], after
-
-let rec applyFormulas (range: Range) =
+let rec applyMap (ranges: Range list) =
     function
-    | [] -> [ range ]
+    | [] -> ranges
     | formula :: formulas ->
-        let applied, remaining = applyFormula range formula
+        let applied = ranges |> List.map (applyFormula formula)
 
-        match remaining with
-        | None -> applied
-        | Some r -> List.append applied <| applyFormulas r formulas
+        let changed = applied |> List.collect fst
+        let unchanged = applied |> List.collect snd
 
-let applyMap (ranges: Range list) (map: Formula list) =
-    ranges |> List.collect (fun r -> applyFormulas r map)
+        List.append changed <| applyMap unchanged formulas
 
 let applyMaps (maps: Formula list list) (ranges: Range list) = maps |> List.fold applyMap ranges
 
