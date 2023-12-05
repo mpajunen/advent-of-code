@@ -7,12 +7,11 @@ let rec split splitter (input: 'a array) =
     | Some n -> input[.. n - 1] :: split splitter input[n + 1 ..]
     | None -> [ input ]
 
+type Range = { Start: int64; Length: int64 }
 type Formula =
     { Destination: int64
       Length: int64
       Source: int64 }
-
-type SeedRange = { Start: int64; Length: int64 }
 
 let parseMap (rows: string array) =
     rows[1..]
@@ -34,23 +33,23 @@ let parseInput (input: string array) =
 
     seeds, maps
 
-let moveRange (formula: Formula) (seed: SeedRange) =
-    { Start = seed.Start + (formula.Destination - formula.Source)
-      Length = seed.Length }
+let shiftRange (formula: Formula) (range: Range) =
+    { Start = range.Start + (formula.Destination - formula.Source)
+      Length = range.Length }
 
-let applyFormula (seed: SeedRange) (formula: Formula) =
+let applyFormula (range: Range) (formula: Formula) =
     let before =
-        if seed.Start < formula.Source then
+        if range.Start < formula.Source then
             Some
-                { Start = seed.Start
-                  Length = min seed.Length (formula.Source - seed.Start) }
+                { Start = range.Start
+                  Length = min range.Length (formula.Source - range.Start) }
         else
             None
 
-    let seedEnd = seed.Start + seed.Length
+    let rangeEnd = range.Start + range.Length
 
-    let commonStart = max seed.Start formula.Source
-    let commonEnd = min seedEnd (formula.Source + formula.Length)
+    let commonStart = max range.Start formula.Source
+    let commonEnd = min rangeEnd (formula.Source + formula.Length)
 
     let common =
         if commonEnd > commonStart then
@@ -59,19 +58,19 @@ let applyFormula (seed: SeedRange) (formula: Formula) =
                   Length = commonEnd - commonStart }
         else
             None
-        |> Option.map (moveRange formula)
+        |> Option.map (shiftRange formula)
 
     let after =
-        if commonEnd < seedEnd then
+        if commonEnd < rangeEnd then
             Some
-                { Start = max commonEnd seed.Start
-                  Length = min seed.Length (seedEnd - commonEnd) }
+                { Start = max commonEnd range.Start
+                  Length = min range.Length (rangeEnd - commonEnd) }
         else
             None
 
     Array.choose id [| before; common |], after
 
-let rec applyFormulas (range: SeedRange) =
+let rec applyFormulas (range: Range) =
     function
     | [] -> [| range |]
     | formula :: formulas ->
@@ -81,10 +80,10 @@ let rec applyFormulas (range: SeedRange) =
         | None -> applied
         | Some r -> Array.append applied <| applyFormulas r formulas
 
-let applyMap (ranges: SeedRange array) (map: Formula list) =
+let applyMap (ranges: Range array) (map: Formula list) =
     ranges |> Array.collect (fun r -> applyFormulas r map)
 
-let applyMaps (maps: Formula list list) (ranges: SeedRange array) = maps |> List.fold applyMap ranges
+let applyMaps (maps: Formula list list) (ranges: Range array) = maps |> List.fold applyMap ranges
 
 let solve (input: string array) =
     let seeds, maps = parseInput input
