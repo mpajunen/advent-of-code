@@ -1,0 +1,118 @@
+#!/usr/bin/env -S dotnet fsi
+
+#load "../fs-common/DayUtils.fs"
+
+let split input =
+    let mutable sects: string array array = [| [||] |]
+
+    for row in input do
+        if String.length row = 0 then
+            sects <- Array.append sects [| [||] |]
+        else
+            sects[sects.Length - 1] <- Array.append sects[sects.Length - 1] [| row |]
+
+    sects
+
+type Formula =
+    { Destination: int64
+      Length: int64
+      Source: int64 }
+
+type SeedRange = { Start: int64; Length: int64 }
+
+let parseMap (rows: string array) =
+    rows[1..]
+    |> Array.map (fun row ->
+        row.Split " "
+        |> Array.map int64
+        |> fun c ->
+            { Destination = c[0]
+              Source = c[1]
+              Length = c[2] })
+    |> Array.sortBy _.Source
+    |> Array.toList
+
+let parseInput (input: string array) =
+    let sections = split input
+
+    let seeds = sections[0].[0].Split(": ").[1].Split " " |> Array.map int64
+    let maps = sections[1..] |> Array.map parseMap |> Array.toList
+
+    seeds, maps
+
+let mapSingleOnce seed (map: Formula list) =
+    let formula =
+        map |> List.tryFind (fun f -> seed >= f.Source && seed < f.Source + f.Length)
+
+    match formula with
+    | None -> seed
+    | Some f -> seed + (f.Destination - f.Source)
+
+let mapSingleAll maps seed = List.fold mapSingleOnce seed maps
+
+let moveRange (formula: Formula) (seed: SeedRange) =
+    { Start = seed.Start + (formula.Destination - formula.Source)
+      Length = seed.Length }
+
+let applyFormula (seed: SeedRange) (formula: Formula) =
+    let before =
+        if seed.Start < formula.Source then
+            Some
+                { Start = seed.Start
+                  Length = min seed.Length (formula.Source - seed.Start) }
+        else
+            None
+
+    let seedEnd = seed.Start + seed.Length
+
+    let commonStart = max seed.Start formula.Source
+    let commonEnd = min seedEnd (formula.Source + formula.Length)
+
+    let common =
+        if commonEnd > commonStart then
+            Some
+                { Start = commonStart
+                  Length = commonEnd - commonStart }
+        else
+            None
+        |> Option.map (moveRange formula)
+
+    let after =
+        if commonEnd < seedEnd then
+            Some
+                { Start = max commonEnd seed.Start
+                  Length = min seed.Length (seedEnd - commonEnd) }
+        else
+            None
+
+    Array.choose id [| before; common |], after
+
+let rec applyFormulas (range: SeedRange) =
+    function
+    | [] -> [| range |]
+    | formula :: formulas ->
+        let applied, remaining = applyFormula range formula
+
+        match remaining with
+        | None -> applied
+        | Some r -> Array.append applied <| applyFormulas r formulas
+
+let applyMap (ranges: SeedRange array) (map: Formula list) =
+    ranges |> Array.collect (fun r -> applyFormulas r map)
+
+let applyMaps (maps: Formula list list) (ranges: SeedRange array) = maps |> List.fold applyMap ranges
+
+let solve (input: string array) =
+    let seeds, maps = parseInput input
+
+    let seedRanges =
+        seeds
+        |> Array.chunkBySize 2
+        |> Array.map (fun chunk -> { Start = chunk[0]; Length = chunk[1] })
+
+    let result1 = seeds |> Array.map (mapSingleAll maps) |> Array.min
+    let result2 = seedRanges |> applyMaps maps |> Array.map _.Start |> Array.min
+
+    result1, result2, 346433842L, 60294664L
+
+DayUtils.runDay solve
