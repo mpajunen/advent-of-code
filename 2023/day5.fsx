@@ -7,22 +7,20 @@ let rec split splitter (input: 'a array) =
     | Some n -> input[.. n - 1] :: split splitter input[n + 1 ..]
     | None -> [ input ]
 
-type Range = { Start: int64; Length: int64 }
-type Formula =
-    { Destination: int64
-      Length: int64
-      Source: int64 }
+type Range = { Start: int64; End: int64 }
+type Formula = { Range: Range; Shift: int64 }
+
+let parseFormula (row: string) =
+    row.Split " "
+    |> Array.map int64
+    |> fun c ->
+        { Range = { Start = c[1]; End = c[1] + c[2] }
+          Shift = c[0] - c[1] }
 
 let parseMap (rows: string array) =
     rows[1..]
-    |> Array.map (fun row ->
-        row.Split " "
-        |> Array.map int64
-        |> fun c ->
-            { Destination = c[0]
-              Source = c[1]
-              Length = c[2] })
-    |> Array.sortBy _.Source
+    |> Array.map parseFormula
+    |> Array.sortBy _.Range.Start
     |> Array.toList
 
 let parseInput (input: string array) =
@@ -33,38 +31,34 @@ let parseInput (input: string array) =
 
     seeds, maps
 
-let shiftRange (formula: Formula) (range: Range) =
-    { Start = range.Start + (formula.Destination - formula.Source)
-      Length = range.Length }
+let moveRange (formula: Formula) (range: Range) =
+    { Start = range.Start + formula.Shift
+      End = range.End + formula.Shift }
 
 let applyFormula (range: Range) (formula: Formula) =
     let before =
-        if range.Start < formula.Source then
+        if range.Start < formula.Range.Start then
             Some
                 { Start = range.Start
-                  Length = min range.Length (formula.Source - range.Start) }
+                  End = min range.End formula.Range.Start }
         else
             None
 
-    let rangeEnd = range.Start + range.Length
-
-    let commonStart = max range.Start formula.Source
-    let commonEnd = min rangeEnd (formula.Source + formula.Length)
+    let commonStart = max range.Start formula.Range.Start
+    let commonEnd = min range.End formula.Range.End
 
     let common =
         if commonEnd > commonStart then
-            Some
-                { Start = commonStart
-                  Length = commonEnd - commonStart }
+            Some { Start = commonStart; End = commonEnd }
         else
             None
-        |> Option.map (shiftRange formula)
+        |> Option.map (moveRange formula)
 
     let after =
-        if commonEnd < rangeEnd then
+        if commonEnd < range.End then
             Some
                 { Start = max commonEnd range.Start
-                  Length = min range.Length (rangeEnd - commonEnd) }
+                  End = range.End }
         else
             None
 
@@ -91,12 +85,12 @@ let solve (input: string array) =
     let findLocationMin = applyMaps maps >> Array.map _.Start >> Array.min
 
     let result1 =
-        seeds |> Array.map (fun s -> { Start = s; Length = 1 }) |> findLocationMin
+        seeds |> Array.map (fun s -> { Start = s; End = s + 1L }) |> findLocationMin
 
     let result2 =
         seeds
         |> Array.chunkBySize 2
-        |> Array.map (fun c -> { Start = c[0]; Length = c[1] })
+        |> Array.map (fun c -> { Start = c[0]; End = c[0] + c[1] })
         |> findLocationMin
 
     result1, result2, 346433842L, 60294664L
