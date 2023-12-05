@@ -18,7 +18,7 @@ let buildPartNumbers input =
     let partNumber (basePosition, number: Match) =
         allSymbolPositions basePosition number
         |> Seq.tryFind (fun p -> Map.containsKey p symbols)
-        |> Option.map (fun (p) ->
+        |> Option.map (fun p ->
             {| SymbolPosition = p
                Number = int number.Value
                Symbol = (Map.find p symbols).Value |})

@@ -3,7 +3,7 @@
 #load "../fs-common/DayUtils.fs"
 
 let parseNumbers (s: string) =
-    s.Split " " |> Array.filter ((<>) "") |> Array.map int |> Set
+    s.Split " " |> Array.filter ((<>) "") |> Set
 
 let parseCard (row: string) =
     row.Split([| ':'; '|' |])[1..]
