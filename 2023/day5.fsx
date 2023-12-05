@@ -34,16 +34,6 @@ let parseInput (input: string array) =
 
     seeds, maps
 
-let mapSingleOnce seed (map: Formula list) =
-    let formula =
-        map |> List.tryFind (fun f -> seed >= f.Source && seed < f.Source + f.Length)
-
-    match formula with
-    | None -> seed
-    | Some f -> seed + (f.Destination - f.Source)
-
-let mapSingleAll maps seed = List.fold mapSingleOnce seed maps
-
 let moveRange (formula: Formula) (seed: SeedRange) =
     { Start = seed.Start + (formula.Destination - formula.Source)
       Length = seed.Length }
@@ -99,13 +89,16 @@ let applyMaps (maps: Formula list list) (ranges: SeedRange array) = maps |> List
 let solve (input: string array) =
     let seeds, maps = parseInput input
 
-    let seedRanges =
+    let findLocationMin = applyMaps maps >> Array.map _.Start >> Array.min
+
+    let result1 =
+        seeds |> Array.map (fun s -> { Start = s; Length = 1 }) |> findLocationMin
+
+    let result2 =
         seeds
         |> Array.chunkBySize 2
-        |> Array.map (fun chunk -> { Start = chunk[0]; Length = chunk[1] })
-
-    let result1 = seeds |> Array.map (mapSingleAll maps) |> Array.min
-    let result2 = seedRanges |> applyMaps maps |> Array.map _.Start |> Array.min
+        |> Array.map (fun c -> { Start = c[0]; Length = c[1] })
+        |> findLocationMin
 
     result1, result2, 346433842L, 60294664L
 
