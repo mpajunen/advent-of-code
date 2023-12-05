@@ -26,7 +26,9 @@ let parseMap (rows: string array) =
 let parseInput (input: string array) =
     let sections = input |> split (fun s -> s.Length = 0)
 
-    let seeds = sections[0].[0].Split(": ").[1].Split " " |> Array.map int64
+    let seeds =
+        sections[0].[0].Split(": ").[1].Split " " |> Array.map int64 |> Array.toList
+
     let maps = sections[1..] |> List.map parseMap
 
     seeds, maps
@@ -62,35 +64,35 @@ let applyFormula (range: Range) (formula: Formula) =
         else
             None
 
-    Array.choose id [| before; common |], after
+    List.choose id [ before; common ], after
 
 let rec applyFormulas (range: Range) =
     function
-    | [] -> [| range |]
+    | [] -> [ range ]
     | formula :: formulas ->
         let applied, remaining = applyFormula range formula
 
         match remaining with
         | None -> applied
-        | Some r -> Array.append applied <| applyFormulas r formulas
+        | Some r -> List.append applied <| applyFormulas r formulas
 
-let applyMap (ranges: Range array) (map: Formula list) =
-    ranges |> Array.collect (fun r -> applyFormulas r map)
+let applyMap (ranges: Range list) (map: Formula list) =
+    ranges |> List.collect (fun r -> applyFormulas r map)
 
-let applyMaps (maps: Formula list list) (ranges: Range array) = maps |> List.fold applyMap ranges
+let applyMaps (maps: Formula list list) (ranges: Range list) = maps |> List.fold applyMap ranges
 
 let solve (input: string array) =
     let seeds, maps = parseInput input
 
-    let findLocationMin = applyMaps maps >> Array.map _.Start >> Array.min
+    let findLocationMin = applyMaps maps >> List.map _.Start >> List.min
 
     let result1 =
-        seeds |> Array.map (fun s -> { Start = s; End = s + 1L }) |> findLocationMin
+        seeds |> List.map (fun s -> { Start = s; End = s + 1L }) |> findLocationMin
 
     let result2 =
         seeds
-        |> Array.chunkBySize 2
-        |> Array.map (fun c -> { Start = c[0]; End = c[0] + c[1] })
+        |> List.chunkBySize 2
+        |> List.map (fun c -> { Start = c[0]; End = c[0] + c[1] })
         |> findLocationMin
 
     result1, result2, 346433842L, 60294664L
