@@ -22,6 +22,12 @@ let isWin (totalTime, record) held = distance totalTime held > record
 let countSequential (totalTime, record) =
     { 0L .. totalTime } |> Seq.filter (isWin (totalTime, record)) |> Seq.length
 
+let countSequentialRange (totalTime, record) =
+    let min = { 0L .. totalTime } |> Seq.find (isWin (totalTime, record))
+    let max = { 0L .. totalTime } |> Seq.findBack (isWin (totalTime, record))
+
+    max - min + 1L |> int
+
 // Quadratic equation: ax^2 + bx + c = 0
 // Solution: (-b ± √(b^2 - 4ac)) / 2a
 let solveQuadratic a b c =
@@ -39,8 +45,8 @@ let countQuadratic (totalTime, record) =
     ceil time2 - floor time1 - 1.0 |> int
 
 let solve (input: string array) =
-    let result1 = input |> parseGames |> Array.map countQuadratic |> Array.fold (*) 1
-    let result2 = input |> parseSingleGame |> countQuadratic
+    let result1 = input |> parseGames |> Array.map countSequentialRange |> Array.fold (*) 1
+    let result2 = input |> parseSingleGame |> countSequentialRange
 
     result1, result2, 227850, 42948149
 
