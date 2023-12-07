@@ -22,14 +22,23 @@ let extractParams () =
 type SolveDay<'A1, 'A2> = array<string> -> 'A1 * 'A2 * 'A1 * 'A2
 
 let runDay (solve: SolveDay<_, _>) =
-    let year, day = extractParams()
+    let stopwatch = new Diagnostics.Stopwatch()
+    stopwatch.Start()
+
+    let year, day = extractParams ()
 
     let result1, result2, expected1, expected2 = readInput year day |> solve
 
+    stopwatch.Stop()
+
     printfn "%A" result1
+
     if result1 <> expected1 then
-        printfn "Expected %A got %A!" expected1 result1
+        printfn "Expected %A in part 1, got %A!" expected1 result1
 
     printfn "%A" result2
+
     if result2 <> expected2 then
-        printfn "Expected %A got %A!" expected2 result2
+        printfn "Expected %A in part 2, got %A!" expected2 result2
+
+    printfn "Elapsed Time: %d milliseconds" stopwatch.ElapsedMilliseconds
