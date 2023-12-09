@@ -14,13 +14,11 @@ let rec fillDiffs =
 
 let extrapolate = List.sumBy List.last
 
-let extrapolateBack = List.map List.head >> List.reduceBack (-)
-
 let solve (input: string array) =
-    let filled = input |> Array.map (parseRow >> fillDiffs)
+    let rows = input |> Array.map parseRow
 
-    let result1 = filled |> Array.sumBy extrapolate
-    let result2 = filled |> Array.sumBy extrapolateBack
+    let result1 = rows |> Array.sumBy (fillDiffs >> extrapolate)
+    let result2 = rows |> Array.sumBy (List.rev >> fillDiffs >> extrapolate)
 
     result1, result2, 1887980197, 990
 
