@@ -27,7 +27,7 @@ let solve (input: string array) =
         layers |> Array.map (Array.countBy id >> Map) |> Array.minBy (Map.find '0')
 
     let result1 = Map.find '1' checkCounts * Map.find '2' checkCounts
-    let result2 = Array.fold combineLayers layers[0] layers[1..] |> toImage
+    let result2 = Array.reduce combineLayers layers |> toImage
 
     result1,
     result2,

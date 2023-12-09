@@ -25,7 +25,7 @@ let buildPartNumbers input =
 
     allNumbers |> Seq.choose partNumber
 
-let product = Seq.fold (*) 1
+let product = Seq.reduce (*)
 
 let solve (input: string array) =
     let partNumbers = input |> buildPartNumbers

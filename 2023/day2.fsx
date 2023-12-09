@@ -30,7 +30,7 @@ let getGamePower (game: Game) =
     |> Array.collect id
     |> Array.groupBy snd
     |> Array.map (snd >> Array.map fst >> Array.max)
-    |> Array.fold (*) 1
+    |> Array.reduce (*)
 
 let solve (input: string array) =
     let games = input |> Array.map parseGame

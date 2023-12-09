@@ -66,7 +66,7 @@ let countQuadratic (totalTime, record) =
     ceil time2 - floor time1 - 1.0 |> int
 
 let solve count (input: string array) =
-    let result1 = input |> parseGames |> Array.map count |> Array.fold (*) 1
+    let result1 = input |> parseGames |> Array.map count |> Array.reduce (*)
     let result2 = input |> parseSingleGame |> count
 
     result1, result2, 227850, 42948149

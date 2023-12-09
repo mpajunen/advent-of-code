@@ -6,7 +6,7 @@ let getDigits (candidate: int) =
     candidate.ToString() |> Seq.map (string >> int)
 
 let areDigitsIncreasing (digits: int seq) =
-    Seq.fold (fun previous digit -> if digit >= previous then digit else 999) 0 digits < 10
+    Seq.reduce (fun previous digit -> if digit >= previous then digit else 999) digits < 10
 
 let hasSameDigits (countCheck: int -> bool) (digits: int seq) =
     Seq.countBy id digits |> Seq.map snd |> Seq.exists countCheck
