@@ -12,9 +12,7 @@ let getNext (from: Vec2.Vec) (instruction: string) : Vec2.Vec =
     Vec2.Move.apply from { Dir = dir; Steps = steps }
 
 let parseWire (input: string) =
-    input.Split ","
-    |> Array.scan getNext Vec2.origin
-    |> fun steps -> Array.zip steps[.. steps.Length - 2] steps[1..]
+    input.Split "," |> Array.scan getNext Vec2.origin |> Array.pairwise
 
 let getIntersections (wire1: Wire) (wire2: Wire) : Vec2.Vec array =
     Array.collect (fun segment -> Array.choose (Vec2.Line.getIntersection segment) wire2) wire1
