@@ -4,6 +4,9 @@
 
 open System.Collections.Generic
 
+let firstChar s =
+    if String.length s = 0 then None else Some s[0]
+
 let parseRow (row: string) =
     let parts = row.Split " "
 
@@ -25,27 +28,20 @@ let rec countArrangements row =
         count
 
 and countArrangementsNext row =
-    let noGroupNext =
-        function
-        | "", [] -> 1L
-        | "", _ -> 0L
-        | conditions, groups ->
-            if conditions[0] <> '#' then
-                countArrangements (conditions[1..], groups)
-            else
-                0L
+    let noGroupNext (conditions, groups) =
+        match firstChar conditions, groups with
+        | None, [] -> 1L
+        | None, _ -> 0L
+        | Some '#', _ -> 0L
+        | _ -> countArrangements (conditions[1..], groups)
 
-    let groupNext =
-        function
+    let rec groupNext (conditions, groups) =
+        match firstChar conditions, groups with
         | _, [] -> 0L
-        | "", _ -> 0L
-        | conditions, size :: remaining ->
-            let candidate = conditions[.. size - 1]
-
-            if conditions.Length >= size && String.forall ((<>) '.') candidate then
-                noGroupNext (conditions[size..], remaining)
-            else
-                0L
+        | None, _ -> 0L
+        | Some '.', _ -> 0L
+        | _, 1 :: remaining -> noGroupNext (conditions[1..], remaining)
+        | _, size :: remaining -> groupNext (conditions[1..], size - 1 :: remaining)
 
     groupNext row + noGroupNext row
 
