@@ -115,14 +115,14 @@ type Grid<'a> = 'a array2d
 
 module Grid =
     let cols (grid: Grid<'a>) =
-        seq { 0 .. Array2D.length2 grid - 1 } |> Seq.map (fun x -> grid[*, x])
+        [| for x in 0 .. Array2D.length2 grid - 1 do
+               yield grid[*, x] |]
 
     let countBy (projection: 'a -> 'b) (grid: Grid<'a>) =
         grid |> Seq.cast |> Seq.countBy projection
 
     let countOf (projection: 'a -> bool) =
         countBy projection >> Map >> Map.find true
-
 
     let private matchingKeys predicate (grid: Grid<'a>) =
         seq {
@@ -137,6 +137,9 @@ module Grid =
     let findKey predicate = matchingKeys predicate >> Seq.pick id
 
     let findKeys predicate = matchingKeys predicate >> Seq.choose id
+
+    let fromRows (source: string array) =
+        source |> Array.map _.ToCharArray() |> array2D
 
     let fromSparseMap (defaultValue: 'a) (source: Map<Vec, 'a>) : Grid<'a> =
         let limits = Map.keys source |> Area.getLimits
@@ -156,7 +159,8 @@ module Grid =
     let get (grid: Grid<'a>) (p: Vec) = grid.[p.Y, p.X]
 
     let rows (grid: Grid<'a>) =
-        seq { 0 .. Array2D.length1 grid - 1 } |> Seq.map (fun y -> grid[y, *])
+        [| for y in 0 .. Array2D.length1 grid - 1 do
+               yield grid[y, *] |]
 
     let set (grid: Grid<'a>) (p: Vec) (value: 'a) = grid.[p.Y, p.X] <- value
 
