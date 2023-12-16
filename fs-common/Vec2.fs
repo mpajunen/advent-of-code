@@ -4,6 +4,9 @@ type Vec = { X: int; Y: int }
 
 let origin = { X = 0; Y = 0 }
 
+module Vec =
+    let create y x = { X = x; Y = y }
+
 let manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
 
 let add (a: Vec) (b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
@@ -92,6 +95,10 @@ module Move =
 type Actor = { Position: Vec; Facing: Dir }
 
 module Actor =
+    let create y x facing =
+        { Position = Vec.create y x
+          Facing = facing }
+
     let turn (turn: Turn) (actor: Actor) =
         { actor with
             Facing = Move.turn actor.Facing turn }
@@ -157,6 +164,9 @@ module Grid =
         Array2D.init rows columns getCell
 
     let get (grid: Grid<'a>) (p: Vec) = grid.[p.Y, p.X]
+
+    let isWithin (grid: Grid<'a>) (p: Vec) =
+        p.X >= 0 && p.X < Array2D.length2 grid && p.Y >= 0 && p.Y < Array2D.length1 grid
 
     let rows (grid: Grid<'a>) =
         [| for y in 0 .. Array2D.length1 grid - 1 do
