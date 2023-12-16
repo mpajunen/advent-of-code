@@ -34,7 +34,7 @@ let parseMap (rows: string array) =
     |> Array.toList
 
 let parseInput (input: string array) =
-    let sections = input |> split (fun s -> s.Length = 0)
+    let sections = input |> split ((=) "")
 
     let seeds =
         sections[0].[0].Split(": ").[1].Split " " |> Array.map int64 |> Array.toList
