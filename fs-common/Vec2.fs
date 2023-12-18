@@ -92,6 +92,10 @@ module Move =
 
     let turnRight = turn_ 1
 
+    let adjacent (point: Vec) =
+        [ { X = 0; Y = 1 }; { X = -1; Y = 0 }; { X = 1; Y = 0 }; { X = 0; Y = -1 } ]
+        |> List.map (add point)
+
 type Actor = { Position: Vec; Facing: Dir }
 
 module Actor =
