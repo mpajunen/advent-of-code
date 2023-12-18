@@ -10,45 +10,26 @@ let parseRow (row: string) =
 
     parts[0][0] |> Move.findDir, int parts[1]
 
-let buildLine prev (dir, steps) =
-    let step = Move.unit dir
-    [| 1..steps |] |> Array.map (fun n -> add (Array.last prev) <| multiply step n)
+let getVec (row: string) =
+    row |> parseRow ||> Move.create |> Move.toVec
 
-let scale points =
-    let minX = points |> Array.map _.X |> Array.min
-    let minY = points |> Array.map _.Y |> Array.min
+let getCorners = Array.scan add origin
 
-    let scaling = { X = minX; Y = minY }
+let determinant (a, b) = a.X * b.Y - a.Y * b.X
 
-    points |> Array.map (fun p -> subtract p scaling)
+let shoelace (corners: Vec array) =
+    let pairs = Array.append corners [| corners[0] |] |> Array.pairwise
 
-let fill (trench: Grid<char>) =
-    let point = Grid.findKey ((=) '#') trench
+    (pairs |> Array.sumBy determinant) / 2
 
-    let rec fillFrom p =
-        if Grid.get trench p = '.' then
-            Grid.set trench p 'F'
+let area (instructions: Vec array) =
+    let innerArea = instructions |> getCorners |> shoelace
+    let lineArea = instructions |> Array.sumBy Vec.length
 
-            p |> Move.adjacent |> List.iter fillFrom
-
-    fillFrom { X = point.X + 1; Y = point.Y + 1 }
-
-    trench
-
-let buildTrench instructions =
-    instructions
-    |> Array.scan buildLine [| origin |]
-    |> Array.collect id
-    |> scale
-    |> Array.map (fun p -> p, '#')
-    |> Map
-    |> Grid.fromSparseMap '.'
-    |> fill
+    innerArea + lineArea / 2 + 1
 
 let solve (input: string array) =
-    let result1 =
-        input |> Array.map parseRow |> buildTrench |> fill |> Grid.countOf ((<>) '.')
-
+    let result1 = input |> Array.map getVec |> area
     let result2 = 0
 
     result1, result2, 76387, 0

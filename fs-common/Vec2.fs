@@ -7,6 +7,8 @@ let origin = { X = 0; Y = 0 }
 module Vec =
     let create y x = { X = x; Y = y }
 
+    let length (v: Vec) = abs v.X + abs v.Y
+
 let manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
 
 let add (a: Vec) (b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
@@ -58,6 +60,8 @@ type Turn =
 type Move = { Dir: Dir; Steps: int }
 
 module Move =
+    let create dir steps = { Dir = dir; Steps = steps }
+
     let findDir (dir: char) =
         match dir with
         | 'D' -> Dir.Down
@@ -73,9 +77,9 @@ module Move =
         | Dir.Right -> { X = 1; Y = 0 }
         | Dir.Up -> { X = 0; Y = -1 }
 
-    let private moveVec (move: Move) = multiply (unit move.Dir) move.Steps
+    let toVec (move: Move) = multiply (unit move.Dir) move.Steps
 
-    let apply (point: Vec) (move: Move) = add point <| moveVec move
+    let apply (point: Vec) (move: Move) = add point <| toVec move
 
     let private directions = [ Dir.Up; Dir.Right; Dir.Down; Dir.Left ]
 
