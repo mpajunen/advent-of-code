@@ -5,33 +5,37 @@
 
 open Vec2
 
-let parseRow (row: string) =
-    let parts = row.Split(" ")
+let dirs = [ Dir.Right; Dir.Down; Dir.Left; Dir.Up ]
 
+let parse1 (parts: string array) =
     parts[0][0] |> Move.findDir, int parts[1]
 
-let getVec (row: string) =
-    row |> parseRow ||> Move.create |> Move.toVec
+let parse2 (parts: string array) =
+    dirs[parts[2][7..7] |> int], System.Convert.ToInt32(parts[2][2..6], 16)
+
+let getVec parse (row: string) =
+    row.Split(" ") |> parse ||> Move.create |> Move.toVec
 
 let getCorners = Array.scan add origin
 
-let determinant (a, b) = a.X * b.Y - a.Y * b.X
+let determinant (a, b) =
+    int64 a.X * int64 b.Y - int64 a.Y * int64 b.X
 
 let shoelace (corners: Vec array) =
     let pairs = Array.append corners [| corners[0] |] |> Array.pairwise
 
-    (pairs |> Array.sumBy determinant) / 2
+    (pairs |> Array.sumBy determinant) / 2L
 
 let area (instructions: Vec array) =
     let innerArea = instructions |> getCorners |> shoelace
     let lineArea = instructions |> Array.sumBy Vec.length
 
-    innerArea + lineArea / 2 + 1
+    innerArea + int64 lineArea / 2L + 1L
 
 let solve (input: string array) =
-    let result1 = input |> Array.map getVec |> area
-    let result2 = 0
+    let result1 = input |> Array.map (getVec parse1) |> area
+    let result2 = input |> Array.map (getVec parse2) |> area
 
-    result1, result2, 76387, 0
+    result1, result2, 76387L, 250022188522074L
 
 DayUtils.runDay solve
