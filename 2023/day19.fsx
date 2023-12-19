@@ -3,6 +3,8 @@
 #load "../fs-common/DayUtils.fs"
 
 module Range =
+    let inside (a, b) n = n >= a && n <= b
+
     let length (a, b) = if b >= a then b - a + 1 else 0
 
     let splitFrom (a, b) n = (a, min b (n - 1)), (max a n, b)
@@ -62,8 +64,7 @@ module RuleTree =
 
 let parsePart (row: string) =
     row[1 .. row.Length - 2].Split(",")
-    |> Array.map (_.Split("=") >> fun rating -> rating[0][0], (int rating[1], int rating[1]))
-    |> Map
+    |> Array.map (_.Split("=") >> fun rating -> rating[0][0], int rating[1])
 
 let splitPartRange cond (range: PartRange) =
     let matching, nonMatching =
@@ -79,15 +80,18 @@ let comboCount =
 
 let rec evaluate tree range =
     match tree with
-    | Decision success -> if success then comboCount range else 0L
+    | Decision success -> if success then [ range ] else []
     | Branch(condition, left, right) ->
         range
         |> splitPartRange condition
-        |> fun (matching, nonMatching) -> evaluate left matching + evaluate right nonMatching
+        |> fun (matching, nonMatching) -> evaluate left matching @ evaluate right nonMatching
 
-let rating = Map.values >> Seq.sumBy fst
+let rating = Array.sumBy snd
 
 let COMBINATION = "xmas".ToCharArray() |> Array.map (fun c -> c, (1, 4000)) |> Map
+
+let isComboMatch part (combo: PartRange) =
+    part |> Array.forall (fun (category, v) -> Range.inside combo[category] v)
 
 let solve (input: string array) =
     let split = input |> split ((=) "")
@@ -95,8 +99,13 @@ let solve (input: string array) =
     let tree = split[0] |> RuleTree.build |> RuleTree.prune
     let parts = split[1] |> Array.map parsePart
 
-    let result1 = parts |> Array.filter (evaluate tree >> (=) 1L) |> Array.sumBy rating
-    let result2 = evaluate tree COMBINATION
+    let allCombinations = evaluate tree COMBINATION
+
+    let isMatch part =
+        allCombinations |> List.exists (isComboMatch part)
+
+    let result1 = parts |> Array.filter isMatch |> Array.sumBy rating
+    let result2 = allCombinations |> List.sumBy comboCount
 
     result1, result2, 346230, 124693661917133L
 
