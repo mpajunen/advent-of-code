@@ -2,6 +2,11 @@
 
 #load "../fs-common/DayUtils.fs"
 
+module Range =
+    let length (a, b) = if b >= a then b - a + 1 else 0
+
+    let splitFrom (a, b) n = (a, min b (n - 1)), (max a n, b)
+
 let rec split splitter (input: 'a array) =
     match Array.tryFindIndex splitter input with
     | Some n -> input[.. n - 1] :: split splitter input[n + 1 ..]
@@ -15,7 +20,7 @@ type Condition = { Op: char; Category: char; Num: int }
 
 type Rule = Condition option * Goal
 
-type Part = Map<char, int>
+type PartRange = Map<char, int * int>
 
 let parseGoal =
     function
@@ -45,33 +50,38 @@ let parseWorkflow (row: string) =
 
 let parsePart (row: string) =
     row[1 .. row.Length - 2].Split(",")
-    |> Array.map (_.Split("=") >> fun rating -> rating[0][0], int rating[1])
+    |> Array.map (_.Split("=") >> fun rating -> rating[0][0], (int rating[1], int rating[1]))
     |> Map
 
-let matchesCondition cond (part: Part) =
-    match cond.Op with
-    | '<' -> part[cond.Category] < cond.Num
-    | '>' -> part[cond.Category] > cond.Num
-    | _ -> failwith "Invalid operation!"
+let splitPartRange cond (range: PartRange) =
+    let matching, nonMatching =
+        match cond.Op with
+        | '<' -> Range.splitFrom range[cond.Category] cond.Num
+        | '>' -> Range.splitFrom range[cond.Category] (cond.Num + 1) |> fun (a, b) -> b, a
+        | _ -> failwith "Invalid operation!"
 
-let evaluate (workflows: Map<string, Rule array>) (part: Part) =
-    let rec evalRule (workflow: Rule array) =
+    range |> Map.add cond.Category matching, range |> Map.add cond.Category nonMatching
+
+let comboCount =
+    Map.values >> Seq.map Range.length >> Seq.map int64 >> Seq.reduce (*)
+
+let evaluate (workflows: Map<string, Rule array>) =
+    let rec evalRule (workflow: Rule array) range =
         match workflow[0] with
-        | None, goal -> evalGoal goal
-        | Some cond, goal ->
-            if matchesCondition cond part then
-                evalGoal goal
-            else
-                evalRule workflow[1..]
+        | None, goal -> range |> evalGoal goal
+        | Some condition, goal ->
+            let matching, nonMatching = range |> splitPartRange condition
 
-    and evalGoal goal =
+            (matching |> evalGoal goal) + (nonMatching |> evalRule workflow[1..])
+
+    and evalGoal goal range =
         match goal with
-        | Workflow name -> evalRule workflows[name]
-        | Approval success -> success
+        | Workflow name -> evalRule workflows[name] range
+        | Approval success -> if success then comboCount range else 0L
 
     evalRule workflows["in"]
 
-let rating = Map.values >> Seq.sum
+let rating = Map.values >> Seq.sumBy fst
 
 let COMBINATION = "xmas".ToCharArray() |> Array.map (fun c -> c, (1, 4000)) |> Map
 
@@ -81,9 +91,11 @@ let solve (input: string array) =
     let workflows = split[0] |> Array.map parseWorkflow |> Map
     let parts = split[1] |> Array.map parsePart
 
-    let result1 = parts |> Array.filter (evaluate workflows) |> Array.sumBy rating
-    let result2 = 0
+    let result1 =
+        parts |> Array.filter (evaluate workflows >> (=) 1L) |> Array.sumBy rating
 
-    result1, result2, 346230, 0
+    let result2 = COMBINATION |> evaluate workflows
+
+    result1, result2, 346230, 124693661917133L
 
 DayUtils.runDay solve
