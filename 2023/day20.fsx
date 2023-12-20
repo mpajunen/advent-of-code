@@ -26,8 +26,6 @@ let parseModule (s: string) =
 
 let defaultModules = [| "output", (Untyped, []); "rx", (Untyped, []) |]
 
-let SOURCE_CONJUCTIONS = [ "sg"; "lm"; "dh"; "db" ]
-
 let buildState (modules: Map<string, Module>) =
     let inputs = Dictionary()
     let sentValues = Dictionary()
@@ -49,9 +47,12 @@ let buildState (modules: Map<string, Module>) =
 let pushRepeatedly limit (modules: Map<string, Module>) =
     let inputs, sentValues, pulseCounts = buildState modules
 
+    // Find the four conjuctions that input to "rx" via a single conjuction.
+    let sourceConjuctions = inputs[inputs["rx"][0]]
+
     // In theory, the cycle could start later. In practice, there's no fluctuation and the cycle is simple, starting from zero button presses.
     let mutable firstLows =
-        SOURCE_CONJUCTIONS |> List.map (fun name -> (name, 1_000_000)) |> Map
+        sourceConjuctions |> List.map (fun name -> name, 1_000_000) |> Map
 
     let getInputValues name =
         inputs[name] |> List.map (fun k -> sentValues[k])
@@ -59,7 +60,7 @@ let pushRepeatedly limit (modules: Map<string, Module>) =
     let processPulse pressCount isHigh name =
         pulseCounts[isHigh] <- pulseCounts[isHigh] + 1
 
-        if SOURCE_CONJUCTIONS |> List.contains name && not isHigh then
+        if sourceConjuctions |> List.contains name && not isHigh then
             firstLows <- firstLows |> Map.add name (min pressCount firstLows[name])
 
         let outputs, sendHigh =
