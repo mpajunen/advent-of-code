@@ -26,6 +26,8 @@ let parseModule (s: string) =
 
 let defaultModules = [| "output", (Untyped, []); "rx", (Untyped, []) |]
 
+let SOURCE_CONJUCTIONS = [ "sg"; "lm"; "dh"; "db" ]
+
 let buildState (modules: Map<string, Module>) =
     let inputs = Dictionary()
     let sentValues = Dictionary()
@@ -47,11 +49,18 @@ let buildState (modules: Map<string, Module>) =
 let pushRepeatedly limit (modules: Map<string, Module>) =
     let inputs, sentValues, pulseCounts = buildState modules
 
+    // In theory, the cycle could start later. In practice, there's no fluctuation and the cycle is simple, starting from zero button presses.
+    let mutable firstLows =
+        SOURCE_CONJUCTIONS |> List.map (fun name -> (name, 1_000_000)) |> Map
+
     let getInputValues name =
         inputs[name] |> List.map (fun k -> sentValues[k])
 
-    let processPulse isHigh name =
+    let processPulse pressCount isHigh name =
         pulseCounts[isHigh] <- pulseCounts[isHigh] + 1
+
+        if SOURCE_CONJUCTIONS |> List.contains name && not isHigh then
+            firstLows <- firstLows |> Map.add name (min pressCount firstLows[name])
 
         let outputs, sendHigh =
             match modules[name] with
@@ -67,22 +76,24 @@ let pushRepeatedly limit (modules: Map<string, Module>) =
 
         outputs |> List.map (fun output -> sendHigh, output)
 
-    for _ in { 1..limit } do
+    for pressCount in { 1..limit } do
         let mutable pulses = [ false, "broadcaster" ]
 
         while pulses.Length > 0 do
-            pulses <- pulses[0] ||> processPulse |> List.append pulses[1..]
+            pulses <- pulses[0] ||> processPulse pressCount |> List.append pulses[1..]
 
-    pulseCounts
+    pulseCounts, firstLows
 
 let solve (input: string array) =
     let modules = input |> Array.map parseModule |> Array.append defaultModules |> Map
 
-    let pulseCounts = pushRepeatedly 1000 modules
+    let pulseCounts, _ = pushRepeatedly 1000 modules
+    let _, firstLows = pushRepeatedly 10_000 modules
 
     let result1 = pulseCounts[false] * pulseCounts[true]
-    let result2 = 0
+    // In theory, you'd need to calculate the least common multiple. In practice, not.
+    let result2 = firstLows |> Map.values |> Seq.map int64 |> Seq.reduce (*)
 
-    result1, result2, 841763884, 0
+    result1, result2, 841763884, 246006621493687L
 
 DayUtils.runDay solve
