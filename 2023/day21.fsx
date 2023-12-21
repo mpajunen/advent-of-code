@@ -32,72 +32,96 @@ let getCosts grid start =
 
     costs
 
-let findReachable grid costs stepCount =
-    let maxY = Array2D.length1 costs - 1
-    let maxX = Array2D.length2 costs - 1
+let getSlotCount costs maxCost =
+    Grid.countOf (fun n -> n <= maxCost && n % 2 = maxCost % 2) costs
 
-    let edges = [ costs[0, *]; costs[maxY, *]; costs[*, 0]; costs[*, maxX] ]
+"""
+       /\
+     / AA \
+
+    /A BB A\
+  / AA BB AA \
+
+ /A BB AA BB A\
+ \A BB AA BB A/
+
+  \ AA BB AA /
+    \A BB A/
+
+     \ AA /
+       \/
+"""
+
+// Assumes square grid and corridors from center to sides, so every corner or
+// side can be reached with the same amount of steps. Latter is not true for
+// the example input.
+let getEntryPoints grid =
+    let high = Array2D.length1 grid - 1
+    let middle = high / 2
 
     let cornerEntries =
-        [ (maxY, maxX), Array.head edges[0] + 2
-          (maxY, 0), Array.last edges[0] + 2
-          (0, maxX), Array.head edges[1] + 2
-          (0, 0), Array.last edges[1] + 2 ]
-        |> List.map (fun ((y, x), cost) -> Vec.create y x, cost)
-
-    let sideBase =
-        edges
-        |> List.map (fun edge ->
-            let minValue = Array.min edge
-
-            Array.findIndex ((=) minValue) edge, minValue)
+        [ (0, 0); (high, 0); (0, high); (high, high) ]
+        |> List.map (fun (y, x) -> Vec.create y x, high + 2)
 
     let sideEntries =
-        [ (maxY, fst sideBase[0]), snd sideBase[0] + 1
-          (0, fst sideBase[1]), snd sideBase[1] + 1
-          (fst sideBase[2], maxX), snd sideBase[2] + 1
-          (fst sideBase[3], 0), snd sideBase[3] + 1 ]
-        |> List.map (fun ((y, x), cost) -> Vec.create y x, cost)
+        [ (0, middle); (middle, high); (high, middle); (middle, 0) ]
+        |> List.map (fun (y, x) -> Vec.create y x, middle + 1)
 
-    let sideLength = Array2D.length1 costs
+    cornerEntries, sideEntries
+
+// Assumes step count where there's only one incomplete
+let getEntrySlots grid stepCount =
+    let cornerEntries, sideEntries = getEntryPoints grid
+
+    let sideLength = Array2D.length1 grid
 
     let cornerCosts = cornerEntries |> List.map (fun (p, cost) -> getCosts grid p, cost)
     let sideCosts = sideEntries |> List.map (fun (p, cost) -> getCosts grid p, cost)
 
-    let getCostOptions (costGrid, cost) =
+    let getSlots extra (costGrid, cost) =
         let baseVal = (stepCount - cost) % sideLength
-        let options = [ 0..4 ] |> List.map (fun n -> baseVal + n * sideLength)
 
-        options
-        |> List.map (fun maxCost -> Grid.countOf (fun n -> n <= maxCost && n % 2 = maxCost % 2) costGrid)
+        getSlotCount costGrid (baseVal + extra * sideLength) |> int64
 
-    let cornerReachables = cornerCosts |> List.map getCostOptions
-    let sideReachables = sideCosts |> List.map getCostOptions
+    {| OuterCorners = cornerCosts |> List.map (getSlots 0)
+       InnerCorners = cornerCosts |> List.map (getSlots 1)
+       Sides = sideCosts |> List.map (getSlots 0)
+       InsideA = sideCosts[0] |> getSlots 1
+       InsideB = sideCosts[0] |> getSlots 2 |}
 
-    let quadrantOuterCornerCount = (stepCount - (sideLength - 1)) / sideLength + 1
-    let quadrantInnerCornerCount = quadrantOuterCornerCount - 1
+// Each quadrant
+//
+// /\
+// AA\
+// BBA\
+// BBAA\
+// AABBA\
+// AABBAA\
+// BBAABBA\
+// BBAABBAA\
+//
+let quadrantCounts sideLength stepCount =
+    let side = stepCount / sideLength |> int64
 
-    let seriesSum s e =
-        int64 ((e + s) / 2) * int64 ((e - s) / 2 + 1)
+    {| OuterCorners = side // Only one corner
+       InnerCorners = side - 1L // One corner missing
+       InsideA = side / 2L |> fun s -> s * s // Full. 1, 3, 5, 7, ..., 2 n_a - 1 -> n_a * n_a
+       InsideB = (side - 1L) / 2L |> fun s -> s * (s + 1L) // Full. 2, 4, 6, 8, ..., 2 n_b -> n_b * (n_b + 1)
+    |}
 
-    let quadrantInnerCounts =
-        [ seriesSum ((quadrantInnerCornerCount + 1) % 2 + 1) quadrantInnerCornerCount
-          seriesSum (quadrantInnerCornerCount % 2 + 1) (quadrantInnerCornerCount - 1) ]
+let findReachable grid costs stepCount =
+    let gridSlots = getEntrySlots grid stepCount
+    let gridCounts = quadrantCounts (Array2D.length1 costs) stepCount
 
-    let outerCorners =
-        int64 quadrantOuterCornerCount
-        * int64 (cornerReachables |> List.sumBy (fun r -> r[0]))
+    let outerCorners = gridCounts.OuterCorners * (gridSlots.OuterCorners |> List.sum)
+    let innerCorners = gridCounts.InnerCorners * (gridSlots.InnerCorners |> List.sum)
 
-    let innerCorners =
-        int64 quadrantInnerCornerCount
-        * int64 (cornerReachables |> List.sumBy (fun r -> r[1]))
+    let innerA = 4L * gridCounts.InsideA * gridSlots.InsideA
+    let innerB = 4L * gridCounts.InsideB * gridSlots.InsideB
 
-    let innerA = 4L * quadrantInnerCounts[0] * (int64 cornerReachables.[0].[2])
-    let innerB = 4L * quadrantInnerCounts[1] * (int64 cornerReachables.[0].[3])
+    let sides = gridSlots.Sides |> List.sum
 
-    let sides = sideReachables |> List.sumBy (fun r -> r[0]) |> int64
-
-    let center = costs |> Grid.countOf (fun n -> n % 2 = stepCount % 2) |> int64
+    let center = getSlotCount costs stepCount |> int64
 
     outerCorners + innerCorners + innerA + innerB + sides + center
 
@@ -107,7 +131,7 @@ let solve (input: string array) =
 
     let costs = getCosts grid start
 
-    let result1 = costs |> Grid.countOf (fun n -> n <= 64 && n % 2 = 0)
+    let result1 = getSlotCount costs 64
     let result2 = findReachable grid costs 26501365
 
     result1, result2, 3572, 594606492802848L
