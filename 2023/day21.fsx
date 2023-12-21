@@ -50,6 +50,13 @@ let getSlotCount costs maxCost =
 
      \ AA /
        \/
+
+From outside:
+- B * 8, only corners => B_full * 2 - B_center * 2
+- A * 4, each missing two corners => A_full * 2 + A_center * 2
+- A * 4, each corner missing once => A_full * 3 + A_center * 1
+- B_full * 4
+- A_full
 """
 
 // Assumes square grid and corridors from center to sides, so every corner or
