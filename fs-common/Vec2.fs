@@ -139,6 +139,13 @@ module Grid =
     let countOf (projection: 'a -> bool) =
         countBy projection >> Map >> Map.find true
 
+    let entries (grid: Grid<'a>) =
+        seq {
+            for y in 0 .. (grid.GetLength 0 - 1) do
+                for x in 0 .. (grid.GetLength 1 - 1) do
+                    { X = x; Y = y }, grid[y, x]
+        }
+
     let private matchingKeys predicate (grid: Grid<'a>) =
         seq {
             for y in 0 .. (grid.GetLength 0 - 1) do
