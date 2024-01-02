@@ -17,10 +17,10 @@ type Hailstone =
     { Id: int; Start: Vec3; Velocity: Vec3 }
 
 type Crossing =
-    { Time1: float
-      Time2: float
-      X: float
-      Y: float }
+    { Time1: int64
+      Time2: int64
+      X: int64
+      Y: int64 }
 
 module Hailstone =
     let create index (s: string) =
@@ -31,11 +31,45 @@ module Hailstone =
               Start = v[0]
               Velocity = v[1] }
 
+// X = p.X + v.X * t
+// Y = p.Y + v.Y * t
+// => (p.X - X) / v.X = (p.Y - Y) / v.Y
+// => (p.X - X) * v.Y = (p.Y - Y) * v.X
+// => Y * v.X = X * v.Y + p.Y * v.X - p.X * v.Y
+
+// => (X * v1.Y + p1.Y * v1.X - p1.X * v1.Y) * v2.X = (X * v2.Y + p1.Y * v2.X - p2.X * v2.Y) * v1.X
+// = X * (v2.Y * v1.X - v1.Y * v2.X) = (p1.Y - p1.Y) * v1.X * v2.X - p1.X * v1.Y * v2.X + p2.X * v2.Y * v1.X
+let getIntersectionX (s1: Hailstone) (s2: Hailstone) =
+    let p1, v1 = s1.Start, s1.Velocity
+    let p2, v2 = s2.Start, s2.Velocity
+
+    let determinant = v2.Y * v1.X - v1.Y * v2.X
+
+    if determinant = 0 then
+        -1L // TODO: Maybe?
+    else
+        ((p1.Y - p2.Y) * v1.X * v2.X - p1.X * v1.Y * v2.X + p2.X * v2.Y * v1.X)
+        / determinant
+
+let getIntersection (s1: Hailstone) (s2: Hailstone) =
+    let x = getIntersectionX s1 s2
+
+    let time = (x - s1.Start.X) / s1.Velocity.X
+
+    // r.Start = s.Start + (s.Velocity - r.Velocity) * t
+    let y = s1.Start.Y + s1.Velocity.Y * time
+    let z = s1.Start.Z + s1.Velocity.Z * time
+
+    { X = x; Y = y; Z = z }
+
 // x = s.Start.X + s.Velocity.X * time
 // y = s.Start.Y + s.Velocity.Y * time
 // => y = s.Start.Y + s.Velocity.Y * (x - s.Start.X) / s.Velocity.X
 // => y = (s.Velocity.Y / s.Velocity.X) * x + (s.Start.X - s.Velocity.Y / s.Velocity.X * s.Start.X)
 // => y = a * x + b
+
+// => y * s.Velocity.X = s.Start.Y * s.Velocity.X + x * s.Velocity.Y - s.Start.X * s.Velocity.Y
+
 let getIntersectionFactors (s: Hailstone) =
     let a = float s.Velocity.Y / float s.Velocity.X
     let b = float s.Start.Y - a * float s.Start.X
@@ -46,14 +80,25 @@ let getIntersectionFactors (s: Hailstone) =
 // => a1 * x + b = a2 * x + b2
 // => x = (b2 - b1) / (a1 - a2)
 let findPlaneIntersection (s1: Hailstone) (s2: Hailstone) =
+    let x_ = getIntersectionX s1 s2
+
+    let t1_ = (x_ - s1.Start.X) / s1.Velocity.X
+    let t2_ = (x_ - s2.Start.X) / s2.Velocity.X
+
+    let y_ = s1.Start.Y + s1.Velocity.Y * t1_
+
     let a1, b1 = getIntersectionFactors s1
     let a2, b2 = getIntersectionFactors s2
 
-    let x = (b2 - b1) / (a1 - a2)
-    let y = a1 * x + b1
+    let xf = (b2 - b1) / (a1 - a2)
+    let x = xf |> int64
+    let y = (a1 * xf + b1) |> int64
 
-    let t1 = (x - float (s1.Start.X)) / float (s1.Velocity.X)
-    let t2 = (x - float (s2.Start.X)) / float (s2.Velocity.X)
+    let t1 = (x - s1.Start.X) / s1.Velocity.X
+    let t2 = (x - s2.Start.X) / s2.Velocity.X
+
+    // if (t1 <> t1_) then
+    //     printfn "%A" (x, x_, t1, t1_, s1, s2)
 
     { Time1 = t1; Time2 = t2; X = x; Y = y }
 
@@ -63,8 +108,8 @@ let getCrossings (stones: Hailstone array) =
     |> Array.collect id
 
 let TEST_AREA =
-    {| Min = 200000000000000.0
-       Max = 400000000000000.0 |}
+    {| Min = 200000000000000L
+       Max = 400000000000000L |}
 
 let isInTestArea c =
     TEST_AREA.Min < c.X
@@ -111,41 +156,13 @@ let getRockVelocity (stones: Hailstone array) =
       Y = getAxisVelocity stones _.Y
       Z = getAxisVelocity stones _.Z }
 
-// r.Start + r.Velocity * t = s1.Start + s.Velocity * t
-// t = (r.Start - s.Start) / (s.Velocity - r.Velocity)
-// t = (r.Start - s.Start) / Δv
+let getRelativeToRock s vRock =
+    { s with
+        Velocity = Vec3.subtract s.Velocity vRock }
 
-// => (r.Velocity - s.Velocity) * t = s1.Start - r.Start
-// => Δv * t = s1.Start - r.Start
-
-// => (s.Start.X - r.Start.X) / Δv.X = (s.Start.Y - r.Start.Y) / Δv.Y
-// => (s.Start.X - r.Start.X) * Δv.Y = (s.Start.Y - r.Start.Y) * Δv.X
-
-// => r.Start.Y * Δv.X = r.Start.X * Δv.Y + s.Start.Y * Δv.X - s.Start.X * Δv.Y
-
-// => (r.Start.X * Δv1.Y + s1.Start.Y * Δv1.X - s1.Start.X * Δv1.Y) * Δv2.X = (r.Start.X * Δv2.Y + s1.Start.Y * Δv2.X - s2.Start.X * Δv2.Y) * Δv1.X
-// = r.Start.X * (Δv2.Y * Δv1.X - Δv1.Y * Δv2.X) = (s1.Start.Y - s1.Start.Y) * Δv1.X * Δv2.X - s1.Start.X * Δv1.Y * Δv2.X + s2.Start.X * Δv2.Y * Δv1.X
-let getStartX (s1: Hailstone) (s2: Hailstone) (vRock: Vec3) =
-    let Δv1 = Vec3.subtract vRock s1.Velocity
-    let Δv2 = Vec3.subtract vRock s2.Velocity
-
-    ((s1.Start.Y - s2.Start.Y) * Δv1.X * Δv2.X - s1.Start.X * Δv1.Y * Δv2.X
-     + s2.Start.X * Δv2.Y * Δv1.X)
-    / (Δv2.Y * Δv1.X - Δv1.Y * Δv2.X)
-
+// Moving relative to the rock, all hailstones will intersect at the rock starting position
 let getRockStart (stones: Hailstone array) (vRock: Vec3) =
-    let startX = getStartX stones[0] stones[1] vRock
-
-    let s = stones[0]
-
-    // time = (r.Start - s.Start) / (s.Velocity - r.Velocity)
-    let time = (startX - s.Start.X) / (s.Velocity.X - vRock.X)
-
-    // r.Start = s.Start + (s.Velocity - r.Velocity) * t
-    let startY = s.Start.Y + (s.Velocity.Y - vRock.Y) * time
-    let startZ = s.Start.Z + (s.Velocity.Z - vRock.Z) * time
-
-    { X = startX; Y = startY; Z = startZ }
+    getIntersection (getRelativeToRock stones[0] vRock) (getRelativeToRock stones[1] vRock)
 
 let solve (input: string array) =
     let stones = input |> Array.mapi Hailstone.create
