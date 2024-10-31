@@ -42,7 +42,11 @@ const runYear = async (year = new Date().getFullYear()) => {
     console.log(`${year}: Day ${day}`)
     const start = Date.now()
 
-    await runDay(day, year)
+    try {
+      await runDay(day, year)
+    } catch (error) {
+      console.error((error as Error).message)
+    }
 
     const end = Date.now()
     console.log(`Time: ${(end - start) / 1000} s`)
