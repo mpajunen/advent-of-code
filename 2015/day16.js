@@ -51,7 +51,7 @@ const compareAunt = aunt =>
 
 const correct = aunts.filter(compareAunt)[0]
 
-console.log(correct)
+console.log(correct.number)
 
 const getMessageOperator = interest => {
   let operator
@@ -93,4 +93,4 @@ const compareAunt2 = aunt =>
 
 const correct2 = aunts.filter(compareAunt2)[0]
 
-console.log(correct2)
+console.log(correct2.number)

@@ -1,7 +1,6 @@
 'use strict'
 
 const fs = require('fs')
-const immutable = require('immutable')
 const R = require('ramda')
 
 const input = fs.readFileSync('input/day14.txt', 'utf8')
@@ -19,8 +18,6 @@ const readReindeer = str => {
 
 const reindeer = input.split('\n').map(readReindeer)
 
-console.log(reindeer)
-
 const getTotalDistance =
   time =>
   ({ speed, duration, rest }) => {
@@ -37,7 +34,6 @@ const TIME = 2503
 const totals = reindeer.map(getTotalDistance(TIME))
 const max = totals.reduce(R.max, 0)
 
-console.log(totals)
 console.log(max)
 
 const getDistances =
@@ -72,8 +68,6 @@ const getPoints = distances =>
 
 const points = getPoints(distances)
 
-//console.log(points.length)
-
 const getCounts = values =>
   values.reduce((counts, timeValues) => {
     timeValues.forEach(value => (counts[value] += 1))
@@ -84,7 +78,4 @@ const getCounts = values =>
 const pointCounts = getCounts(points)
 const maxPoints = pointCounts.reduce(R.max, 0)
 
-//console.log(distances[3])
-
-console.log(pointCounts)
 console.log(maxPoints)

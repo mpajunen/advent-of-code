@@ -32,7 +32,7 @@ const amounts = utils.getAmounts(people, seatings)
 const perms = utils.getCircularPermutations(getKeys(people))
 const limits = utils.getPermutationMinMax(perms, amounts)
 
-console.log(limits)
+console.log(limits.max)
 
 const addMe = (seatings, person) =>
   seatings.concat({ from: 'me', to: person, amount: 0 })
@@ -44,4 +44,4 @@ const amounts2 = utils.getAmounts(people2, seatings2)
 const perms2 = utils.getCircularPermutations(getKeys(people2))
 const limits2 = utils.getPermutationMinMax(perms2, amounts2)
 
-console.log(limits2)
+console.log(limits2.max)

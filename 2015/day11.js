@@ -13,8 +13,6 @@ const numBase = alphabet.length
 
 const getLetterIndex = char => alphabet.indexOf(char)
 
-//console.log(alphabet)
-
 const decode = pw => pw.split('').map(getLetterIndex)
 
 const encode = nums => nums.map(num => alphabet[num]).join('')
@@ -37,9 +35,6 @@ const getNext = nums => {
     : remaining.concat([lastDigit])
 }
 
-const hasNoInvalidLetters = nums =>
-  nums.filter(num => invalidLetters.indexOf(num) !== -1).length === 0
-
 const hasIncreasingStraight = nums =>
   nums
     .map(
@@ -60,11 +55,7 @@ const hasTwoPairs = nums => {
   return first !== -1 && getFirstPairIndex(nums.slice(first + 2)) !== -1
 }
 
-const filters = [
-  //hasNoInvalidLetters,
-  hasIncreasingStraight,
-  hasTwoPairs,
-]
+const filters = [hasIncreasingStraight, hasTwoPairs]
 
 const isValidPw = nums =>
   filters.reduce((init, filter) => init && filter(nums), true)

@@ -1,7 +1,6 @@
 'use strict'
 
 const fs = require('fs')
-//const immutable = require('immutable')
 
 const input = fs.readFileSync('input/day8.txt', 'utf8').trim()
 
@@ -44,7 +43,5 @@ const encodeString = str => '"' + encodeStringContent(str) + '"'
 const encoded = strings.map(encodeString)
 
 const result2 = getTotalLength(encoded) - getTotalLength(strings)
-
-console.log(encoded)
 
 console.log(result2)

@@ -28,4 +28,5 @@ const perms = utils.getPermutations(getKeys(places))
 
 const limits = utils.getPermutationMinMax(perms, distances)
 
-console.log(limits)
+console.log(limits.min)
+console.log(limits.max)

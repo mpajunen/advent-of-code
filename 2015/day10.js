@@ -3,9 +3,6 @@
 const fs = require('fs')
 const R = require('ramda')
 
-//const input = '1'
-//const iterations = 5
-
 const iterations = 50
 const input = fs.readFileSync('input/day10.txt', 'utf8').trim()
 

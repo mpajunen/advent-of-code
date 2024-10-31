@@ -32,24 +32,11 @@ const findWireConnections = wire => {
   if (direct === undefined) {
     return []
   }
-  //console.log(wire)
-  //console.log(direct)
+
   const nested = findConnections(direct)
 
   return nested.concat(direct)
 }
-
-//const sortedConnections = findWireConnections('a')
-
-const toMap = (array, keyProp) => {
-  let map = {}
-
-  array.forEach(item => (map[item[keyProp]] = item))
-
-  return map
-}
-
-const connectionMap = toMap(connections, 'target')
 
 const isConnectionUntaken = current => connection =>
   current[connection.target] === undefined
@@ -66,8 +53,6 @@ const findNewFreeConnections = current =>
     .filter(isConnectionUntaken(current))
     .filter(isConnectionFree(current))
 
-//const sortedConnections = connectionMap
-
 let sortedConnections = {}
 
 while (sortedConnections['a'] === undefined) {
@@ -75,10 +60,6 @@ while (sortedConnections['a'] === undefined) {
     connection => (sortedConnections[connection.target] = connection),
   )
 }
-
-const foo = findNewFreeConnections({})
-
-//console.log(foo)
 
 const gates = {
   AND: (left, right) => left & right,
@@ -95,27 +76,18 @@ const handleConnection = (wires, { left, right, gate, target }) => {
 
   wires[target] = gates[gate](leftIn, rightIn)
 
-  //console.log(`${gate}(${left}: ${leftIn}, ${right}: ${rightIn}) => ${target}: ${wires[target]}`)
-
   return wires
 }
 
 const sortedMap = immutable.OrderedMap(sortedConnections)
-const result1 = sortedMap.reduce(handleConnection, {})
+const result1 = sortedMap.reduce(handleConnection, {}).a
 
-console.log(sortedConnections)
-//console.log(result1)
+console.log(result1)
 
-const replacement = {
-  left: undefined,
-  right: result1.a,
-  gate: null,
-  target: 'b',
-}
+const replacement = { left: undefined, right: result1, gate: null, target: 'b' }
 
 const fixedMap = sortedMap.set('b', replacement)
 
-const result2 = fixedMap.reduce(handleConnection, {})
+const result2 = fixedMap.reduce(handleConnection, {}).a
 
-//console.log(fixedMap.toJS())
 console.log(result2)

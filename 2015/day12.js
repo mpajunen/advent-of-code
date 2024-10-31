@@ -2,7 +2,6 @@
 
 const fs = require('fs')
 const immutable = require('immutable')
-const R = require('ramda')
 
 const input = fs.readFileSync('input/day12.txt', 'utf8')
 
