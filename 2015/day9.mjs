@@ -1,10 +1,6 @@
 'use strict'
 
-import fs from 'fs'
-
 import * as utils from './utils.mjs'
-
-const input = fs.readFileSync('input/day9.txt', 'utf8').trim()
 
 const readRoute = str => {
   const [from, , to, , distance] = str.split(' ')
@@ -16,17 +12,16 @@ const readRoute = str => {
   }
 }
 
-const routes = input.split('\n').map(readRoute)
-
-const places = utils.getNodes(routes)
-
-const distances = utils.getAmounts(places, routes)
-
 const getKeys = list => list.map((_, key) => key)
 
-const perms = utils.getPermutations(getKeys(places))
+export default rows => {
+  const routes = rows.map(readRoute)
 
-const limits = utils.getPermutationMinMax(perms, distances)
+  const places = utils.getNodes(routes)
+  const distances = utils.getAmounts(places, routes)
+  const perms = utils.getPermutations(getKeys(places))
 
-console.log(limits.min)
-console.log(limits.max)
+  const limits = utils.getPermutationMinMax(perms, distances)
+
+  return [limits.min, limits.max, 141, 736]
+}

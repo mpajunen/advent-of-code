@@ -1,9 +1,6 @@
 'use strict'
 
-const fs = require('fs')
 const R = require('ramda')
-
-const input = fs.readFileSync('input/day11.txt', 'utf8').trim()
 
 const alphabet = R.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1).map(code =>
   String.fromCharCode(code),
@@ -16,8 +13,6 @@ const getLetterIndex = char => alphabet.indexOf(char)
 const decode = pw => pw.split('').map(getLetterIndex)
 
 const encode = nums => nums.map(num => alphabet[num]).join('')
-
-const decoded = decode(input)
 
 const invalidLetters = ['i', 'o', 'l'].map(getLetterIndex)
 
@@ -68,11 +63,11 @@ const getNextValidPw = nums => {
   return nums
 }
 
-var nums = decoded
+export default ([row]) => {
+  const nums = decode(row)
 
-const newPw = encode(getNextValidPw(nums))
+  const newPw = encode(getNextValidPw(nums))
+  const nextPw = encode(getNextValidPw(decode(newPw)))
 
-const nextPw = encode(getNextValidPw(decode(newPw)))
-
-console.log(newPw)
-console.log(nextPw)
+  return [newPw, nextPw, 'hxbxxyzz', 'hxcaabcc']
+}

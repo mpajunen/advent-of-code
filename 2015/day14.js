@@ -1,9 +1,6 @@
 'use strict'
 
-const fs = require('fs')
 const R = require('ramda')
-
-const input = fs.readFileSync('input/day14.txt', 'utf8')
 
 const readReindeer = str => {
   const [name, , , speed, , , duration, ...other] = str.split(' ')
@@ -15,8 +12,6 @@ const readReindeer = str => {
     rest: parseInt(other.slice(-2, -1)[0], 10),
   }
 }
-
-const reindeer = input.split('\n').map(readReindeer)
 
 const getTotalDistance =
   time =>
@@ -30,11 +25,6 @@ const getTotalDistance =
   }
 
 const TIME = 2503
-
-const totals = reindeer.map(getTotalDistance(TIME))
-const max = totals.reduce(R.max, 0)
-
-console.log(max)
 
 const getDistances =
   time =>
@@ -51,31 +41,38 @@ const getDistances =
     }, [])
   }
 
-const distances = reindeer.map(getDistances(TIME))
+export default rows => {
+  const reindeer = rows.map(readReindeer)
 
-const getMaxValue = now =>
-  distances.reduce((max, reindeer) => Math.max(max, reindeer[now]), 0)
-const getMaxIndexes = now => {
-  const max = getMaxValue(now)
+  const totals = reindeer.map(getTotalDistance(TIME))
+  const max = totals.reduce(R.max, 0)
 
-  return distances
-    .map((reindeer, index) => (reindeer[now] === max ? index : null))
-    .filter(x => x !== null)
+  const distances = reindeer.map(getDistances(TIME))
+
+  const getMaxValue = now =>
+    distances.reduce((max, reindeer) => Math.max(max, reindeer[now]), 0)
+  const getMaxIndexes = now => {
+    const max = getMaxValue(now)
+
+    return distances
+      .map((reindeer, index) => (reindeer[now] === max ? index : null))
+      .filter(x => x !== null)
+  }
+
+  const getPoints = distances =>
+    distances[0].map((_, time) => getMaxIndexes(time))
+
+  const points = getPoints(distances)
+
+  const getCounts = values =>
+    values.reduce((counts, timeValues) => {
+      timeValues.forEach(value => (counts[value] += 1))
+
+      return counts
+    }, distances.slice(0).fill(0))
+
+  const pointCounts = getCounts(points)
+  const maxPoints = pointCounts.reduce(R.max, 0)
+
+  return [max, maxPoints, 2640, 1102]
 }
-
-const getPoints = distances =>
-  distances[0].map((_, time) => getMaxIndexes(time))
-
-const points = getPoints(distances)
-
-const getCounts = values =>
-  values.reduce((counts, timeValues) => {
-    timeValues.forEach(value => (counts[value] += 1))
-
-    return counts
-  }, distances.slice(0).fill(0))
-
-const pointCounts = getCounts(points)
-const maxPoints = pointCounts.reduce(R.max, 0)
-
-console.log(maxPoints)

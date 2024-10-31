@@ -1,7 +1,5 @@
 'use strict'
 
-const fs = require('fs')
-
 const sum = (a, b) => a + b
 
 const directions = {
@@ -42,29 +40,25 @@ const countPositions = counts =>
 
 const origin = { x: 0, y: 0 }
 
-const movements = fs
-  .readFileSync('input/day3.txt', 'utf8')
-  .split('')
-  .map(movement => directions[movement])
+export default ([row]) => {
+  const movements = row.split('').map(movement => directions[movement])
 
-const positions1 = movements.reduce(buildPositions, [origin])
+  const positions1 = movements.reduce(buildPositions, [origin])
 
-const counts1 = positions1.reduce(buildCounts, {})
+  const counts1 = positions1.reduce(buildCounts, {})
 
-const result1 = countPositions(counts1)
+  const result1 = countPositions(counts1)
+  const santaMoves = movements.filter((value, key) => key % 2 === 0)
 
-console.log(result1)
+  const roboMoves = movements.filter((value, key) => key % 2 === 1)
 
-const santaMoves = movements.filter((value, key) => key % 2 === 0)
+  const positions2 = santaMoves
+    .reduce(buildPositions, [origin])
+    .concat(roboMoves.reduce(buildPositions, [origin]))
 
-const roboMoves = movements.filter((value, key) => key % 2 === 1)
+  const counts2 = positions2.reduce(buildCounts, {})
 
-const positions2 = santaMoves
-  .reduce(buildPositions, [origin])
-  .concat(roboMoves.reduce(buildPositions, [origin]))
+  const result2 = countPositions(counts2)
 
-const counts2 = positions2.reduce(buildCounts, {})
-
-const result2 = countPositions(counts2)
-
-console.log(result2)
+  return [result1, result2, 2592, 2360]
+}

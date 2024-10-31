@@ -1,10 +1,6 @@
 'use strict'
 
-import fs from 'fs'
-
 import * as utils from './utils.mjs'
-
-const input = fs.readFileSync('input/day13.txt', 'utf8').trim()
 
 const readSeating = str => {
   const [to, , verb, happiness, ...rest] = str.split(' ')
@@ -23,25 +19,25 @@ const combineAmounts = ({ from, to, amount: prevAmount }, index, seatings) => {
   return { from, to, amount }
 }
 
-const seatings = input.split('\n').map(readSeating).map(combineAmounts)
-
 const getKeys = list => list.map((_, key) => key)
-
-const people = utils.getNodes(seatings)
-const amounts = utils.getAmounts(people, seatings)
-const perms = utils.getCircularPermutations(getKeys(people))
-const limits = utils.getPermutationMinMax(perms, amounts)
-
-console.log(limits.max)
 
 const addMe = (seatings, person) =>
   seatings.concat({ from: 'me', to: person, amount: 0 })
 
-const seatings2 = people.reduce(addMe, seatings)
+export default rows => {
+  const seatings = rows.map(readSeating).map(combineAmounts)
 
-const people2 = people.concat(['me'])
-const amounts2 = utils.getAmounts(people2, seatings2)
-const perms2 = utils.getCircularPermutations(getKeys(people2))
-const limits2 = utils.getPermutationMinMax(perms2, amounts2)
+  const people = utils.getNodes(seatings)
+  const amounts = utils.getAmounts(people, seatings)
+  const perms = utils.getCircularPermutations(getKeys(people))
+  const limits = utils.getPermutationMinMax(perms, amounts)
 
-console.log(limits2.max)
+  const seatings2 = people.reduce(addMe, seatings)
+
+  const people2 = people.concat(['me'])
+  const amounts2 = utils.getAmounts(people2, seatings2)
+  const perms2 = utils.getCircularPermutations(getKeys(people2))
+  const limits2 = utils.getPermutationMinMax(perms2, amounts2)
+
+  return [limits.max, limits2.max, 618, 601]
+}

@@ -1,9 +1,6 @@
 'use strict'
 
-const fs = require('fs')
 const md5 = require('js-md5')
-
-const input = fs.readFileSync('input/day4.txt', 'utf8').trim()
 
 const findMd5WithPrefix = (input, prefix) => {
   const len = prefix.length
@@ -23,10 +20,9 @@ const findMd5WithPrefix = (input, prefix) => {
   return i
 }
 
-const result1 = findMd5WithPrefix(input, '00000')
+export default ([input]) => {
+  const result1 = findMd5WithPrefix(input, '00000')
+  const result2 = findMd5WithPrefix(input, '000000')
 
-console.log(result1)
-
-const result2 = findMd5WithPrefix(input, '000000')
-
-console.log(result2)
+  return [result1, result2, 282749, 9962624]
+}

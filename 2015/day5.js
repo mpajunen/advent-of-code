@@ -1,10 +1,6 @@
 'use strict'
 
-const fs = require('fs')
 const immutable = require('immutable')
-
-const input = fs.readFileSync('input/day5.txt', 'utf8')
-const words = input.split('\n').map(line => line.split(''))
 
 const vowels = 'aeiou'.split('')
 const disallowedPairs = ['ab', 'cd', 'pq', 'xy'].map(pair => pair.split(''))
@@ -22,16 +18,6 @@ const isPreviousBad = (char, index, word) =>
 const hasEnoughVowels = word => getWordVowels(word).length >= 3
 const hasDoubleChar = word => word.filter(isPreviousSame).length > 0
 const hasNoBad = word => word.filter(isPreviousBad).length === 0
-
-const goodWords = words
-  .filter(hasEnoughVowels)
-  .filter(hasDoubleChar)
-  .filter(hasNoBad)
-  .map(word => word.join(''))
-
-const result1 = goodWords.length
-
-console.log(result1)
 
 const getPair = (char, index, word) =>
   index > 0 ? word[index - 1] + char : null
@@ -55,11 +41,23 @@ const isGapRepeater = (char, index, word) =>
   index > 1 && word[index - 2] === char
 const hasGapRepeat = word => word.filter(isGapRepeater).length > 0
 
-const betterWords = words
-  .filter(hasDoublePairs)
-  .filter(hasGapRepeat)
-  .map(word => word.join(''))
+export default rows => {
+  const words = rows.map(line => line.split(''))
 
-const result2 = betterWords.length
+  const goodWords = words
+    .filter(hasEnoughVowels)
+    .filter(hasDoubleChar)
+    .filter(hasNoBad)
+    .map(word => word.join(''))
 
-console.log(result2)
+  const result1 = goodWords.length
+
+  const betterWords = words
+    .filter(hasDoublePairs)
+    .filter(hasGapRepeat)
+    .map(word => word.join(''))
+
+  const result2 = betterWords.length
+
+  return [result1, result2, 255, 55]
+}

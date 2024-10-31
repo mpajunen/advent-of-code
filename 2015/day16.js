@@ -1,6 +1,5 @@
 'use strict'
 
-const fs = require('fs')
 const immutable = require('immutable')
 const R = require('ramda')
 
@@ -22,12 +21,6 @@ const readAunt = line => {
   }
 }
 
-const aunts = fs
-  .readFileSync('input/day16.txt', 'utf8')
-  .trim()
-  .split('\n')
-  .map(readAunt)
-
 const message = `
 children: 3
 cats: 7
@@ -48,10 +41,6 @@ const interestMatches = interests => current =>
 
 const compareAunt = aunt =>
   R.reject(interestMatches(aunt.interests), R.keys(aunt.interests)).length === 0
-
-const correct = aunts.filter(compareAunt)[0]
-
-console.log(correct.number)
 
 const getMessageOperator = interest => {
   let operator
@@ -91,6 +80,11 @@ const compareAunt2 = aunt =>
   R.reject(interestMatches2(aunt.interests), R.keys(aunt.interests)).length ===
   0
 
-const correct2 = aunts.filter(compareAunt2)[0]
+export default rows => {
+  const aunts = rows.map(readAunt)
 
-console.log(correct2.number)
+  const correct = aunts.filter(compareAunt)[0]
+  const correct2 = aunts.filter(compareAunt2)[0]
+
+  return [correct.number, correct2.number, 213, 323]
+}
