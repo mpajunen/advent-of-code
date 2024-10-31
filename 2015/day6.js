@@ -2,7 +2,7 @@
 
 const fs = require('fs')
 
-const input = fs.readFileSync('input/day6.txt', 'utf8')
+const input = fs.readFileSync('input/day6.txt', 'utf8').trim()
 
 const splitAction = action => action.split(' ').slice(-4)
 const convertLoc1 = location => location.split(',').map(x => parseInt(x, 10))

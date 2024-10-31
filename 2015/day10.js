@@ -1,12 +1,13 @@
 'use strict'
 
+const fs = require('fs')
 const R = require('ramda')
 
 //const input = '1'
 //const iterations = 5
 
 const iterations = 50
-const input = '1113222113'
+const input = fs.readFileSync('input/day10.txt', 'utf8').trim()
 
 const lookAndSay = str => {
   let result = ''

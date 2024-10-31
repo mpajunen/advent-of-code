@@ -1,8 +1,9 @@
 'use strict'
 
+const fs = require('fs')
 const md5 = require('js-md5')
 
-const input = 'ckczppom'
+const input = fs.readFileSync('input/day4.txt', 'utf8').trim()
 
 const findMd5WithPrefix = (input, prefix) => {
   const len = prefix.length

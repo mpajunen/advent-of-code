@@ -1,13 +1,9 @@
 'use strict'
 
+const fs = require('fs')
 const R = require('ramda')
 
-const input =
-  //= 'abcdefgh'
-  //= 'ghjaaaaa'
-  //= 'ghijklmn'
-  //= 'xcrrq'
-  'hepxcrrq'
+const input = fs.readFileSync('input/day11.txt', 'utf8').trim()
 
 const alphabet = R.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1).map(code =>
   String.fromCharCode(code),

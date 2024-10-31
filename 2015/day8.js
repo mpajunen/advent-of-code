@@ -3,7 +3,7 @@
 const fs = require('fs')
 //const immutable = require('immutable')
 
-const input = fs.readFileSync('input/day8.txt', 'utf8')
+const input = fs.readFileSync('input/day8.txt', 'utf8').trim()
 
 const strings = input.split('\n')
 

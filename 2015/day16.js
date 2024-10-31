@@ -24,11 +24,22 @@ const readAunt = line => {
 
 const aunts = fs
   .readFileSync('input/day16.txt', 'utf8')
+  .trim()
   .split('\n')
   .map(readAunt)
 
-const message = fs
-  .readFileSync('input/day16-2.txt', 'utf8')
+const message = `
+children: 3
+cats: 7
+samoyeds: 2
+pomeranians: 3
+akitas: 0
+vizslas: 0
+goldfish: 5
+trees: 3
+cars: 2
+perfumes: 1`
+  .trim()
   .split('\n')
   .reduce(buildInterests, {})
 

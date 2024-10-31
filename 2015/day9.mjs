@@ -4,7 +4,7 @@ import fs from 'fs'
 
 import * as utils from './utils.mjs'
 
-const input = fs.readFileSync('input/day9.txt', 'utf8')
+const input = fs.readFileSync('input/day9.txt', 'utf8').trim()
 
 const readRoute = str => {
   const [from, , to, , distance] = str.split(' ')

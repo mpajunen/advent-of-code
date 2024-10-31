@@ -10,6 +10,7 @@ const getBoxSides = box => box.split('x').map(side => parseInt(side, 10))
 
 const sides = fs
   .readFileSync('input/day2.txt', 'utf8')
+  .trim()
   .split('\n')
   .map(getBoxSides)
 

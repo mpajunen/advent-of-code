@@ -4,7 +4,7 @@ import fs from 'fs'
 
 import * as utils from './utils.mjs'
 
-const input = fs.readFileSync('input/day13.txt', 'utf8')
+const input = fs.readFileSync('input/day13.txt', 'utf8').trim()
 
 const readSeating = str => {
   const [to, , verb, happiness, ...rest] = str.split(' ')
