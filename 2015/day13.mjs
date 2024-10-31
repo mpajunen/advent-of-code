@@ -2,7 +2,7 @@
 
 import fs from 'fs'
 
-import * as utils from './utils'
+import * as utils from './utils.mjs'
 
 const input = fs.readFileSync('input/day13.txt', 'utf8')
 
