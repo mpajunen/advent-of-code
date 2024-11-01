@@ -20,9 +20,16 @@ export default function day8([row]: string[]): [unknown, unknown] {
   const pixels = List.range(0, WIDTH * HEIGHT)
     .map(getPixel)
     .join('')
+  const text = Str.chunk(WIDTH, pixels).join('\n')
 
-  return [
-    checkCounts[1] * checkCounts[2], // 1806
-    Str.chunk(WIDTH, pixels), // JAFRA
-  ]
+  return [checkCounts[1] * checkCounts[2], text, 1806, expectedText]
 }
+
+const expectedText =`
+  ##  ##  #### ###   ##  
+   # #  # #    #  # #  # 
+   # #  # ###  #  # #  # 
+   # #### #    ###  #### 
+#  # #  # #    # #  #  # 
+ ##  #  # #    #  # #  # `
+  .slice(1) // Remove leading newline

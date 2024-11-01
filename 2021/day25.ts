@@ -62,7 +62,6 @@ export default (rows: string[]) => {
   const input = Grid.fromStrings<Cell>(rows)
 
   const result1 = stepsToStop(input)
-  const result2 = 0
 
-  return [result1, result2, 582, undefined]
+  return [result1, undefined, 582, undefined]
 }

@@ -23,7 +23,9 @@ export default function day4([row]: string[]): [unknown, unknown] {
   const numbers = List.range(start, end + 1)
 
   return [
-    numbers.filter(isMatch([hasAdjacent, isIncreasing])).length, // 945
-    numbers.filter(isMatch([hasPair, isIncreasing])).length, // 617
+    numbers.filter(isMatch([hasAdjacent, isIncreasing])).length,
+    numbers.filter(isMatch([hasPair, isIncreasing])).length,
+    945,
+    617
   ]
 }

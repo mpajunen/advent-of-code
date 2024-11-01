@@ -14,8 +14,5 @@ export default function day1(rows: string[]): [unknown, unknown] {
   const result1 = Num.sum(masses.map(getBaseFuel))
   const result2 = Num.sum(masses.map(getFuel))
 
-  return [
-    result1, // 3337766
-    result2, // 5003788
-  ]
+  return [result1, result2, 3337766, 5003788]
 }

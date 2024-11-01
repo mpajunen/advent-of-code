@@ -17,8 +17,5 @@ export default function day2([row]: string[]): [unknown, unknown] {
 
   const [result1] = IntCode.runWithInit(codes, 12, 2)
 
-  return [
-    result1, // 4138687
-    findOutput(codes), // 6635
-  ]
+  return [result1, findOutput(codes), 4138687, 6635]
 }

@@ -68,8 +68,5 @@ export default function day3(rows: string[]): [number, number] {
   const distances = lines.map(l => movingDistances(l, crossings))
   const totalDistances = List.zip(distances[0], distances[1]).map(Num.sum)
 
-  return [
-    Math.min(...originDistances), // 266
-    Math.min(...totalDistances), // 19242
-  ]
+  return [Math.min(...originDistances), Math.min(...totalDistances), 266, 19242]
 }

@@ -32,8 +32,5 @@ export default function day6(rows: string[]): [unknown, unknown] {
   const totalOrbits = orbits.getNodes().map(orbits.getAncestors).flat().length
   const santaDistance = orbits.getHopDistance('YOU', 'SAN')
 
-  return [
-    totalOrbits, // 314247
-    santaDistance, // 514
-  ]
+  return [totalOrbits, santaDistance, 314247, 514]
 }

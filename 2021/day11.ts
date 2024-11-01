@@ -47,5 +47,5 @@ export default (rows: string[]) => {
   const result1 = steps(input, 100).flashes
   const result2 = steps(input, 1000).stepCount
 
-  return [result1, result2, undefined, undefined]
+  return [result1, result2, 1637, 242]
 }

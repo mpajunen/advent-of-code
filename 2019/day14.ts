@@ -93,8 +93,5 @@ export default function day14(rows: string[]): [unknown, unknown] {
 
   const oreCount = findOreCount(reactions, [{ resource: 'FUEL', count: 1 }])
 
-  return [
-    oreCount, // 301997
-    findMaxFuel(reactions, 1_000_000_000_000), // 6216589
-  ]
+  return [oreCount, findMaxFuel(reactions, 1_000_000_000_000), 301997, 6216589]
 }

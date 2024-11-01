@@ -24,7 +24,6 @@ export default (rows: string[]) => {
   const sizes = pub.map(findLoopSize)
 
   const result1 = transformTimes(pub[1], sizes[0])
-  const result2 = 0
 
-  return [result1, result2, undefined, undefined]
+  return [result1, undefined, 354320, undefined]
 }

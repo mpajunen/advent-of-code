@@ -116,8 +116,5 @@ export default function day12(rows: string[]): [unknown, unknown] {
 
   const cycles = axes.map(axis => findAxisCycle(moons, axis))
 
-  return [
-    totalEnergy, // 14606
-    leastCommonMultiple(cycles), // 543673227860472
-  ]
+  return [totalEnergy, leastCommonMultiple(cycles), 14606, 543673227860472]
 }

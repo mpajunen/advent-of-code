@@ -32,8 +32,5 @@ export default function day10(rows: string[]): [unknown, unknown] {
   const vaporized = List.sortBy(i => getLaserRotation(i.angle), closest)
   const betWinner = vaporized[200 - 1]
 
-  return [
-    maxCount, // 303
-    betWinner.position.x * 100 + betWinner.position.y, // 408
-  ]
+  return [maxCount, betWinner.position.x * 100 + betWinner.position.y, 303, 408]
 }
