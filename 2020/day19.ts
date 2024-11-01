@@ -2,7 +2,7 @@ import { Input, List } from '../common'
 
 type Rule = string | number[] | { options: number[][] }
 type Rules = Record<number, Rule>
-type Input = { messages: string[], rules: Rules }
+type Input = { messages: string[]; rules: Rules }
 
 const MAX_DEPTH = 30
 
@@ -32,23 +32,28 @@ const getIn = (rows: string[], fixedRules: string[] = []): Input => {
   return { rules: Object.fromEntries(ruleEntries), messages }
 }
 
-const createMatch = (rules: Rules) => (message: string): boolean => {
-  const match = (r: Rule, options: string[], depth: number): string[] => {
-    if (depth > MAX_DEPTH) {
-      return []
+const createMatch =
+  (rules: Rules) =>
+  (message: string): boolean => {
+    const match = (r: Rule, options: string[], depth: number): string[] => {
+      if (depth > MAX_DEPTH) {
+        return []
+      }
+
+      if (typeof r === 'string') {
+        return options.flatMap(s => (s[0] === r ? s.slice(1) : []))
+      } else if (Array.isArray(r)) {
+        return r.reduce(
+          (acc, part) => match(rules[part], acc, depth + 1),
+          options,
+        )
+      } else {
+        return r.options.flatMap(p => match(p, options, depth + 1))
+      }
     }
 
-    if (typeof r === 'string') {
-      return options.flatMap(s => s[0] === r ? s.slice(1) : [])
-    } else if (Array.isArray(r)) {
-      return r.reduce((acc, part) => match(rules[part], acc, depth + 1), options)
-    } else {
-      return r.options.flatMap(p => match(p, options, depth + 1))
-    }
+    return match(rules[0], [message], 0).includes('')
   }
-
-  return match(rules[0], [message], 0).includes('')
-}
 
 export default (rows: string[]) => {
   const base = getIn(rows)

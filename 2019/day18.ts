@@ -32,7 +32,7 @@ const buildInitial = (rows: string[]) => {
   const raw = Grid.fromStrings<string>(rows)
 
   const maze = {
-    grid: raw.map(v => v === tiles.entrance ? tiles.passage : v),
+    grid: raw.map(v => (v === tiles.entrance ? tiles.passage : v)),
     targets: raw.entries().filter(([_, v]) => tiles.keys.includes(v)),
   }
   const state = {
@@ -45,12 +45,21 @@ const buildInitial = (rows: string[]) => {
   return { maze, state }
 }
 
-const findDistances = (maze: Maze, state: State, position: Vec2): Grid<number> => {
+const findDistances = (
+  maze: Maze,
+  state: State,
+  position: Vec2,
+): Grid<number> => {
   const getInitial = (tile: string): SpecialDistance =>
-    tile === '#' ? BLOCKED :
-      tile === '.' ? OPEN :
-        state.collected.includes(tile.toLowerCase()) ? OPEN :
-          tiles.keys.includes(tile) ? TARGET : BLOCKED
+    tile === '#'
+      ? BLOCKED
+      : tile === '.'
+        ? OPEN
+        : state.collected.includes(tile.toLowerCase())
+          ? OPEN
+          : tiles.keys.includes(tile)
+            ? TARGET
+            : BLOCKED
 
   const distances = maze.grid.map<number>(getInitial)
 
@@ -97,33 +106,39 @@ function findOptimalOption(maze: Maze, states: State[]): State {
     return states[0]
   }
 
-  const optimalOptions = findGroupMin(o => o.collected, o => o.distance, options)
+  const optimalOptions = findGroupMin(
+    o => o.collected,
+    o => o.distance,
+    options,
+  )
 
   return findOptimalOption(maze, optimalOptions)
 }
 
-const findNextOptions = (maze: Maze) => (state: State): State[] => {
-  const allDistances = state.positions.map(p => findDistances(maze, state, p))
+const findNextOptions =
+  (maze: Maze) =>
+  (state: State): State[] => {
+    const allDistances = state.positions.map(p => findDistances(maze, state, p))
 
-  return allDistances.flatMap((distances, robotIndex) =>
-    List.filterMap(([position, key]) => {
-      const distance = distances.get(position)
-      if (state.collected.includes(key) || distance < 0) {
-        return undefined
-      }
+    return allDistances.flatMap((distances, robotIndex) =>
+      List.filterMap(([position, key]) => {
+        const distance = distances.get(position)
+        if (state.collected.includes(key) || distance < 0) {
+          return undefined
+        }
 
-      const positions = [...state.positions]
-      positions[robotIndex] = position
+        const positions = [...state.positions]
+        positions[robotIndex] = position
 
-      return {
-        collected: `${state.collected.split('').sort().join('')}${key}`,
-        positions,
-        distance: state.distance + distance,
-        route: `${state.route}${key}`,
-      }
-    }, maze.targets),
-  )
-}
+        return {
+          collected: `${state.collected.split('').sort().join('')}${key}`,
+          positions,
+          distance: state.distance + distance,
+          route: `${state.route}${key}`,
+        }
+      }, maze.targets),
+    )
+  }
 
 const buildModified = (maze: Maze, state: State) => {
   const grid = maze.grid.copy()

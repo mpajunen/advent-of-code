@@ -18,7 +18,8 @@ const getDistance = (a, b) => common.sum(a.map((v, i) => Math.abs(v - b[i])))
 
 const isClose = (a, b) => getDistance(a, b) <= MAX
 
-const getConstellationCount = points => createGraph(points, isClose).getDisconnectedGroups().length
+const getConstellationCount = points =>
+  createGraph(points, isClose).getDisconnectedGroups().length
 
 const result1 = getConstellationCount(input.points)
 

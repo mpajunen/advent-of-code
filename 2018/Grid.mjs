@@ -1,13 +1,17 @@
 import * as common from './common'
 
-export const add = ([xa, ya]) => ([xb, yb]) => [xb + xa, yb + ya]
+export const add =
+  ([xa, ya]) =>
+  ([xb, yb]) => [xb + xa, yb + ya]
 
-export const manhattan = ([x1, y1]) => ([x2, y2]) =>
-  Math.abs(x1 - x2) + Math.abs(y1 - y2)
+export const manhattan =
+  ([x1, y1]) =>
+  ([x2, y2]) =>
+    Math.abs(x1 - x2) + Math.abs(y1 - y2)
 
 export function createGrid(getValue, width, height = undefined) {
   const createRow = i =>
-    Array.from({ length: width },(_, j) => getValue([i, j]))
+    Array.from({ length: width }, (_, j) => getValue([i, j]))
   const values = common.emptyArray(height || width, createRow)
 
   return new Grid(values)
@@ -48,7 +52,7 @@ export default class Grid {
   }
 
   filter(func) {
-    return this.map((value, point) => func(value, point) ? value : undefined)
+    return this.map((value, point) => (func(value, point) ? value : undefined))
   }
 
   findMax() {
@@ -82,8 +86,9 @@ export default class Grid {
   }
 
   map(func) {
-    const values = this.data
-      .map((row, j) => row.map((value, i) => func(value, [i, j])))
+    const values = this.data.map((row, j) =>
+      row.map((value, i) => func(value, [i, j])),
+    )
 
     return new Grid(values)
   }
@@ -99,7 +104,9 @@ export default class Grid {
 
   mapPart(func, [startX, startY], [endX, endY]) {
     const changeRow = (row, j) =>
-      row.map((value, i) => i >= startY && i < endY ? func(value, [i, j]) : value)
+      row.map((value, i) =>
+        i >= startY && i < endY ? func(value, [i, j]) : value,
+      )
     const change = (row, j) =>
       j >= startX && j < endX ? changeRow(row, j) : row
 
@@ -120,9 +127,7 @@ export default class Grid {
   }
 
   stringGrid() {
-    return this.data
-      .map(row => row.join(''))
-      .join('\n')
+    return this.data.map(row => row.join('')).join('\n')
   }
 
   valueCounts() {

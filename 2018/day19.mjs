@@ -37,7 +37,6 @@ const result1 = runProgram(input, 0, true)
 
 console.log(result1) // 984
 
-
 const result2 = runProgram(input, 1, true)
 
 console.log(result2) // 10982400

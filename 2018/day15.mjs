@@ -10,7 +10,12 @@ const FLOOR = '.'
 const WALL = '#'
 
 const INVALID_COST = 9999
-const MOVEMENTS = [[1, 0], [0, 1], [-1, 0], [0, -1]]
+const MOVEMENTS = [
+  [1, 0],
+  [0, 1],
+  [-1, 0],
+  [0, -1],
+]
 
 const allAdjacent = position => MOVEMENTS.map(add(position))
 
@@ -21,7 +26,7 @@ const createCreature = (kind, position) => ({
   health: STARTING_HEALTH,
 })
 
-const comparePosition = ([xa, ya], [xb, yb]) => (ya - yb) || (xa - xb)
+const comparePosition = ([xa, ya], [xb, yb]) => ya - yb || xa - xb
 
 const compareCreaturePosition = (creature1, creature2) =>
   comparePosition(creature1.position, creature2.position)
@@ -32,7 +37,7 @@ const createStart = inputRows => {
     .map(row => row.split(' ')[0].split(''))
   const raw = new Grid(rawValues)
 
-  const room = raw.map(char => CREATURES.includes(char) ? FLOOR : char)
+  const room = raw.map(char => (CREATURES.includes(char) ? FLOOR : char))
   const creatures = raw.reduce(
     (acc, char, position) =>
       CREATURES.includes(char) ? [...acc, createCreature(char, position)] : acc,
@@ -46,21 +51,23 @@ const findEnemies = (creatures, active) =>
   creatures.filter(c => c.health > 0 && c.kind !== active.kind)
 
 const findAtPosition = (creatures, position) =>
-  creatures.find(c => c.health > 0 && comparePosition(c.position, position) === 0)
+  creatures.find(
+    c => c.health > 0 && comparePosition(c.position, position) === 0,
+  )
 
 const game = (start, elfDamage = DEFAULT_DAMAGE) => {
   const { room } = start
 
   const allowedFor = (creatures, active) => position =>
     room.get(position) === FLOOR &&
-    (
-      comparePosition(active.position, position) === 0 ||
-      findAtPosition(creatures, position) === undefined
-    )
+    (comparePosition(active.position, position) === 0 ||
+      findAtPosition(creatures, position) === undefined)
 
   const findTargetPositions = (creatures, active) => {
     const enemies = findEnemies(creatures, active)
-    const targets = [].concat(...enemies.map(enemy => enemy.position).map(allAdjacent))
+    const targets = [].concat(
+      ...enemies.map(enemy => enemy.position).map(allAdjacent),
+    )
 
     return targets.filter(allowedFor(creatures, active))
   }
@@ -83,7 +90,9 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
         continue
       }
 
-      const newPositions = allAdjacent(position).filter(p => costs.get(p) === FLOOR)
+      const newPositions = allAdjacent(position).filter(
+        p => costs.get(p) === FLOOR,
+      )
 
       newPositions.forEach(p => {
         costs.set(p, cost)
@@ -100,13 +109,17 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
   }
 
   const findTarget = (targets, costs) => {
-    const targetCosts = targets.map(t => costs.get(t)).map(c => Number.isInteger(c) ? c : INVALID_COST)
+    const targetCosts = targets
+      .map(t => costs.get(t))
+      .map(c => (Number.isInteger(c) ? c : INVALID_COST))
     const minCost = Math.min(...targetCosts)
     if (minCost === INVALID_COST) {
       return undefined
     }
 
-    const minTargets = targets.filter((t, index) => targetCosts[index] === minCost)
+    const minTargets = targets.filter(
+      (t, index) => targetCosts[index] === minCost,
+    )
 
     return minTargets.sort(comparePosition)[0]
   }
@@ -150,8 +163,9 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
 
   const findAttackTarget = (creatures, active) => {
     const targetSquares = allAdjacent(active.position)
-    const targets = findEnemies(creatures, active)
-      .filter(enemy => targetSquares.find(t => comparePosition(t, enemy.position) === 0))
+    const targets = findEnemies(creatures, active).filter(enemy =>
+      targetSquares.find(t => comparePosition(t, enemy.position) === 0),
+    )
 
     if (targets.length === 0) {
       return
@@ -161,8 +175,7 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
 
     return targets
       .filter(t => t.health === minHealth)
-      .sort(compareCreaturePosition)
-      [0]
+      .sort(compareCreaturePosition)[0]
   }
 
   const creatureAttack = (creatures, active) => {
@@ -180,12 +193,11 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
   }
 
   const playTurn = creatures =>
-    creatures.sort(compareCreaturePosition)
-      .forEach(creature => {
-        if (creature.health > 0) {
-          act(creatures, creature)
-        }
-      })
+    creatures.sort(compareCreaturePosition).forEach(creature => {
+      if (creature.health > 0) {
+        act(creatures, creature)
+      }
+    })
 
   const inProgress = creatures => {
     const kinds = creatures.filter(c => c.health > 0).map(c => c.kind)
@@ -231,17 +243,17 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
 const print = (room, creatures) => {
   const printable = room.copy()
 
-  creatures.filter(c => c.health > 0).forEach(c => {
-    printable.set(c.position, c.kind)
-  })
+  creatures
+    .filter(c => c.health > 0)
+    .forEach(c => {
+      printable.set(c.position, c.kind)
+    })
 
   console.log('\n' + printable.stringGrid() + '\n')
 }
 
-const elfCount = creatures => creatures
-  .filter(c => c.kind === 'E')
-  .filter(c => c.health > 0)
-  .length
+const elfCount = creatures =>
+  creatures.filter(c => c.kind === 'E').filter(c => c.health > 0).length
 
 const testPlay = (input, turns, elfDamage) => {
   const start = createStart(input)
@@ -249,7 +261,6 @@ const testPlay = (input, turns, elfDamage) => {
 
   return score
 }
-
 
 const input = readInput()
 

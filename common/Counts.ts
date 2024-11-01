@@ -1,8 +1,7 @@
 type Key = number | string
 
 export class Counts<T extends Key = Key> {
-  constructor(public counts: Partial<Record<T, number>> = {}) {
-  }
+  constructor(public counts: Partial<Record<T, number>> = {}) {}
 
   static fromEntries<T extends Key>(entries: [T, number][]): Counts<T> {
     const counts = new Counts()

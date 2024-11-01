@@ -15,7 +15,13 @@ const getMonkey = (row: string): Monkey => {
   const parts = value.split(' ')
 
   return parts.length === 3
-    ? { name, kind: 'op', op: parts[1] as OpName, left: parts[0], right: parts[2] }
+    ? {
+        name,
+        kind: 'op',
+        op: parts[1] as OpName,
+        left: parts[0],
+        right: parts[2],
+      }
     : { name, kind: 'value', value: Number(value) }
 }
 
@@ -27,7 +33,7 @@ const operations: Ops = {
   '-': (l, r) => l - r,
   '*': (l, r) => l * r,
   '/': (l, r) => l / r,
-  '=': (l, r) => l === r ? 1 : 0,
+  '=': (l, r) => (l === r ? 1 : 0),
 }
 
 const reverseOps: Record<'left' | 'right', Ops> = {
@@ -60,7 +66,10 @@ const createGetYell = (monkeys: Monkeys) => {
 }
 
 const findOwnYell = (base: Monkeys): number => {
-  const monkeys: Monkeys = { ...base, root: { ...base.root, op: '=' } as Monkey }
+  const monkeys: Monkeys = {
+    ...base,
+    root: { ...base.root, op: '=' } as Monkey,
+  }
 
   const getYell = createGetYell(monkeys)
 

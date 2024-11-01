@@ -1,17 +1,22 @@
 import { Input, List, Vec2 } from '../common'
 
 type Limit = [number, number]
-type Limits = { x: Limit, y: Limit }
+type Limits = { x: Limit; y: Limit }
 
 const getInput = ([row]: string[]): Limits => {
-  const [xMin, xMax, yMin, yMax] = Input.parseByPattern<number[]>('target area: x=%i..%i, y=%i..%i')(row)
+  const [xMin, xMax, yMin, yMax] = Input.parseByPattern<number[]>(
+    'target area: x=%i..%i, y=%i..%i',
+  )(row)
 
   return { x: [xMin, xMax], y: [yMin, yMax] }
 }
 
 const findSolutions = (target: Limits) => (velocity: Vec2) => {
   const hitTarget = (p: Vec2) =>
-    p.x >= target.x[0] && p.x <= target.x[1] && p.y >= target.y[0] && p.y <= target.y[1]
+    p.x >= target.x[0] &&
+    p.x <= target.x[1] &&
+    p.y >= target.y[0] &&
+    p.y <= target.y[1]
 
   let position = { x: 0, y: 0 }
   let yMax = 0

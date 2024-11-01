@@ -34,7 +34,9 @@ const op = (acc: number, [op, value]: [Operator, number]): number =>
   op === '*' ? acc * value : acc + value
 
 const evalExpr = (expr: ExprList): number => {
-  const flattened: FlatList = expr.map(e => Array.isArray(e) ? evalExpr(e) : e)
+  const flattened: FlatList = expr.map(e =>
+    Array.isArray(e) ? evalExpr(e) : e,
+  )
 
   const [first, ...rest] = flattened
 
@@ -44,11 +46,13 @@ const evalExpr = (expr: ExprList): number => {
 }
 
 const evalNew = (expr: ExprList): number => {
-  const flattened: FlatList = expr.map(e => Array.isArray(e) ? evalNew(e) : e)
+  const flattened: FlatList = expr.map(e => (Array.isArray(e) ? evalNew(e) : e))
 
   const parts = List.splitBy('*', flattened)
 
-  const partSums = parts.map(part => part.filter(n => typeof n === 'number')).map(Num.sum)
+  const partSums = parts
+    .map(part => part.filter(n => typeof n === 'number'))
+    .map(Num.sum)
 
   return Num.product(partSums)
 }

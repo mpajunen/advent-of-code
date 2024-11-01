@@ -1,7 +1,7 @@
 import { product } from './Num'
 import { axes, fromTuple, Vec3 } from './Vec3'
 
-export type Cuboid = { min: Vec3, max: Vec3 }
+export type Cuboid = { min: Vec3; max: Vec3 }
 
 export const fromTuples = (min: number[], max: number[]): Cuboid => ({
   min: fromTuple(min),

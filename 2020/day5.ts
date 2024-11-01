@@ -1,6 +1,6 @@
 import { List, Str } from '../common'
 
-const digit = char => ['F', 'L'].includes(char) ? 0 : 1
+const digit = char => (['F', 'L'].includes(char) ? 0 : 1)
 
 const id = row => parseInt(Str.map(digit, row), 2)
 

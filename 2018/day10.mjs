@@ -67,11 +67,9 @@ const createPositionGrid = time => {
 
 const minTime = findMinTime()
 
-
 const result1 = createPositionGrid(minTime).stringGrid()
 
 console.log(result1) // FBHKLEAG
-
 
 const result2 = minTime
 

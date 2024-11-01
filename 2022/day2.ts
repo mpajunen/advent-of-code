@@ -12,13 +12,16 @@ const elfPicks = { A: 0, B: 1, C: 2 } as const
 const pickInstruction = { X: 0, Y: 1, Z: 2 } as const
 const resultInstruction = { X: 2, Y: 0, Z: 1 } as const
 
-const result = (elf: Pick, player: Pick) => (player - elf + 3) % 3 as Result
-const resultPick = (elf: Pick, result: Result) => (elf + result) % 3 as Pick
+const result = (elf: Pick, player: Pick) => ((player - elf + 3) % 3) as Result
+const resultPick = (elf: Pick, result: Result) => ((elf + result) % 3) as Pick
 
-const score = (elf: Pick, player: Pick) => resultScores[result(elf, player)] + pickScores[player]
+const score = (elf: Pick, player: Pick) =>
+  resultScores[result(elf, player)] + pickScores[player]
 
-const score1 = ([elf, player]: Play) => score(elfPicks[elf], pickInstruction[player])
-const score2 = ([elf, player]: Play) => score(elfPicks[elf], resultPick(elfPicks[elf], resultInstruction[player]))
+const score1 = ([elf, player]: Play) =>
+  score(elfPicks[elf], pickInstruction[player])
+const score2 = ([elf, player]: Play) =>
+  score(elfPicks[elf], resultPick(elfPicks[elf], resultInstruction[player]))
 
 const getInput = (rows: string[]) => rows.map(row => row.split(' '))
 

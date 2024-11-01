@@ -4,9 +4,7 @@ import { createGrid, manhattan } from './Grid'
 const readInput = () => {
   const rows = common.readDayRows(6)
 
-  const coordinates = rows.map(
-    row => row.split(', ').map(c => parseInt(c, 10)),
-  )
+  const coordinates = rows.map(row => row.split(', ').map(c => parseInt(c, 10)))
 
   return { coordinates }
 }
@@ -14,7 +12,6 @@ const readInput = () => {
 const input = readInput()
 
 const GRID_SIZE = 500
-
 
 const findClosest = coordinates => point => {
   const distances = coordinates.map(common.manhattan(point))
@@ -43,7 +40,6 @@ const result1 = Math.max(...Object.values(areaSizes))
 
 console.log(result1) // 4011
 
-
 const TOTAL_LIMIT = 10000
 
 const findTotal = coordinates => point =>
@@ -51,8 +47,6 @@ const findTotal = coordinates => point =>
 
 const totalsGrid = createGrid(findTotal(input.coordinates), GRID_SIZE)
 
-const result2 = totalsGrid.values()
-  .filter(v => v <= TOTAL_LIMIT)
-  .length
+const result2 = totalsGrid.values().filter(v => v <= TOTAL_LIMIT).length
 
 console.log(result2) // 46054

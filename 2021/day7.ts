@@ -9,7 +9,7 @@ const cost1: Cost = target => crab => Math.abs(target - crab)
 const cost2: Cost = target => crab => {
   const change = Math.abs(target - crab)
 
-  return (change + 1) * change / 2
+  return ((change + 1) * change) / 2
 }
 
 const minimumFuel = (crabs: number[], cost: Cost) => {

@@ -1,20 +1,21 @@
 import * as fs from 'fs'
 
 export const readDayRows = day =>
-  fs.readFileSync(`./2018/input/day${day}.txt`, 'utf8')
+  fs
+    .readFileSync(`./2018/input/day${day}.txt`, 'utf8')
     .split('\n')
     .filter(r => !!r)
 
 export const isNumeric = n => parseFloat(n).toString() === n
 
-const parseValue = value => isNumeric(value) ? parseFloat(value) : value
+const parseValue = value => (isNumeric(value) ? parseFloat(value) : value)
 
 export const replaceAll = (str, search, replacement) =>
   str.replace(new RegExp(search, 'g'), replacement)
 
 const replaceRules = [
   ['%i', '[\\s]*(-?\\d+)'],
-  ['%w', '[\\s]*(\\w+)']
+  ['%w', '[\\s]*(\\w+)'],
 ]
 
 export const parseByPattern = rawPattern => {
@@ -51,10 +52,10 @@ export const findFactors = num =>
     .reduce((acc, n) => [...acc, n, num / n], [])
 
 export const findIndices = (func, values) =>
-  filterMap((item, index) => func(item, index) ? index : undefined, values)
+  filterMap((item, index) => (func(item, index) ? index : undefined), values)
 
 export const indicesOf = (search, values) =>
-  filterMap((value, index) => value === search ? index : undefined, values)
+  filterMap((value, index) => (value === search ? index : undefined), values)
 
 export const intersection = (values, compare) =>
   values.filter(v => compare.includes(v))
@@ -76,22 +77,23 @@ export const minBy = (accessor, values) => {
 export const range = (from, to) =>
   Array.from({ length: to - from }, (_, k) => k + from)
 
-export const sum = values =>
-  values.reduce((a, b) => a + b, 0)
+export const sum = values => values.reduce((a, b) => a + b, 0)
 
-export const unique = values =>
-  [...new Set(values).values()]
+export const unique = values => [...new Set(values).values()]
 
 export class DefaultDict {
   constructor(getDefault) {
-    return new Proxy({}, {
-      get: (target, name) => {
-        if (!(name in target)) {
-          target[name] = getDefault()
-        }
+    return new Proxy(
+      {},
+      {
+        get: (target, name) => {
+          if (!(name in target)) {
+            target[name] = getDefault()
+          }
 
-        return target[name]
+          return target[name]
+        },
       },
-    })
+    )
   }
 }

@@ -24,9 +24,8 @@ const result1 = getInRadius(strongest).length
 
 console.log(result1) // 442
 
-
 const reachesBox = (center, boxRadius) => bot =>
-  Cube.manhattan(bot.position)(center) <= (bot.radius + (boxRadius - 1))
+  Cube.manhattan(bot.position)(center) <= bot.radius + (boxRadius - 1)
 
 const reachCount = radius => position =>
   bots.filter(reachesBox(position, radius)).length

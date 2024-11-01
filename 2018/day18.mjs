@@ -25,9 +25,10 @@ const getAdjacent = (grid, [x, y]) => [
 ]
 
 const transforms = {
-  [OPEN]: adjacent => adjacent[TREE] >= 3 ? TREE : OPEN,
-  [TREE]: adjacent => adjacent[YARD] >= 3 ? YARD : TREE,
-  [YARD]: adjacent => adjacent[YARD] >= 1 && adjacent[TREE] >= 1 ? YARD : OPEN,
+  [OPEN]: adjacent => (adjacent[TREE] >= 3 ? TREE : OPEN),
+  [TREE]: adjacent => (adjacent[YARD] >= 3 ? YARD : TREE),
+  [YARD]: adjacent =>
+    adjacent[YARD] >= 1 && adjacent[TREE] >= 1 ? YARD : OPEN,
 }
 
 const transform = grid => (value, place) => {
@@ -74,11 +75,9 @@ const result1 = totalValue(passed.grid)
 
 console.log(result1) // 614812
 
-
 const TOTAL_TIME = 1000000000
 const CYCLE_LENGTH = 28
 const CYCLE_START = 560 // Not the actual start, just a value far enough forward with a matching phase (28 * 20)
-
 
 const end = (TOTAL_TIME % CYCLE_LENGTH) + CYCLE_START
 

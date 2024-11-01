@@ -1,8 +1,10 @@
 const findPair = (nums: number[]) =>
-  nums.flatMap(a => nums.flatMap(b => a + b === 2020 ? a * b : []))
+  nums.flatMap(a => nums.flatMap(b => (a + b === 2020 ? a * b : [])))
 
 const findTriplet = (nums: number[]) =>
-  nums.flatMap(a => nums.flatMap(b => nums.flatMap(c => a + b + c === 2020 ? a * b * c : [])))
+  nums.flatMap(a =>
+    nums.flatMap(b => nums.flatMap(c => (a + b + c === 2020 ? a * b * c : []))),
+  )
 
 export default (rows: string[]) => {
   const nums = rows.map(row => parseInt(row))

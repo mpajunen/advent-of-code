@@ -19,7 +19,7 @@ const readInput = () => {
   })
 
   const rows = common.readDayRows(4)
-  const events = rows.map(parseRow).sort((a, b) => a.time < b.time ? -1 : 1)
+  const events = rows.map(parseRow).sort((a, b) => (a.time < b.time ? -1 : 1))
 
   const nights = events.reduce((n, event) => {
     if (event.action.startsWith('Guard')) {
@@ -50,10 +50,9 @@ const readInput = () => {
 
 const input = readInput()
 
-
 const MINUTES = 60
 
-const createSlept = (sleeps) => {
+const createSlept = sleeps => {
   const addSlept = (all, sleep) => {
     sleep.sleeps.forEach(s => {
       common.range(s.start, s.end).forEach(min => {
@@ -64,7 +63,10 @@ const createSlept = (sleeps) => {
     return all
   }
 
-  return sleeps.reduce(addSlept, new common.DefaultDict(() => common.emptyArray(MINUTES)))
+  return sleeps.reduce(
+    addSlept,
+    new common.DefaultDict(() => common.emptyArray(MINUTES)),
+  )
 }
 
 const findGuard = (comparison, slept) => {
@@ -83,7 +85,6 @@ const sleepy = findGuard(guard => common.sum(slept[guard]), slept)
 const result1 = sleepy.guard * sleepy.maxAt
 
 console.log(result1) // 142515
-
 
 const consistent = findGuard(guard => Math.max(...slept[guard]), slept)
 

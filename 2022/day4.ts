@@ -1,8 +1,9 @@
 import { Input, List, Range } from '../common'
 
-const getInput = (rows: string[]) => rows
-  .map(Input.parseByPattern('%i-%i,%i-%i'))
-  .map(row => List.chunk(row, 2)) as [Range, Range][]
+const getInput = (rows: string[]) =>
+  rows
+    .map(Input.parseByPattern('%i-%i,%i-%i'))
+    .map(row => List.chunk(row, 2)) as [Range, Range][]
 
 export default (rows: string[]) => {
   const input = getInput(rows)

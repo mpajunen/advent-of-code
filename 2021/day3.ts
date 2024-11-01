@@ -12,7 +12,9 @@ const findCommon = (most: boolean, rows: Num.Bit[][], index = 0): Num.Bit[] => {
 
   const remaining = rows.filter(row => (row[index] === common) === most)
 
-  return remaining.length === 1 ? remaining[0] : findCommon(most, remaining, index + 1)
+  return remaining.length === 1
+    ? remaining[0]
+    : findCommon(most, remaining, index + 1)
 }
 
 export default (rows: string[]) => {
@@ -21,7 +23,7 @@ export default (rows: string[]) => {
   const columns = new Grid(input).columns()
 
   const gamma = columns.map(getCommonValue)
-  const epsilon = columns.map(column => getCommonValue(column) ? 0 : 1)
+  const epsilon = columns.map(column => (getCommonValue(column) ? 0 : 1))
 
   const oxygen = findCommon(true, input)
   const co2 = findCommon(false, input)

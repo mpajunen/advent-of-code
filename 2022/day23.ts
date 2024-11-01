@@ -4,26 +4,42 @@ import { Dir } from '../common/Vec2'
 type Cell = '#' | '.'
 
 // Clockwise from north
-const units = [[0, -1], [1, -1], [1, 0], [1, 1], [0, 1], [-1, 1], [-1, 0], [-1, -1]].map(Vec2.fromTuple)
+const units = [
+  [0, -1],
+  [1, -1],
+  [1, 0],
+  [1, 1],
+  [0, 1],
+  [-1, 1],
+  [-1, 0],
+  [-1, -1],
+].map(Vec2.fromTuple)
 const dirIndices = { N: 0, S: 4, W: 6, E: 2 }
 
 const priorities: Dir[] = ['N', 'S', 'W', 'E']
 
-type Move = { from: Vec2, to: Vec2 }
+type Move = { from: Vec2; to: Vec2 }
 
-const getElfMove = (grid: Grid<Cell>, round: number, position: Vec2): Move | undefined => {
+const getElfMove = (
+  grid: Grid<Cell>,
+  round: number,
+  position: Vec2,
+): Move | undefined => {
   const adjacent = units.map(a => Vec2.add(position, a)).map(p => grid.get(p))
 
   if (!adjacent.includes('#')) {
     return undefined
   }
 
-  const getDirPositions = (dir: Dir) => [-1, 0, 1]
-    .map(offset => (dirIndices[dir] + offset + units.length) % units.length)
-    .map(i => adjacent[i])
+  const getDirPositions = (dir: Dir) =>
+    [-1, 0, 1]
+      .map(offset => (dirIndices[dir] + offset + units.length) % units.length)
+      .map(i => adjacent[i])
   const dirHasElf = (dir: Dir) => getDirPositions(dir).includes('#')
   const getDirMove = (dir: Dir): Move | undefined =>
-    dirHasElf(dir) ? undefined : { from: position, to: Vec2.add(position, Vec2.units[dir]) }
+    dirHasElf(dir)
+      ? undefined
+      : { from: position, to: Vec2.add(position, Vec2.units[dir]) }
 
   return List.range(0, priorities.length)
     .map(index => priorities[(round + index) % priorities.length])
@@ -34,10 +50,13 @@ const getElfMove = (grid: Grid<Cell>, round: number, position: Vec2): Move | und
 }
 
 const getElfMoves = (grid: Grid<Cell>, round: number): Move[] => {
-  const all = grid.valuePlaces('#').flatMap<Move>(p => getElfMove(grid, round, p) ?? [])
+  const all = grid
+    .valuePlaces('#')
+    .flatMap<Move>(p => getElfMove(grid, round, p) ?? [])
 
-  return Object.values(List.groupBy(move => Vec2.toString(move.to), all))
-    .flatMap(group => group.length === 1 ? group : [])
+  return Object.values(
+    List.groupBy(move => Vec2.toString(move.to), all),
+  ).flatMap(group => (group.length === 1 ? group : []))
 }
 
 const makeMoves = (grid: Grid<Cell>, moves: Move[]) =>

@@ -1,6 +1,7 @@
 import { List } from '../common'
 
-const transform = (n: number, subject: number): number => (n * subject) % 20201227
+const transform = (n: number, subject: number): number =>
+  (n * subject) % 20201227
 
 const findLoopSize = (n: number): number => {
   let size = 0

@@ -9,12 +9,12 @@ export const operations = {
   bori: ([, A, B], reg) => reg[A] | B,
   setr: ([, A], reg) => reg[A],
   seti: ([, A]) => A,
-  gtir: ([, A, B], reg) => A > reg[B] ? 1 : 0,
-  gtri: ([, A, B], reg) => reg[A] > B ? 1 : 0,
-  gtrr: ([, A, B], reg) => reg[A] > reg[B] ? 1 : 0,
-  eqir: ([, A, B], reg) => A === reg[B] ? 1 : 0,
-  eqri: ([, A, B], reg) => reg[A] === B ? 1 : 0,
-  eqrr: ([, A, B], reg) => reg[A] === reg[B] ? 1 : 0,
+  gtir: ([, A, B], reg) => (A > reg[B] ? 1 : 0),
+  gtri: ([, A, B], reg) => (reg[A] > B ? 1 : 0),
+  gtrr: ([, A, B], reg) => (reg[A] > reg[B] ? 1 : 0),
+  eqir: ([, A, B], reg) => (A === reg[B] ? 1 : 0),
+  eqri: ([, A, B], reg) => (reg[A] === B ? 1 : 0),
+  eqrr: ([, A, B], reg) => (reg[A] === reg[B] ? 1 : 0),
 }
 
 export const instruct = (func, instruction, registers) => {

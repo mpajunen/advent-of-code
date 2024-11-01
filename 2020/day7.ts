@@ -1,19 +1,24 @@
 import { Num } from '../common'
 
-type Count = { color: string, count: number }
-type Rule = { color: string, contains: Count[] }
+type Count = { color: string; count: number }
+type Rule = { color: string; contains: Count[] }
 
 const getRule = (row: string): Rule => {
   const [start, rest] = row.split(' contain ')
 
   const color = start.split(' ').slice(0, 2).join(' ')
 
-  const contains = rest.split(', ')
+  const contains = rest
+    .split(', ')
     .map(r => r.split(' '))
-    .flatMap(([count, style, color]) => count === 'no' ? [] : ({
-      count: parseInt(count),
-      color: [style, color].join(' '),
-    }))
+    .flatMap(([count, style, color]) =>
+      count === 'no'
+        ? []
+        : {
+            count: parseInt(count),
+            color: [style, color].join(' '),
+          },
+    )
 
   return { color, contains }
 }

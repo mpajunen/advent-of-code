@@ -44,8 +44,11 @@ export default (rows: string[]) => {
   const input = getInput(rows)
 
   const distanceMap = buildReverseDistanceMap(input)
-  const bottomDistances = distanceMap.entries()
-    .flatMap(([position, distance]) => input.map.get(position) === 'a' ? distance : [])
+  const bottomDistances = distanceMap
+    .entries()
+    .flatMap(([position, distance]) =>
+      input.map.get(position) === 'a' ? distance : [],
+    )
 
   const result1 = distanceMap.get(input.start)
   const result2 = Math.min(...bottomDistances.values())

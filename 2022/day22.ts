@@ -4,12 +4,12 @@ import { Dir, TurnDir } from '../common/Vec2'
 const splitPath = (section: string, letter: string) =>
   section
     .split(letter)
-    .flatMap((part, index) => index === 0 ? part : [letter, part])
+    .flatMap((part, index) => (index === 0 ? part : [letter, part]))
 
 const getPath = (row: string) =>
   splitPath(row, 'R')
     .flatMap(part => splitPath(part, 'L'))
-    .map(step => step === 'R' || step === 'L' ? step : Number(step))
+    .map(step => (step === 'R' || step === 'L' ? step : Number(step)))
 
 type Tile = '.' | '#' | ' '
 type Map = Grid<Tile>
@@ -87,7 +87,10 @@ const createCubeWrap = (map: Map, example: boolean): Wrap => {
   const tilesPerSide = map.size().x / sides.size().x
 
   const getSideInfo = (p: Position) => {
-    const position = { x: Math.floor(p.x / tilesPerSide), y: Math.floor(p.y / tilesPerSide) }
+    const position = {
+      x: Math.floor(p.x / tilesPerSide),
+      y: Math.floor(p.y / tilesPerSide),
+    }
     const number = sides.get(position)
     const tileOffset = Vec2.mul(position, tilesPerSide)
     const inTile = Vec2.subtract(p, tileOffset)
@@ -101,20 +104,40 @@ const createCubeWrap = (map: Map, example: boolean): Wrap => {
     let x
     let y
     if (enterFacing === 'N') {
-      x = { N: inTile.x, S: maxTile - inTile.x, E: inTile.y, W: maxTile - inTile.y }[fromFacing]
+      x = {
+        N: inTile.x,
+        S: maxTile - inTile.x,
+        E: inTile.y,
+        W: maxTile - inTile.y,
+      }[fromFacing]
       y = maxTile
     }
     if (enterFacing === 'S') {
-      x = { N: maxTile - inTile.x, S: inTile.x, E: maxTile - inTile.y, W: inTile.y }[fromFacing]
+      x = {
+        N: maxTile - inTile.x,
+        S: inTile.x,
+        E: maxTile - inTile.y,
+        W: inTile.y,
+      }[fromFacing]
       y = 0
     }
     if (enterFacing === 'W') {
       x = maxTile
-      y = { N: maxTile - inTile.x, S: inTile.x, E: maxTile - inTile.y, W: inTile.y }[fromFacing]
+      y = {
+        N: maxTile - inTile.x,
+        S: inTile.x,
+        E: maxTile - inTile.y,
+        W: inTile.y,
+      }[fromFacing]
     }
     if (enterFacing === 'E') {
       x = 0
-      y = { N: inTile.x, S: maxTile - inTile.x, E: inTile.y, W: maxTile - inTile.y }[fromFacing]
+      y = {
+        N: inTile.x,
+        S: maxTile - inTile.x,
+        E: inTile.y,
+        W: maxTile - inTile.y,
+      }[fromFacing]
     }
 
     return { x, y }
@@ -126,8 +149,15 @@ const createCubeWrap = (map: Map, example: boolean): Wrap => {
 
     const enterFacing = directions[(directions.indexOf(enterFrom) + 2 + 4) % 4]
 
-    const withinTile = getWithinTile(sideFrom.inTile, position.facing, enterFacing)
-    const tileOrigin = Vec2.mul(sides.findPlace(cell => cell === nextSideNumber.toString()), tilesPerSide)
+    const withinTile = getWithinTile(
+      sideFrom.inTile,
+      position.facing,
+      enterFacing,
+    )
+    const tileOrigin = Vec2.mul(
+      sides.findPlace(cell => cell === nextSideNumber.toString()),
+      tilesPerSide,
+    )
 
     const newPlace = Vec2.add(tileOrigin, withinTile)
 
@@ -135,7 +165,12 @@ const createCubeWrap = (map: Map, example: boolean): Wrap => {
   }
 }
 
-const followPath = (map: Map, path: Step[], initialPosition: Position, wrap: Wrap): Position => {
+const followPath = (
+  map: Map,
+  path: Step[],
+  initialPosition: Position,
+  wrap: Wrap,
+): Position => {
   const moveOneStep = (p: Position): Position => {
     let position = { ...p, ...Vec2.add(p, Vec2.units[p.facing]) }
     let tile = map.get(position)
@@ -151,8 +186,10 @@ const followPath = (map: Map, path: Step[], initialPosition: Position, wrap: Wra
   const move = (p: Position, tileCount: number): Position =>
     List.range(0, tileCount).reduce(moveOneStep, p)
 
-  const turn = (p: Position, dir: TurnDir): Position =>
-    ({ ...p, facing: Vec2.turns[dir][p.facing] })
+  const turn = (p: Position, dir: TurnDir): Position => ({
+    ...p,
+    facing: Vec2.turns[dir][p.facing],
+  })
 
   const follow = (p: Position, step: Step): Position =>
     step === 'R' || step === 'L' ? turn(p, step) : move(p, step)
@@ -178,7 +215,9 @@ export default (rows: string[]) => {
   const example = map.size().y < 20
 
   const result1 = score(followPath(map, path, initial, createFlatWrap(map)))
-  const result2 = score(followPath(map, path, initial, createCubeWrap(map, example)))
+  const result2 = score(
+    followPath(map, path, initial, createCubeWrap(map, example)),
+  )
 
   return [result1, result2, 89224, 136182]
 }

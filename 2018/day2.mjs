@@ -16,9 +16,11 @@ const result1 = findNumberWithCount(2) * findNumberWithCount(3)
 
 console.log(result1) // 9633
 
-
 const findSameChars = word1 => word2 =>
-  word2.split('').filter((char, i) => char === word1[i]).join('')
+  word2
+    .split('')
+    .filter((char, i) => char === word1[i])
+    .join('')
 
 const findMostMatchingPart = () => {
   for (const word1 of rows) {

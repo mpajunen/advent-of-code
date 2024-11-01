@@ -2,12 +2,11 @@ export type Dir = 'N' | 'S' | 'E' | 'W'
 
 export type TurnDir = 'L' | 'R'
 
-export type Move = { dir: Dir, length: number }
+export type Move = { dir: Dir; length: number }
 
 export type Line = [Vec2, Vec2]
 
-export type Vec2 = { x: number, y: number }
-
+export type Vec2 = { x: number; y: number }
 
 export const origin: Vec2 = { x: 0, y: 0 }
 
@@ -18,7 +17,12 @@ export const units: Record<Dir, Vec2> = {
   S: { x: 0, y: 1 },
 }
 
-export const screenUnits: Record<'U' | 'L' | 'R' | 'D', Vec2> = { U: units.N, L: units.W, R: units.E, D: units.S }
+export const screenUnits: Record<'U' | 'L' | 'R' | 'D', Vec2> = {
+  U: units.N,
+  L: units.W,
+  R: units.E,
+  D: units.S,
+}
 
 const diagonalList: Vec2[] = [
   { x: -1, y: -1 },
@@ -31,22 +35,27 @@ const unitValues = Object.values(units)
 
 export const allList = [...unitValues, ...diagonalList]
 
-export const adjacent = (base: Vec2): Vec2[] => unitValues.map(vec => add(base, vec))
+export const adjacent = (base: Vec2): Vec2[] =>
+  unitValues.map(vec => add(base, vec))
 
-export const allAdjacent = (base: Vec2): Vec2[] => allList.map(vec => add(base, vec))
+export const allAdjacent = (base: Vec2): Vec2[] =>
+  allList.map(vec => add(base, vec))
 
-export const diagonal = (base: Vec2): Vec2[] => diagonalList.map(vec => add(base, vec))
+export const diagonal = (base: Vec2): Vec2[] =>
+  diagonalList.map(vec => add(base, vec))
 
-export const add = (a: Vec2, b: Vec2): Vec2 =>
-  ({ x: a.x + b.x, y: a.y + b.y })
+export const add = (a: Vec2, b: Vec2): Vec2 => ({ x: a.x + b.x, y: a.y + b.y })
 
 export const angle = ({ x, y }: Vec2): number =>
-  x === 0 && y === 0 ? Number.NaN : Math.atan2(y, x) / Math.PI * 180
+  x === 0 && y === 0 ? Number.NaN : (Math.atan2(y, x) / Math.PI) * 180
 
-export const equal = (a: Vec2) => (b: Vec2): boolean =>
-  a.x === b.x && a.y === b.y
+export const equal =
+  (a: Vec2) =>
+  (b: Vec2): boolean =>
+    a.x === b.x && a.y === b.y
 
-export const fromString = (s: string): Vec2 => fromTuple(s.split(',').map(Number))
+export const fromString = (s: string): Vec2 =>
+  fromTuple(s.split(',').map(Number))
 
 export const fromTuple = ([x, y]: number[]): Vec2 => ({ x, y })
 
@@ -55,11 +64,15 @@ export const manhattan = (a: Vec2, b: Vec2): number =>
 
 export const move = (start: Vec2, move: Move): Vec2 => add(start, moveVec(move))
 
-export const moveVec = ({ dir, length }: Move): Vec2 =>
-  ({ x: units[dir].x * length, y: units[dir].y * length })
+export const moveVec = ({ dir, length }: Move): Vec2 => ({
+  x: units[dir].x * length,
+  y: units[dir].y * length,
+})
 
-export const subtract = (a: Vec2, b: Vec2): Vec2 =>
-  ({ x: a.x - b.x, y: a.y - b.y })
+export const subtract = (a: Vec2, b: Vec2): Vec2 => ({
+  x: a.x - b.x,
+  y: a.y - b.y,
+})
 
 export const mul = ({ x, y }: Vec2, n: number): Vec2 => ({ x: x * n, y: y * n })
 

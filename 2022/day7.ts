@@ -30,13 +30,12 @@ const parseOutput = (row: string): LsOutput => {
 }
 
 const getInput = (rows: string[]) =>
-  List
-    .splitBy(row => row.startsWith('$'), rows, true)
+  List.splitBy(row => row.startsWith('$'), rows, true)
     .slice(1) // Remove empty
     .map(parseCommand)
 
 const getDirDirectSize = (out: LsOutput[]) =>
-  Num.sum(out.map(o => o.type === 'file' ? o.size : 0))
+  Num.sum(out.map(o => (o.type === 'file' ? o.size : 0)))
 
 const getDirDirectSizes = (commands: Command[]): DirSizes => {
   const dirSizes = {}
@@ -67,7 +66,7 @@ const getTotalSizes = (ownSizes: DirSizes): DirSizes => {
   const sizes = Object.entries(ownSizes)
 
   const getTotalSize = (parentDir: string) =>
-    Num.sum(sizes.map(([dir, size]) => dir.startsWith(parentDir) ? size : 0))
+    Num.sum(sizes.map(([dir, size]) => (dir.startsWith(parentDir) ? size : 0)))
 
   return Object.fromEntries(sizes.map(([dir]) => [dir, getTotalSize(dir)]))
 }
@@ -85,8 +84,12 @@ export default (rows: string[]) => {
   const dirSizes = getTotalSizes(getDirDirectSizes(input))
   const neededSpace = getNeededSpace(dirSizes[''])
 
-  const result1 = Num.sum(Object.values(dirSizes).filter(s => s <= SMALL_DIR_LIMIT))
-  const result2 = Math.min(...Object.values(dirSizes).filter(s => s >= neededSpace))
+  const result1 = Num.sum(
+    Object.values(dirSizes).filter(s => s <= SMALL_DIR_LIMIT),
+  )
+  const result2 = Math.min(
+    ...Object.values(dirSizes).filter(s => s >= neededSpace),
+  )
 
   return [result1, result2, 1582412, 3696336]
 }

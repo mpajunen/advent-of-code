@@ -13,13 +13,21 @@ const combineAdd = (ranges: Range[], range: Range) => {
   }
   const toCombine = ranges[index]
 
-  const newRange: Range = [Math.min(toCombine[MIN], range[MIN]), Math.max(toCombine[MAX], range[MAX])]
+  const newRange: Range = [
+    Math.min(toCombine[MIN], range[MIN]),
+    Math.max(toCombine[MAX], range[MAX]),
+  ]
 
-  return combineAdd(ranges.filter((r, i) => i !== index), newRange)
+  return combineAdd(
+    ranges.filter((r, i) => i !== index),
+    newRange,
+  )
 }
 
-export const contains = (a: Range, b: Range) => a[MIN] <= b[MIN] && a[MAX] >= b[MAX]
-export const eitherContains = (a: Range, b: Range) => contains(a, b) || contains(b, a)
+export const contains = (a: Range, b: Range) =>
+  a[MIN] <= b[MIN] && a[MAX] >= b[MAX]
+export const eitherContains = (a: Range, b: Range) =>
+  contains(a, b) || contains(b, a)
 
 export const length = (range: Range) => range[MAX] - range[MIN] + 1
 
@@ -29,4 +37,5 @@ export const overlap = (a: Range, b: Range): Range | undefined => {
 
   return min <= max ? [min, max] : undefined
 }
-export const overlaps = (a: Range, b: Range): boolean => overlap(a, b) !== undefined
+export const overlaps = (a: Range, b: Range): boolean =>
+  overlap(a, b) !== undefined

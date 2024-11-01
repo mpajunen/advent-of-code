@@ -1,6 +1,6 @@
 import { Num } from '../common'
 
-const traverse = (trees: string[][]) => (slope: { x: number, y: number }) => {
+const traverse = (trees: string[][]) => (slope: { x: number; y: number }) => {
   let treeCount = 0
   let x = 0
   let y = 0
@@ -8,7 +8,7 @@ const traverse = (trees: string[][]) => (slope: { x: number, y: number }) => {
   while (y < trees.length) {
     const location = trees[y][x % trees[0].length]
 
-    treeCount += (location === '#' ? 1 : 0)
+    treeCount += location === '#' ? 1 : 0
 
     x += slope.x
     y += slope.y
@@ -17,7 +17,13 @@ const traverse = (trees: string[][]) => (slope: { x: number, y: number }) => {
   return treeCount
 }
 
-const slopes = [{ x: 1, y: 1 }, { x: 3, y: 1 }, { x: 5, y: 1 }, { x: 7, y: 1 }, { x: 1, y: 2 }]
+const slopes = [
+  { x: 1, y: 1 },
+  { x: 3, y: 1 },
+  { x: 5, y: 1 },
+  { x: 7, y: 1 },
+  { x: 1, y: 2 },
+]
 
 export default (rows: string[]) => {
   const trees = rows.map(r => r.split(''))

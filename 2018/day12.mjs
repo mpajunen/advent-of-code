@@ -22,7 +22,7 @@ const readInput = () => {
   rest.forEach(row => {
     const [pattern, , to] = row.split(' ')
     const from = common.sum(
-      pattern.split('').map((char, index) => char === '#' ? FLAGS[index] : 0)
+      pattern.split('').map((char, index) => (char === '#' ? FLAGS[index] : 0)),
     )
 
     rules.set(from, to === '#')
@@ -50,11 +50,9 @@ const step = values => {
   return next
 }
 
-const stepCount = (count, values) =>
-  common.range(0, count).reduce(step, values)
+const stepCount = (count, values) => common.range(0, count).reduce(step, values)
 
-const score = values =>
-  common.sum([...values.keys()])
+const score = values => common.sum([...values.keys()])
 
 const GENERATIONS_TEST = 20
 
@@ -63,7 +61,6 @@ const afterTwenty = stepCount(GENERATIONS_TEST, initial)
 const result1 = score(afterTwenty)
 
 console.log(result1) // 2166
-
 
 const GENERATIONS_FINAL = 50000000000
 

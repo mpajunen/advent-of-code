@@ -1,6 +1,10 @@
 import { Grid, List, Vec2 } from '../common'
 
-enum Square { floor = '.', empty = 'L', occupied = '#' }
+enum Square {
+  floor = '.',
+  empty = 'L',
+  occupied = '#',
+}
 
 type Data = Grid<Square>
 type Step = (grid: Data) => Data
@@ -8,7 +12,9 @@ type Step = (grid: Data) => Data
 type GetNear = (grid: Data, pos: Vec2) => Square[]
 
 const getAdjacent: GetNear = (grid, position) =>
-  Vec2.allAdjacent(position).map(pos => grid.get(pos)).filter(v => v !== undefined)
+  Vec2.allAdjacent(position)
+    .map(pos => grid.get(pos))
+    .filter(v => v !== undefined)
 
 const getVisible: GetNear = (grid, pair) => {
   const one = (position: Vec2, direction: Vec2): Square | undefined => {
@@ -21,20 +27,22 @@ const getVisible: GetNear = (grid, pair) => {
   return Vec2.allList.map(direction => one(pair, direction))
 }
 
-const createStep = (limit: number, find: GetNear): Step => grid =>
-  grid.map((value, position) => {
-    const near = find(grid, position)
-    const occupied = List.counts(near)[Square.occupied] ?? 0
+const createStep =
+  (limit: number, find: GetNear): Step =>
+  grid =>
+    grid.map((value, position) => {
+      const near = find(grid, position)
+      const occupied = List.counts(near)[Square.occupied] ?? 0
 
-    if (value === Square.empty && occupied === 0) {
-      return Square.occupied
-    }
-    if (value === Square.occupied && occupied >= limit) {
-      return Square.empty
-    }
+      if (value === Square.empty && occupied === 0) {
+        return Square.occupied
+      }
+      if (value === Square.occupied && occupied >= limit) {
+        return Square.empty
+      }
 
-    return value
-  })
+      return value
+    })
 
 const getCount = (state: Data): number => state.valueCounts()[Square.occupied]
 

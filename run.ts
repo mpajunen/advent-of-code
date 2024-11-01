@@ -2,14 +2,15 @@ import { readFileSync } from 'fs'
 import { List } from './common'
 
 type Answer = number | string
-type Day = (rows: string[]) => [Answer, Answer, Answer | undefined, Answer | undefined]
+type Day = (
+  rows: string[],
+) => [Answer, Answer, Answer | undefined, Answer | undefined]
 
 const readDayRows = (year, day) =>
-  readFileSync(`./${year}/input/day${day}.txt`, 'utf8')
-    .trimEnd()
-    .split('\n')
+  readFileSync(`./${year}/input/day${day}.txt`, 'utf8').trimEnd().split('\n')
 
-const getCode = async (year: number, day: number): Promise<Day> => (await import(`./${year}/day${day}`)).default
+const getCode = async (year: number, day: number): Promise<Day> =>
+  (await import(`./${year}/day${day}`)).default
 
 const printResult = (result: Answer, expected: Answer) => {
   console.log(result)
@@ -18,7 +19,10 @@ const printResult = (result: Answer, expected: Answer) => {
   }
 }
 
-const runDay = async (day = new Date().getDate(), year = new Date().getFullYear()) => {
+const runDay = async (
+  day = new Date().getDate(),
+  year = new Date().getFullYear(),
+) => {
   const input = readDayRows(year, day)
   const code = await getCode(year, day)
 
@@ -55,7 +59,10 @@ const run = async (mode: string, ...calendar: string[]) => {
 
   if (mode === 'day') {
     const [day, year] = calendar
-    await runDay(day ? parseInt(day) : now.getDate(), year ? parseInt(year) : now.getFullYear())
+    await runDay(
+      day ? parseInt(day) : now.getDate(),
+      year ? parseInt(year) : now.getFullYear(),
+    )
   } else if (mode === 'year') {
     const [year] = calendar
     await runYear(year ? parseInt(year) : now.getFullYear())

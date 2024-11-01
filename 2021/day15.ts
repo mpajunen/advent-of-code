@@ -1,9 +1,12 @@
 import { Grid, Num, Vec2 } from '../common'
 
-const getInput = (rows: string[]) => new Grid(rows.map(r => r.split('').map(Number)))
+const getInput = (rows: string[]) =>
+  new Grid(rows.map(r => r.split('').map(Number)))
 
 const createPaths = (size: number) =>
-  Grid.create<number>({ x: size, y: size }, ({ x, y }) => x === 0 && y === 0 ? 0 : Num.LARGE_VALUE)
+  Grid.create<number>({ x: size, y: size }, ({ x, y }) =>
+    x === 0 && y === 0 ? 0 : Num.LARGE_VALUE,
+  )
 
 const solve = (costs: Grid<number>): number => {
   const size = costs.row(0).length
@@ -49,7 +52,7 @@ const buildMegaGrid = (start: Grid<number>): Grid<number> => {
   ]
 
   const modify = (modifier: number) =>
-    start.map(v => v + modifier).map(v => v > 9 ? v - 9 : v)
+    start.map(v => v + modifier).map(v => (v > 9 ? v - 9 : v))
 
   const subGrids = changes.map(row => row.map(modify))
 

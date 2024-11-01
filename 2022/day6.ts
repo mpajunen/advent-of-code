@@ -1,7 +1,9 @@
 import { List } from '../common'
 
 const findMarker = (chars: string[], length: number) =>
-  List.windowed(length, chars).findIndex(window => List.unique(window).length === length) + length
+  List.windowed(length, chars).findIndex(
+    window => List.unique(window).length === length,
+  ) + length
 
 export default ([row]: string[]) => {
   const chars = row.split('')

@@ -1,19 +1,23 @@
 import { Grid, Input, Num, List, Str, Vec2 } from '../common'
 
 type Operation = 'acc' | 'jmp' | 'nop'
-type Instruction = { operation: Operation, argument: number }
+type Instruction = { operation: Operation; argument: number }
 
-type State = { index: number, acc: number }
+type State = { index: number; acc: number }
 
 type Run = (state: State, instruction: Instruction) => State
 
 const executors: Record<Operation, Run> = {
-  acc: ({ acc, index }, { argument }) => ({ acc: acc + argument, index: index + 1 }),
+  acc: ({ acc, index }, { argument }) => ({
+    acc: acc + argument,
+    index: index + 1,
+  }),
   jmp: ({ acc, index }, { argument }) => ({ acc, index: index + argument }),
   nop: ({ acc, index }) => ({ acc, index: index + 1 }),
 }
 
-const getInstruction = ([operation, argument]: string[]) => ({ operation, argument: parseInt(argument) }) as Instruction
+const getInstruction = ([operation, argument]: string[]) =>
+  ({ operation, argument: parseInt(argument) }) as Instruction
 
 const run = (instructions: Instruction[]) => {
   let state = { index: 0, acc: 0 }
@@ -33,10 +37,14 @@ const run = (instructions: Instruction[]) => {
   }
 }
 
-const conversion: Record<Operation, Operation> = { acc: 'acc', jmp: 'nop', nop: 'jmp' }
+const conversion: Record<Operation, Operation> = {
+  acc: 'acc',
+  jmp: 'nop',
+  nop: 'jmp',
+}
 
 const tryFixes = (instructions: Instruction[]) =>
-  instructions.flatMap(({ operation, argument}, index) => {
+  instructions.flatMap(({ operation, argument }, index) => {
     const fixed = [...instructions]
     fixed[index] = { operation: conversion[operation], argument }
     const [a, b] = run(fixed)

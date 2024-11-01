@@ -2,10 +2,12 @@ import * as common from './common'
 import { instruct, operations } from './WristDevice'
 
 const getPosition = row =>
-  row.slice(9, 19).split(', ').map(n => parseInt(n, 10))
+  row
+    .slice(9, 19)
+    .split(', ')
+    .map(n => parseInt(n, 10))
 
-const getInstruction = row =>
-  row.split(' ').map(n => parseInt(n, 10))
+const getInstruction = row => row.split(' ').map(n => parseInt(n, 10))
 
 const readInput = () => {
   /*
@@ -39,21 +41,20 @@ After:  [0, 3, 2, 2]
 
 const input = readInput()
 
-
 const exampleMatches = example => func =>
-  instruct(func, example.instruction, example.before)
-    .every((r, index) => r === example.after[index])
+  instruct(func, example.instruction, example.before).every(
+    (r, index) => r === example.after[index],
+  )
 
 const MULTI_BEHAVIOR_LIMIT = 3
 
 const isMultiMatch = example =>
-  Object.values(operations)
-    .filter(exampleMatches(example)).length >= MULTI_BEHAVIOR_LIMIT
+  Object.values(operations).filter(exampleMatches(example)).length >=
+  MULTI_BEHAVIOR_LIMIT
 
 const result1 = input.examples.filter(isMultiMatch).length
 
 console.log(result1) // 605
-
 
 const findPossible = (example, key) => {
   const ops = Object.entries(operations)

@@ -1,7 +1,9 @@
 export const chunk = <T>(values: T[], size: number): T[][] =>
   range(0, values.length, size).map(start => values.slice(start, start + size))
 
-export const counts = <V extends number | string>(array: V[]): Record<V, number> => {
+export const counts = <V extends number | string>(
+  array: V[],
+): Record<V, number> => {
   const found: Partial<Record<V, number>> = {}
 
   array.forEach(value => {
@@ -17,13 +19,20 @@ export const empty = (length, getValue = (key: number) => 0) =>
 export const exclude = <T>(values: T[], exclusion: T[]): T[] =>
   values.filter(v => !exclusion.includes(v))
 
-export const filterMap = <In, Out>(func: (value: In, index: number) => Out | undefined, values: In[]): Out[] =>
-  values.map(func).filter(value => value !== undefined)
+export const filterMap = <In, Out>(
+  func: (value: In, index: number) => Out | undefined,
+  values: In[],
+): Out[] => values.map(func).filter(value => value !== undefined)
 
-export const findIndices = <T>(func: (value: T, index: number) => number, values: T[]) =>
-  filterMap((item, index) => func(item, index) ? index : undefined, values)
+export const findIndices = <T>(
+  func: (value: T, index: number) => number,
+  values: T[],
+) => filterMap((item, index) => (func(item, index) ? index : undefined), values)
 
-export const groupBy = <T, K extends number | string>(getGroup: (item: T) => K, items: T[]): Partial<Record<K, T[]>> => {
+export const groupBy = <T, K extends number | string>(
+  getGroup: (item: T) => K,
+  items: T[],
+): Partial<Record<K, T[]>> => {
   const groups: Partial<Record<K, T[]>> = {}
 
   for (const item of items) {
@@ -36,10 +45,11 @@ export const groupBy = <T, K extends number | string>(getGroup: (item: T) => K, 
   return groups
 }
 
-export const includes = <T>(list: Readonly<T[]>, value: unknown): value is T => list.includes(value as T)
+export const includes = <T>(list: Readonly<T[]>, value: unknown): value is T =>
+  list.includes(value as T)
 
 export const indicesOf = <T>(search: T, values: T[]): number[] =>
-  filterMap((value, index) => value === search ? index : undefined, values)
+  filterMap((value, index) => (value === search ? index : undefined), values)
 
 export const intersection = <T>(values: T[], compare: T[]): T[] =>
   values.filter(v => compare.includes(v))
@@ -53,8 +63,13 @@ export const intersects = <T>(values: T[], compare: T[]): boolean =>
 export const isSorted = <T extends number | string>(list: T[]): boolean =>
   zipPairs(list).every(([a, b]) => a <= b)
 
-export const mapBy = <T, K extends number | string>(items: T[], accessor: (item: T) => K): Partial<Record<K, T>> =>
-  Object.fromEntries(items.map(item => [accessor(item), item])) as Partial<Record<K, T>>
+export const mapBy = <T, K extends number | string>(
+  items: T[],
+  accessor: (item: T) => K,
+): Partial<Record<K, T>> =>
+  Object.fromEntries(items.map(item => [accessor(item), item])) as Partial<
+    Record<K, T>
+  >
 
 export const maxBy = <T>(accessor: (v: T) => number, values: T[]): T[] => {
   const comparisons = values.map(accessor)
@@ -70,19 +85,25 @@ export const minBy = <T>(accessor: (v: T) => number, values: T[]): T[] => {
   return indicesOf(min, comparisons).map(i => values[i])
 }
 
-export const partition = <T>(accessor: (v: T) => boolean, values: T[]): [T[], T[]] => {
-  const groups = groupBy(v => accessor(v) ? 1 : 0, values)
+export const partition = <T>(
+  accessor: (v: T) => boolean,
+  values: T[],
+): [T[], T[]] => {
+  const groups = groupBy(v => (accessor(v) ? 1 : 0), values)
 
   return [groups[1] ?? [], groups[0] ?? []]
 }
 
 export const range = (from: number, to: number, step = 1): number[] =>
-  Array.from({ length: (to - from) / step }, (_, k) => (k * step) + from)
+  Array.from({ length: (to - from) / step }, (_, k) => k * step + from)
 
 export const repeat = <T>(value: T, count: number): T[] =>
   new Array(count).fill(value)
 
-type Scanner<Accumulator, Item> = (value: Accumulator, item: Item) => Accumulator
+type Scanner<Accumulator, Item> = (
+  value: Accumulator,
+  item: Item,
+) => Accumulator
 
 export const scan = <Accumulator, Item>(
   initial: Accumulator,
@@ -98,7 +119,7 @@ export const scan = <Accumulator, Item>(
   })
 }
 
-type SequenceLength<T> = { value: T, length: number }
+type SequenceLength<T> = { value: T; length: number }
 
 export const sequenceLengths = <T>(values: T[]): SequenceLength<T>[] =>
   sequences(values).map(seq => ({ value: seq[0], length: seq.length }))
@@ -119,9 +140,13 @@ export const sequences = <T>(values: T[]): T[][] => {
   return all
 }
 
-export const sort = <T extends number | string>(items: T[]): T[] => sortBy(i => i, items)
+export const sort = <T extends number | string>(items: T[]): T[] =>
+  sortBy(i => i, items)
 
-export const sortBy = <T, K extends number | string>(accessor: (item: T) => K, items: T[]): T[] => {
+export const sortBy = <T, K extends number | string>(
+  accessor: (item: T) => K,
+  items: T[],
+): T[] => {
   const compare = (a: T, b: T) => {
     const ka = accessor(a)
     const kb = accessor(b)
@@ -135,10 +160,15 @@ export const sortBy = <T, K extends number | string>(accessor: (item: T) => K, i
 type Splitter<T> = T | ((value: T) => boolean)
 type SplitValue = number | string | object
 
-export const splitBy = <T extends SplitValue>(splitter: Splitter<T>, values: T[], includeSplit = false): T[][] => {
+export const splitBy = <T extends SplitValue>(
+  splitter: Splitter<T>,
+  values: T[],
+  includeSplit = false,
+): T[][] => {
   const all = [[]]
 
-  const split = typeof splitter === 'function' ? splitter : (value: T) => value === splitter
+  const split =
+    typeof splitter === 'function' ? splitter : (value: T) => value === splitter
 
   values.forEach(value => {
     if (split(value)) {
@@ -154,8 +184,7 @@ export const splitBy = <T extends SplitValue>(splitter: Splitter<T>, values: T[]
   return all
 }
 
-export const unique = <T>(values: T[]): T[] =>
-  Array.from(new Set(values))
+export const unique = <T>(values: T[]): T[] => Array.from(new Set(values))
 
 export const until = <T>(values: T[], condition: (value: T) => boolean) => {
   const index = values.findIndex(condition)
@@ -173,5 +202,4 @@ export const windowed = <T>(windowSize: number, values: T[]): T[][] => {
 export const zip = <A, B>(a: A[], b: B[]): [A, B][] =>
   a.slice(0, b.length).map((aValue, i) => [aValue, b[i]])
 
-export const zipPairs = <T>(list: T[]): [T, T][] =>
-  zip(list, list.slice(1))
+export const zipPairs = <T>(list: T[]): [T, T][] => zip(list, list.slice(1))

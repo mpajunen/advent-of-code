@@ -11,11 +11,16 @@ const increasePair = ([left, right]: Pair, [amount, dir]: Increase): Pair =>
     : [left, increase(right, [amount, dir])]
 
 const increase = (value: Value, [amount, dir]: Increase): Value =>
-  typeof value === 'number' ? value + amount : increasePair(value, [amount, dir])
+  typeof value === 'number'
+    ? value + amount
+    : increasePair(value, [amount, dir])
 
-type Explosion = { value: Value, addLeft?: number, addRight?: number }
+type Explosion = { value: Value; addLeft?: number; addRight?: number }
 
-const tryExplodePair = ([left, right]: Pair, depth: number): Explosion | undefined => {
+const tryExplodePair = (
+  [left, right]: Pair,
+  depth: number,
+): Explosion | undefined => {
   if (depth > 4) {
     return { value: 0, addLeft: left as number, addRight: right as number }
   }
@@ -24,14 +29,20 @@ const tryExplodePair = ([left, right]: Pair, depth: number): Explosion | undefin
   if (leftRes) {
     const { value, addLeft, addRight } = leftRes
 
-    return { value: [value, addRight ? increase(right, [addRight, 'left']) : right], addLeft }
+    return {
+      value: [value, addRight ? increase(right, [addRight, 'left']) : right],
+      addLeft,
+    }
   }
 
   const rightRes = tryExplodePart(right, depth + 1)
   if (rightRes) {
     const { value, addLeft, addRight } = rightRes
 
-    return { value: [addLeft ? increase(left, [addLeft, 'right']) : left, value], addRight }
+    return {
+      value: [addLeft ? increase(left, [addLeft, 'right']) : left, value],
+      addRight,
+    }
   }
 
   return undefined
@@ -44,7 +55,9 @@ const tryExplode = (a: Pair) => tryExplodePair(a, 1)?.value as Pair | undefined
 
 const trySplit = (value: Value): Pair | undefined => {
   if (typeof value === 'number') {
-    return value < 10 ? undefined : [Math.floor(value / 2), Math.ceil(value / 2)]
+    return value < 10
+      ? undefined
+      : [Math.floor(value / 2), Math.ceil(value / 2)]
   }
   const [left, right] = value
   const newLeft = trySplit(left)

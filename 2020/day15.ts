@@ -9,9 +9,7 @@ const speakUntil = (start: number[], limit: number): number => {
   let latest = start[start.length - 1]
 
   while (index < limit) {
-    latest = earlier[latest] !== undefined
-      ? prev[latest] - earlier[latest]
-      : 0
+    latest = earlier[latest] !== undefined ? prev[latest] - earlier[latest] : 0
 
     earlier[latest] = prev[latest]
     prev[latest] = index

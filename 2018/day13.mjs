@@ -1,23 +1,21 @@
 import * as common from './common'
 import Grid, { add } from './Grid'
 
-const railReplacements =
-  { '<': '-', '>': '-', '^': '|', 'v': '|' }
+const railReplacements = { '<': '-', '>': '-', '^': '|', v: '|' }
 
 const crossings = {
   '<': ['v', '<', '^'],
   '>': ['^', '>', 'v'],
   '^': ['<', '^', '>'],
-  'v': ['>', 'v', '<'],
+  v: ['>', 'v', '<'],
 }
 
 const turns = {
-  '/': { '<': 'v', 'v': '<', '^': '>', '>': '^' },
-  '\\': { '>': 'v', 'v': '>', '^': '<', '<': '^' },
+  '/': { '<': 'v', v: '<', '^': '>', '>': '^' },
+  '\\': { '>': 'v', v: '>', '^': '<', '<': '^' },
 }
 
-const movements =
-  { '>': [1, 0], 'v': [0, 1], '^': [0, -1], '<': [-1, 0] }
+const movements = { '>': [1, 0], v: [0, 1], '^': [0, -1], '<': [-1, 0] }
 
 const movementDirections = Object.keys(movements)
 
@@ -30,34 +28,36 @@ const createCart = (direction, position) => ({
 })
 
 const comparePosition = ({ position: [xa, ya] }, { position: [xb, yb] }) =>
-  (ya - yb) || (xa - xb)
+  ya - yb || xa - xb
 
 const readInput = () => {
-  const rawGrid = common.readDayRows(13)
-    .map(row => row.split(''))
+  const rawGrid = common.readDayRows(13).map(row => row.split(''))
 
-  const tracks = rawGrid.map(row => row.map(char => railReplacements[char] || char))
-  const carts = new Grid(rawGrid).reduce(
-    (acc, char, position) => {
+  const tracks = rawGrid.map(row =>
+    row.map(char => railReplacements[char] || char),
+  )
+  const carts = new Grid(rawGrid)
+    .reduce((acc, char, position) => {
       if (!movementDirections.includes(char)) {
         return acc
       }
 
       return [...acc, createCart(char, position)]
-    },
-    [],
-  ).sort(comparePosition)
+    }, [])
+    .sort(comparePosition)
 
   return { tracks, carts }
 }
 
 const input = readInput()
 
-const applyMovement = (point, direction) =>
-  add(point)(movements[direction])
+const applyMovement = (point, direction) => add(point)(movements[direction])
 
 const move = cart => {
-  const { name, position: [x, y] } = cart
+  const {
+    name,
+    position: [x, y],
+  } = cart
   let { direction, crossed } = cart
 
   const track = input.tracks[y][x]
@@ -75,10 +75,10 @@ const move = cart => {
 }
 
 const checkCrash = (previous, moved, cart) =>
-  moved.find(c => comparePosition(c, cart) === 0)
-  || previous.slice(moved.length).find(c => comparePosition(c, cart) === 0)
+  moved.find(c => comparePosition(c, cart) === 0) ||
+  previous.slice(moved.length).find(c => comparePosition(c, cart) === 0)
 
-const moveAll = (start) => {
+const moveAll = start => {
   let carts = []
 
   // Missing sort!
@@ -125,7 +125,6 @@ const firstCrash = findFirstCrash(input.carts)
 const result1 = firstCrash.position.join(',')
 
 console.log(result1) // 91,69
-
 
 const moveUntilOneLeft = carts => {
   let state = {

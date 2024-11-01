@@ -28,13 +28,16 @@ const getMonkey = (rows: string[]) => {
     number: Number(numberRow.slice(0, -1).split(' ')[1]),
     items: itemRow.split(': ')[1].split(', ').map(Number),
     operation: operation(operationRow.split(' = ')[1]),
-    test: { divisible: testPart[0], trueTarget: testPart[1], falseTarget: testPart[2] },
+    test: {
+      divisible: testPart[0],
+      trueTarget: testPart[1],
+      falseTarget: testPart[2],
+    },
     inspections: 0,
   }
 }
 
-const getInput = (rows: string[]) =>
-  List.splitBy('', rows).map(getMonkey)
+const getInput = (rows: string[]) => List.splitBy('', rows).map(getMonkey)
 
 const takeTurn = (denominator?: number) => (monkeys: Monkey[], index: number) =>
   produce(monkeys, m => {
@@ -45,7 +48,10 @@ const takeTurn = (denominator?: number) => (monkeys: Monkey[], index: number) =>
       const worry = denominator
         ? operated % denominator
         : Math.trunc(operated / 3)
-      const target = worry % monkey.test.divisible === 0 ? monkey.test.trueTarget : monkey.test.falseTarget
+      const target =
+        worry % monkey.test.divisible === 0
+          ? monkey.test.trueTarget
+          : monkey.test.falseTarget
 
       m[target].items.push(worry)
     }
@@ -53,11 +59,16 @@ const takeTurn = (denominator?: number) => (monkeys: Monkey[], index: number) =>
     m[monkey.number].items = []
   })
 
-const runRound = (denominator?: number) => (monkeys: Monkey[]): Monkey[] =>
-  List.range(0, monkeys.length).reduce(takeTurn(denominator), monkeys)
+const runRound =
+  (denominator?: number) =>
+  (monkeys: Monkey[]): Monkey[] =>
+    List.range(0, monkeys.length).reduce(takeTurn(denominator), monkeys)
 
-const runRounds = (monkeys: Monkey[], count: number, denominator?: number): Monkey[] =>
-  List.range(0, count).reduce(runRound(denominator), monkeys)
+const runRounds = (
+  monkeys: Monkey[],
+  count: number,
+  denominator?: number,
+): Monkey[] => List.range(0, count).reduce(runRound(denominator), monkeys)
 
 const monkeyBusiness = (monkeys: Monkey[]) => {
   const inspections = List.sort(monkeys.map(m => m.inspections)).reverse()

@@ -56,13 +56,25 @@ const getParts = directions => {
 const getPlaces = (direction, [x, y]) => {
   switch (direction) {
     case 'N':
-      return [[x + 0, y - 1], [x + 0, y - 2]]
+      return [
+        [x + 0, y - 1],
+        [x + 0, y - 2],
+      ]
     case 'E':
-      return [[x + 1, y + 0], [x + 2, y + 0]]
+      return [
+        [x + 1, y + 0],
+        [x + 2, y + 0],
+      ]
     case 'S':
-      return [[x + 0, y + 1], [x + 0, y + 2]]
+      return [
+        [x + 0, y + 1],
+        [x + 0, y + 2],
+      ]
     case 'W':
-      return [[x - 1, y + 0], [x - 2, y + 0]]
+      return [
+        [x - 1, y + 0],
+        [x - 2, y + 0],
+      ]
   }
 }
 
@@ -137,8 +149,7 @@ const findAllDepths = maze => {
   return costs.values().filter(c => Number(c) === c)
 }
 
-const findMaxDepth = maze =>
-  Math.max(...findAllDepths(maze))
+const findMaxDepth = maze => Math.max(...findAllDepths(maze))
 
 const findDepthOverCount = maze =>
   findAllDepths(maze).filter(n => n >= 1000).length
@@ -150,7 +161,6 @@ const maze = buildMaze(input)
 const result1 = findMaxDepth(maze)
 
 console.log(result1) // 4184
-
 
 const result2 = findDepthOverCount(maze)
 

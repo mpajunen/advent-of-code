@@ -3,26 +3,38 @@ import { List, Vec3 } from '../common'
 const getInput = (rows: string[]) => {
   const scanners = List.splitBy('', rows)
 
-  return scanners.map(s => s.slice(1).map(Vec3.fromString)).map((beacons, id) => ({ id, beacons }))
+  return scanners
+    .map(s => s.slice(1).map(Vec3.fromString))
+    .map((beacons, id) => ({ id, beacons }))
 }
 
-type Scanner = { id: number, beacons: Vec3[], distances: number[][] }
+type Scanner = { id: number; beacons: Vec3[]; distances: number[][] }
 type Match = Scanner & { origin: Vec3 }
 
 const checkMatch = (match: Match, scanner: Scanner): Match | undefined => {
   for (const [matchIndex, matchDistances] of match.distances.entries()) {
-    for (const [scannerIndex, scannerDistances] of scanner.distances.entries()) {
+    for (const [
+      scannerIndex,
+      scannerDistances,
+    ] of scanner.distances.entries()) {
       if (List.intersection(matchDistances, scannerDistances).length < 12) {
         continue
       }
 
       for (const rotation of Vec3.rotations) {
-        const rotated = scanner.beacons.map(beacon => Vec3.rotate(rotation, beacon))
+        const rotated = scanner.beacons.map(beacon =>
+          Vec3.rotate(rotation, beacon),
+        )
 
-        const origin = Vec3.subtract(match.beacons[matchIndex], rotated[scannerIndex])
+        const origin = Vec3.subtract(
+          match.beacons[matchIndex],
+          rotated[scannerIndex],
+        )
         const shifted = rotated.map(r => Vec3.add(r, origin))
 
-        const matchingVectors = shifted.filter(s => match.beacons.some(m => Vec3.equal(m, s)))
+        const matchingVectors = shifted.filter(s =>
+          match.beacons.some(m => Vec3.equal(m, s)),
+        )
 
         if (matchingVectors.length >= 12) {
           return { ...scanner, beacons: shifted, origin }
@@ -53,7 +65,11 @@ const findMatches = ([first, ...remaining]: Scanner[]): Match[] => {
 }
 
 const largest = (matches: Match[]): number =>
-  Math.max(...matches.flatMap(a => matches.map(b => Vec3.manhattan(a.origin, b.origin))))
+  Math.max(
+    ...matches.flatMap(a =>
+      matches.map(b => Vec3.manhattan(a.origin, b.origin)),
+    ),
+  )
 
 const buildScannerDistances = (scanner: Omit<Scanner, 'distances'>) =>
   scanner.beacons.map(a => scanner.beacons.map(b => Vec3.manhattan(a, b)))

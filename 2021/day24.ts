@@ -28,10 +28,11 @@ const getInput = (rows: string[]) =>
     .map(Input.parseByPattern<Params>(CHUNK_TEMPLATE))
 
 // Calculate maximum z value at the start of each chunk, z can only be reduced by a limited factor
-const getMaxStartZ = (endMaxZ: number, params: Params) => params[0] * (endMaxZ + 1) - 1
+const getMaxStartZ = (endMaxZ: number, params: Params) =>
+  params[0] * (endMaxZ + 1) - 1
 
 const runChunk = (params: Params, z: number, input: number): number => {
-  let x = z % 26 + params[1]
+  let x = (z % 26) + params[1]
   z = Math.trunc(z / params[0])
   if (x !== input) {
     z = z * 26 + input + params[2]
@@ -44,7 +45,12 @@ const DIGIT_OPTIONS = List.range(1, 10)
 
 type States = Map<number, number>
 
-const runChunkStates = (params: Params, states: States, kind: 'max' | 'min', endMaxZ: number): States => {
+const runChunkStates = (
+  params: Params,
+  states: States,
+  kind: 'max' | 'min',
+  endMaxZ: number,
+): States => {
   const newStates: Map<number, number> = new Map()
   const compare = kind === 'max' ? Math.max : Math.min
   const baseValue = kind === 'max' ? 0 : Num.LARGE_VALUE
@@ -57,7 +63,10 @@ const runChunkStates = (params: Params, states: States, kind: 'max' | 'min', end
         continue
       }
 
-      newStates.set(zAfter, compare(newStates.get(zAfter) ?? baseValue, base + digit))
+      newStates.set(
+        zAfter,
+        compare(newStates.get(zAfter) ?? baseValue, base + digit),
+      )
     }
   }
 
@@ -68,7 +77,8 @@ const solve = (allParams: Params[], kind: 'max' | 'min'): number => {
   const allMaxZ = List.scan(0, [...allParams].reverse(), getMaxStartZ).reverse()
 
   const states = allParams.reduce(
-    (states, params, index) => runChunkStates(params, states, kind, allMaxZ[index + 1] ?? 0),
+    (states, params, index) =>
+      runChunkStates(params, states, kind, allMaxZ[index + 1] ?? 0),
     new Map([[0, 0]]),
   )
 

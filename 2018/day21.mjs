@@ -47,7 +47,7 @@ const innerLoop = r => {
 11	muli	5	65899	5
 12	bani	5	16777215	5
  */
-const changeFive = r => ((((r[5] + (r[3] & 255))) * 65899)) & 16777215 // 65793 * 255
+const changeFive = r => ((r[5] + (r[3] & 255)) * 65899) & 16777215 // 65793 * 255
 
 /*
 7	seti	9010242		5
@@ -78,7 +78,12 @@ const outerLoop = r => {
   return r
 }
 
-const runProgram = ({ ip, instructions }, limit, start0 = 0, optimize = false) => {
+const runProgram = (
+  { ip, instructions },
+  limit,
+  start0 = 0,
+  optimize = false,
+) => {
   const startIp = 6
   let registers = [start0, 0, startIp, 0, 0, 0]
   let i = 0
@@ -87,9 +92,10 @@ const runProgram = ({ ip, instructions }, limit, start0 = 0, optimize = false) =
   const foundAt = []
 
   while (registers[ip] < instructions.length) {
-    registers = optimize && registers[ip] === 6
-      ? outerLoop(registers)
-      : run(ip, instructions, registers)
+    registers =
+      optimize && registers[ip] === 6
+        ? outerLoop(registers)
+        : run(ip, instructions, registers)
 
     i += 1
 
@@ -120,11 +126,9 @@ const INSTRUCTION_LIMIT = 200000 // Determined empirically
 
 const result = runProgram(input, INSTRUCTION_LIMIT, 0, true)
 
-
 const result1 = result.first
 
 console.log(result1) // 6619857
-
 
 const result2 = result.last
 

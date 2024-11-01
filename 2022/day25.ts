@@ -18,7 +18,7 @@ const toSnafu = (decimal: number) => {
   const [digits] = positions.reduce(
     ([digits, current], position) => {
       const place = SNAFU_BASE ** position
-      const remainder = current % (place * SNAFU_BASE) / place
+      const remainder = (current % (place * SNAFU_BASE)) / place
       const digit = remainder > 2 ? remainder - SNAFU_BASE : remainder
 
       return [DEC_TO_SNAFU[digit] + digits, current - digit * place]

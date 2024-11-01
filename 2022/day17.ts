@@ -18,11 +18,17 @@ const rockPatterns = `
 
 ##
 ##
-`.trim().split('\n')
+`
+  .trim()
+  .split('\n')
 
 const rocks = List.splitBy('', rockPatterns)
   .map(rows => Grid.fromStrings(rows.reverse()))
-  .map(grid => grid.entries().flatMap<Vec2>(([position, value]) => value === '#' ? position : []))
+  .map(grid =>
+    grid
+      .entries()
+      .flatMap<Vec2>(([position, value]) => (value === '#' ? position : [])),
+  )
 
 const WIDTH = 7
 const APPEAR_POSITION = { x: 2, y: 3 }
@@ -37,7 +43,7 @@ const createState = (height: number) => ({
   top: 0,
 })
 
-type Moved = { rock: Vec2[], moveCount: number }
+type Moved = { rock: Vec2[]; moveCount: number }
 
 const movements = {
   '<': { x: -1, y: 0 },
@@ -49,8 +55,7 @@ const move = (rock: Vec2[], change: Vec2): Vec2[] =>
   rock.map(p => Vec2.add(p, change))
 
 const addRock = (jets: string, state: State) => {
-  const isBlocked = (rock: Vec2[]) =>
-    rock.some(p => state.grid.get(p) !== '.')
+  const isBlocked = (rock: Vec2[]) => rock.some(p => state.grid.get(p) !== '.')
 
   const moveRock = (rock: Vec2[], moveCount: number = 0): Moved => {
     const time = state.time + moveCount
@@ -104,15 +109,20 @@ const findCyclePeriod = (allTops: number[]) => {
     return List.unique(differences).length === 1
   }
 
-  return List.range(rocks.length, searchTops.length, rocks.length).find(isPeriod)
+  return List.range(rocks.length, searchTops.length, rocks.length).find(
+    isPeriod,
+  )
 }
 
 const getCycleRocks = (tops: number[]) => {
   const cyclePeriod = findCyclePeriod(tops)
-  const cycleHeight = tops[CYCLE_SEARCH_START + cyclePeriod] - tops[CYCLE_SEARCH_START]
+  const cycleHeight =
+    tops[CYCLE_SEARCH_START + cyclePeriod] - tops[CYCLE_SEARCH_START]
 
-  const completedCycles = Math.floor((TOTAL_ROCKS - CYCLE_SEARCH_START) / cyclePeriod)
-  const rocksBeforeCycles = TOTAL_ROCKS - (completedCycles * cyclePeriod)
+  const completedCycles = Math.floor(
+    (TOTAL_ROCKS - CYCLE_SEARCH_START) / cyclePeriod,
+  )
+  const rocksBeforeCycles = TOTAL_ROCKS - completedCycles * cyclePeriod
 
   return tops[rocksBeforeCycles] + completedCycles * cycleHeight
 }

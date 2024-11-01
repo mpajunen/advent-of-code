@@ -9,11 +9,13 @@ const isIncreasing = (digits: number[]): boolean =>
 const hasPair = (digits: number[]): boolean =>
   Object.values(List.counts(digits)).includes(2)
 
-const isMatch = (checks: Check[]) => (num: number): boolean => {
-  const digits = Num.digits(num)
+const isMatch =
+  (checks: Check[]) =>
+  (num: number): boolean => {
+    const digits = Num.digits(num)
 
-  return checks.every(check => check(digits))
-}
+    return checks.every(check => check(digits))
+  }
 
 export default function day4([row]: string[]): [unknown, unknown] {
   const [start, end] = Input.parseByPattern<[number, number]>('%i-%i')(row)

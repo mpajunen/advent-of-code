@@ -1,10 +1,13 @@
 import { List, Num } from '../common'
 
 const toBits = (num: number): Num.Bit[] =>
-  [num & 8, num & 4, num & 2, num & 1].map(v => v ? 1 : 0)
+  [num & 8, num & 4, num & 2, num & 1].map(v => (v ? 1 : 0))
 
 const getInput = ([row]: string[]) =>
-  row.split('').map(v => parseInt(v, 16)).flatMap(toBits)
+  row
+    .split('')
+    .map(v => parseInt(v, 16))
+    .flatMap(toBits)
 
 const readPackets = (bits: Num.Bit[]): Packet[] => {
   let index = 0
@@ -51,8 +54,10 @@ const readPackets = (bits: Num.Bit[]): Packet[] => {
 }
 
 type OperatorId = 0 | 1 | 2 | 3 | 5 | 6 | 7
-type Packet = { version: number }
-  & ({ typeId: 4, literal: number } | { typeId: OperatorId, operands: Packet[] })
+type Packet = { version: number } & (
+  | { typeId: 4; literal: number }
+  | { typeId: OperatorId; operands: Packet[] }
+)
 
 const sumVersions = (p: Packet): number =>
   p.version + (p.typeId === 4 ? 0 : Num.sum(p.operands.map(sumVersions)))
@@ -62,9 +67,9 @@ const operators: Record<OperatorId, (values: number[]) => number> = {
   1: Num.product,
   2: values => Math.min(...values),
   3: values => Math.max(...values),
-  5: ([a, b]) => a > b ? 1 : 0,
-  6: ([a, b]) => a < b ? 1 : 0,
-  7: ([a, b]) => a === b ? 1 : 0,
+  5: ([a, b]) => (a > b ? 1 : 0),
+  6: ([a, b]) => (a < b ? 1 : 0),
+  7: ([a, b]) => (a === b ? 1 : 0),
 }
 
 const calculate = (p: Packet): number =>

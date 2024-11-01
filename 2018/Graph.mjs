@@ -2,7 +2,9 @@ import * as common from './common'
 
 const findEdges = (vertices, checkEdge) =>
   vertices
-    .map(item => common.findIndices(compare => checkEdge(item, compare), vertices))
+    .map(item =>
+      common.findIndices(compare => checkEdge(item, compare), vertices),
+    )
     .map((itemTo, from) => itemTo.map(to => [from, to]))
     .reduce((all, item) => [...all, ...item])
 
@@ -27,7 +29,8 @@ export default class Graph {
   getDisconnectedGroups() {
     const groups = []
 
-    const fitsGroup = index => group => common.intersection(group, this.neighbors[index]).length > 0
+    const fitsGroup = index => group =>
+      common.intersection(group, this.neighbors[index]).length > 0
 
     this.vertices.forEach((_, item) => {
       const fitIndices = common.findIndices(fitsGroup(item), groups)

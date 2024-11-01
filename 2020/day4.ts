@@ -12,7 +12,15 @@ const isValid1 = (passport: Record<string, string>) =>
   Object.keys(passport).length === 8 ||
   (Object.keys(passport).length === 7 && passport.cid === undefined)
 
-const isValid2 = ({ byr, iyr, eyr, hgt, hcl, ecl, pid }: Record<string, string>) => {
+const isValid2 = ({
+  byr,
+  iyr,
+  eyr,
+  hgt,
+  hcl,
+  ecl,
+  pid,
+}: Record<string, string>) => {
   const birth = Number(byr)
   const issued = Number(iyr)
   const expire = Number(eyr)
@@ -22,16 +30,19 @@ const isValid2 = ({ byr, iyr, eyr, hgt, hcl, ecl, pid }: Record<string, string>)
   const isColor = hcl?.match(/^#[\dabcdef]{6}$/)
   const isPid = pid?.match(/^\d{9}$/)
 
-  return (birth >= 1920 && birth <= 2002)
-    && (issued >= 2010 && issued <= 2020)
-    && (expire >= 2020 && expire <= 2030)
-    && (
-      (heightUnit === 'in' && List.isSorted([59, height, 76]))
-      || (heightUnit === 'cm' && List.isSorted([150, height, 193]))
-    )
-    && isColor
-    && ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].includes(ecl)
-    && isPid
+  return (
+    birth >= 1920 &&
+    birth <= 2002 &&
+    issued >= 2010 &&
+    issued <= 2020 &&
+    expire >= 2020 &&
+    expire <= 2030 &&
+    ((heightUnit === 'in' && List.isSorted([59, height, 76])) ||
+      (heightUnit === 'cm' && List.isSorted([150, height, 193]))) &&
+    isColor &&
+    ['amb', 'blu', 'brn', 'gry', 'grn', 'hzl', 'oth'].includes(ecl) &&
+    isPid
+  )
 }
 
 export default (rows: string[]) => {

@@ -7,12 +7,15 @@ const START_POSITION = 'AA'
 const MINUTES_LIMIT = 30
 const MINUTES_TO_TRAIN = 4
 
-const parseValve = Input.parseByPattern<[string, number]>('Valve %w has flow rate=%i')
+const parseValve = Input.parseByPattern<[string, number]>(
+  'Valve %w has flow rate=%i',
+)
 
 const getInput = (rows: string[]) => {
   const allValves = rows.map(getValve)
-  const rateEntries: [string, number][] =
-    allValves.filter(v => v.rate > 0).map(v => [v.name, v.rate])
+  const rateEntries: [string, number][] = allValves
+    .filter(v => v.rate > 0)
+    .map(v => [v.name, v.rate])
 
   return {
     tunnels: buildSimpleTunnels(allValves),
@@ -48,15 +51,16 @@ const buildSimpleTunnels = (allValves: Valve[]) => {
     // Paths include start (extra step), but time is needed for opening the valve
     Math.min(...getPathsTo([from.name], to.name).map(p => p.length))
 
-  return Object.fromEntries(valves
-    .map(from => [
+  return Object.fromEntries(
+    valves.map(from => [
       from.name,
       Object.fromEntries(
         valves
           .filter(to => to.name !== from.name)
           .map(to => [to.name, getShortestPathTo(from, to)]),
       ),
-    ]))
+    ]),
+  )
 }
 
 type PathOption = { path: string[]; release: number }
@@ -66,8 +70,9 @@ type PathState = PathOption & { minutesLeft: number }
 const combinePaths = (allPaths: PathOption[]): PathOption[] => {
   const groups = List.groupBy(o => List.sort(o.path).join(''), allPaths)
 
-  return Object.values(groups)
-    .map(group => List.maxBy(path => path.release, group)[0])
+  return Object.values(groups).map(
+    group => List.maxBy(path => path.release, group)[0],
+  )
 }
 
 const buildPaths = ({ tunnels, valveRates }: Inp, startMinutes: number) => {
@@ -90,10 +95,16 @@ const buildPaths = ({ tunnels, valveRates }: Inp, startMinutes: number) => {
     })
   }
   // Keep "partial" path states so example data also still works
-  const buildAllStates = (state: PathState): PathState[] =>
-    [state, ...buildNextStates(state).flatMap(buildAllStates)]
+  const buildAllStates = (state: PathState): PathState[] => [
+    state,
+    ...buildNextStates(state).flatMap(buildAllStates),
+  ]
 
-  const allPaths = buildAllStates({ path: [], minutesLeft: startMinutes, release: 0 })
+  const allPaths = buildAllStates({
+    path: [],
+    minutesLeft: startMinutes,
+    release: 0,
+  })
 
   return combinePaths(allPaths)
 }

@@ -39,7 +39,6 @@ const result1 = common.sum(types.values())
 
 console.log(result1) // 11810
 
-
 const MARGIN = 30
 
 const SWITCH_COST = 7
@@ -71,20 +70,20 @@ const tryMove = (costs, frontier, from, to) => {
 
   let moved = false
 
-  TOOLS.filter(tool => tool !== PROHIBITED[toType])
-    .forEach(tool => {
-      const cost = Math.min(
+  TOOLS.filter(tool => tool !== PROHIBITED[toType]).forEach(tool => {
+    const cost =
+      Math.min(
         fromCosts[tool],
         ...Object.entries(fromCosts)
           .filter(([t]) => t !== PROHIBITED[toType])
           .map(([t, c]) => c + SWITCH_COST),
       ) + 1
 
-      if (cost < toCosts[tool]) {
-        toCosts[tool] = cost
-        moved = true
-      }
-    })
+    if (cost < toCosts[tool]) {
+      toCosts[tool] = cost
+      moved = true
+    }
+  })
 
   if (moved) {
     frontier.push(to)

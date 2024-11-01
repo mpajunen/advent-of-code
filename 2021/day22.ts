@@ -1,9 +1,11 @@
 import { Cuboid, Input, Num } from '../common'
 
-const parse = Input.parseByPattern<['on' | 'off', ...number[]]>('%w x=%i..%i,y=%i..%i,z=%i..%i')
+const parse = Input.parseByPattern<['on' | 'off', ...number[]]>(
+  '%w x=%i..%i,y=%i..%i,z=%i..%i',
+)
 
-type Step = { to: 'on' | 'off', area: Cuboid }
-type State = { on: Cuboid[], off: Cuboid[] }
+type Step = { to: 'on' | 'off'; area: Cuboid }
+type State = { on: Cuboid[]; off: Cuboid[] }
 
 const getInput = (rows: string[]) =>
   rows.map(parse).map(([to, ...limits]) => {
@@ -14,7 +16,11 @@ const getInput = (rows: string[]) =>
   })
 
 const addStep = ({ on, off }: State, { area, to }: Step): State => ({
-  on: [...on, ...Cuboid.intersections(area, off), ...(to === 'on' ? [area] : [])],
+  on: [
+    ...on,
+    ...Cuboid.intersections(area, off),
+    ...(to === 'on' ? [area] : []),
+  ],
   off: [...off, ...Cuboid.intersections(area, on)],
 })
 

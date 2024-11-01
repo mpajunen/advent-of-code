@@ -1,10 +1,19 @@
 import { List, Num } from '../common'
-import { add, Line, manhattan, mul, origin, screenUnits, Vec2 } from '../common/Vec2'
+import {
+  add,
+  Line,
+  manhattan,
+  mul,
+  origin,
+  screenUnits,
+  Vec2,
+} from '../common/Vec2'
 
 const getMoves = (row: string): Vec2[] =>
   row.split(',').map(move => mul(screenUnits[move[0]], parseInt(move.slice(1))))
 
-const limit = (axis: keyof Vec2, dir: 'max' | 'min', [start, end]: Line) => Math[dir](start[axis], end[axis])
+const limit = (axis: keyof Vec2, dir: 'max' | 'min', [start, end]: Line) =>
+  Math[dir](start[axis], end[axis])
 
 const commonAxisValues = (axis: keyof Vec2, a: Line, b: Line): number[] =>
   List.range(
@@ -28,12 +37,18 @@ const lineIncludes = ([start, end]: Line, point: Vec2): boolean =>
 const movingDistances = (lines: Line[], crossings: Vec2[]): number[] => {
   let distance = 0
 
-  const distances: number[] = List.empty(crossings.length, () => Num.LARGE_VALUE)
+  const distances: number[] = List.empty(
+    crossings.length,
+    () => Num.LARGE_VALUE,
+  )
 
   for (const [start, end] of lines) {
     crossings.forEach((crossing, index) => {
       if (lineIncludes([start, end], crossing)) {
-        distances[index] = Math.min(distances[index], manhattan(start, crossing) + distance)
+        distances[index] = Math.min(
+          distances[index],
+          manhattan(start, crossing) + distance,
+        )
       }
     })
 

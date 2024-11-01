@@ -1,7 +1,8 @@
 import produce from 'immer'
 import { Input } from '../common'
 
-const getInput = (rows: string[]) => rows.map(Input.parseByPattern<Command>('%w %i'))
+const getInput = (rows: string[]) =>
+  rows.map(Input.parseByPattern<Command>('%w %i'))
 
 const start = { depth: 0, aim: 0, horizontal: 0 }
 

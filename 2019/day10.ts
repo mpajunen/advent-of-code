@@ -1,7 +1,9 @@
 import { List, Str, Vec2 } from '../common'
 
-const getAngle = (from: Vec2) => (to: Vec2): number =>
-  Vec2.angle(Vec2.subtract(to, from))
+const getAngle =
+  (from: Vec2) =>
+  (to: Vec2): number =>
+    Vec2.angle(Vec2.subtract(to, from))
 
 const getAngleCounts = (positions: Vec2[]) => (from: Vec2) =>
   List.unique(positions.map(getAngle(from))).length - 1 // Remove self
@@ -10,10 +12,8 @@ const getLaserRotation = (angle: number): number =>
   (angle >= -90 ? angle : angle + 360) + 90
 
 export default function day10(rows: string[]): [unknown, unknown] {
-  const positions = rows.flatMap(
-    (row, y) => Str.chunk(1, row).flatMap(
-      (char, x) => char === '#' ? [{ x, y }] : [],
-    ),
+  const positions = rows.flatMap((row, y) =>
+    Str.chunk(1, row).flatMap((char, x) => (char === '#' ? [{ x, y }] : [])),
   )
   const [best] = List.maxBy(getAngleCounts(positions), positions)
   const maxCount = getAngleCounts(positions)(best)

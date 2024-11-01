@@ -22,7 +22,7 @@ const step = state => {
   addNew(state.recipes, state.positions)
 
   state.positions = state.positions.map(
-    p => (p + 1 + state.recipes[p]) % state.recipes.length
+    p => (p + 1 + state.recipes[p]) % state.recipes.length,
   )
 }
 
@@ -40,7 +40,6 @@ const result1 = process1(input)
 
 console.log(result1) // 7116398711
 
-
 const process2 = searchValue => {
   const state = getInitialState()
   const OFFSET = searchValue.length
@@ -48,7 +47,9 @@ const process2 = searchValue => {
   while (true) {
     step(state)
 
-    const testValue = state.recipes.slice(state.recipes.length - OFFSET - 1).join('')
+    const testValue = state.recipes
+      .slice(state.recipes.length - OFFSET - 1)
+      .join('')
 
     if (testValue.startsWith(searchValue)) {
       return state.recipes.length - OFFSET - 1
@@ -62,4 +63,3 @@ const process2 = searchValue => {
 const result2 = process2(input.toString())
 
 console.log(result2) // 20316365
-

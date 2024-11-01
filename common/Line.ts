@@ -1,6 +1,6 @@
 import { add, Vec2 } from './Vec2'
 
-export type Line = { from: Vec2, to: Vec2 }
+export type Line = { from: Vec2; to: Vec2 }
 
 const fromTuple = ([from, to]: [Vec2, Vec2]): Line => ({ from, to })
 

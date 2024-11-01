@@ -15,7 +15,8 @@ type Dir = keyof typeof units
 type BlackValue = 0 | 1
 type Data = Grid<BlackValue>
 
-const parseRow = (row: string) => Array.from(row.match(/(se|sw|ne|nw|e|w)/g)) as Dir[]
+const parseRow = (row: string) =>
+  Array.from(row.match(/(se|sw|ne|nw|e|w)/g)) as Dir[]
 
 const getTile = (directions: Dir[]): Vec2 =>
   directions.map(dir => units[dir]).reduce(Vec2.add, Vec2.origin)
@@ -39,7 +40,9 @@ const getGrid = (tiles: Vec2[]) => {
 
 const flip = (grid: Data): Data => {
   const getAdjacentCount = (tile: Vec2): number => {
-    const adjacent = unitValues.map(u => Vec2.add(u, tile)).map(pos => grid.get(pos))
+    const adjacent = unitValues
+      .map(u => Vec2.add(u, tile))
+      .map(pos => grid.get(pos))
 
     return List.counts(adjacent)[1] ?? 0
   }
@@ -48,8 +51,12 @@ const flip = (grid: Data): Data => {
     const count = getAdjacentCount(pos)
 
     return color === 1
-      ? (count === 1 || count === 2 ? 1 : 0)
-      : (count === 2 ? 1 : 0)
+      ? count === 1 || count === 2
+        ? 1
+        : 0
+      : count === 2
+        ? 1
+        : 0
   })
 }
 

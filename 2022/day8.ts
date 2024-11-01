@@ -15,14 +15,21 @@ const getTreeLinesFrom = (grid: Grid<number>, { x, y }: Vec2) => {
   ]
 }
 
-const isVisibleFromEdge = (height: number, position: Vec2, grid: Grid<number>) =>
-  getTreeLinesFrom(grid, position).some(trees => Math.max(...trees) < height)
+const isVisibleFromEdge = (
+  height: number,
+  position: Vec2,
+  grid: Grid<number>,
+) => getTreeLinesFrom(grid, position).some(trees => Math.max(...trees) < height)
 
 const getDirectionScore = (height: number, trees: number[]) =>
   trees.findIndex(tree => tree >= height) + 1 || trees.length
 
 const getScenicScore = (height: number, position: Vec2, grid: Grid<number>) =>
-  Num.product(getTreeLinesFrom(grid, position).map(trees => getDirectionScore(height, trees)))
+  Num.product(
+    getTreeLinesFrom(grid, position).map(trees =>
+      getDirectionScore(height, trees),
+    ),
+  )
 
 export default (rows: string[]) => {
   const grid = getInput(rows)

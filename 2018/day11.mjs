@@ -2,13 +2,15 @@ import { createGrid } from './Grid'
 
 const input = 1788
 
-const getValue = serial => ([x, y]) => {
-  const rackId = x + 10
-  const powerLevel = (rackId * y + serial) * rackId
-  const digit = Math.floor(powerLevel / 100) % 10
+const getValue =
+  serial =>
+  ([x, y]) => {
+    const rackId = x + 10
+    const powerLevel = (rackId * y + serial) * rackId
+    const digit = Math.floor(powerLevel / 100) % 10
 
-  return digit - 5
-}
+    return digit - 5
+  }
 
 const GRID_SIZE = 300
 const SQUARE_SIZE = 3
@@ -24,10 +26,11 @@ const createPrefixSums = data => {
 
     rows.push([])
     for (let j = 0; j < row.length; j++) {
-      rows[i][j] = data[i][j]
-        + (i > 0 ? rows[i - 1][j] : 0)
-        + (j > 0 ? rows[i][j - 1] : 0)
-        - (i > 0 && j > 0 ? rows[i - 1][j - 1] : 0)
+      rows[i][j] =
+        data[i][j] +
+        (i > 0 ? rows[i - 1][j] : 0) +
+        (j > 0 ? rows[i][j - 1] : 0) -
+        (i > 0 && j > 0 ? rows[i - 1][j - 1] : 0)
     }
   }
 
@@ -42,10 +45,12 @@ const subSquareTotal = (point, size) => {
     return INVALID
   }
 
-  return prefixSums[x + size - 1][y + size - 1]
-    - prefixSums[x - 1][y + size - 1]
-    - prefixSums[x + size - 1][y - 1]
-    + prefixSums[x - 1][y - 1]
+  return (
+    prefixSums[x + size - 1][y + size - 1] -
+    prefixSums[x - 1][y + size - 1] -
+    prefixSums[x + size - 1][y - 1] +
+    prefixSums[x - 1][y - 1]
+  )
 }
 
 const totals = cells.map((_, point) => subSquareTotal(point, SQUARE_SIZE))

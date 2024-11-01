@@ -10,8 +10,16 @@ export default function day8([row]: string[]): [unknown, unknown] {
   const checkCounts = Str.charCounts(checkLayer)
 
   const getPixel = (index: number): string =>
-    layers.reduce((previous: string, current: string) => previous === '2' ? current[index] : previous, '2') === '1' ? '#' : ' '
-  const pixels = List.range(0, WIDTH * HEIGHT).map(getPixel).join('')
+    layers.reduce(
+      (previous: string, current: string) =>
+        previous === '2' ? current[index] : previous,
+      '2',
+    ) === '1'
+      ? '#'
+      : ' '
+  const pixels = List.range(0, WIDTH * HEIGHT)
+    .map(getPixel)
+    .join('')
 
   return [
     checkCounts[1] * checkCounts[2], // 1806

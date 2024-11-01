@@ -7,19 +7,28 @@ const getInput = (rows: string[]) => {
 
   const rules = rawRules
     .map(r => r.split(' -> '))
-    .flatMap(([pair, insert]): Rule[] => [[pair, pair[0] + insert], [pair, insert + pair[1]]])
+    .flatMap(([pair, insert]): Rule[] => [
+      [pair, pair[0] + insert],
+      [pair, insert + pair[1]],
+    ])
 
   return { template, rules }
 }
 
-const step = (rules: Rule[]) => (counts: Counts): Counts =>
-  Counts.fromEntries(rules.map(([from, to]) => [to, counts.get(from)]))
+const step =
+  (rules: Rule[]) =>
+  (counts: Counts): Counts =>
+    Counts.fromEntries(rules.map(([from, to]) => [to, counts.get(from)]))
 
 const createPairs = (polymer: string): string[] =>
   List.zipPairs(polymer.split('')).map(pair => pair.join(''))
 
 const charCounts = (pairCounts: Counts): Counts =>
-  Counts.fromEntries(pairCounts.entries().map(([pair, count]): [string, number] => [pair[1], count]))
+  Counts.fromEntries(
+    pairCounts
+      .entries()
+      .map(([pair, count]): [string, number] => [pair[1], count]),
+  )
 
 const solve = (rules: Rule[], template: string, stepCount: number) => {
   const initialCounts = new Counts(List.counts(createPairs(template)))

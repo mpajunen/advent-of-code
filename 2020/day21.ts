@@ -20,17 +20,22 @@ const findCauses = ([first, ...rest]: Option[]): Cause[] => {
   if (rest.length === 0) {
     return [result]
   }
-  const remaining: Option[] = rest
-    .map(([a, ingredients]) => [a, ingredients.filter(i => i !== ingredient)])
+  const remaining: Option[] = rest.map(([a, ingredients]) => [
+    a,
+    ingredients.filter(i => i !== ingredient),
+  ])
 
   return [result, ...findCauses(List.sortBy(o => o[1].length, remaining))]
 }
 
 const findAllergens = (foods: Food[]): Cause[] => {
   const allergens = List.unique(foods.flatMap(f => f.allergens))
-  const foundIn: Option[] = allergens.map(a => [a, List.intersectionOf(
-    foods.filter(f => f.allergens.includes(a)).map(f => f.ingredients),
-  )])
+  const foundIn: Option[] = allergens.map(a => [
+    a,
+    List.intersectionOf(
+      foods.filter(f => f.allergens.includes(a)).map(f => f.ingredients),
+    ),
+  ])
 
   return findCauses(foundIn)
 }
@@ -44,8 +49,9 @@ export default (rows: string[]) => {
     .flatMap(f => f.ingredients)
     .filter(i => !dangerous.includes(i))
 
-  const canonical = List.sortBy(([allergen]) => allergen, causes)
-    .map(([, ingredient]) => ingredient)
+  const canonical = List.sortBy(([allergen]) => allergen, causes).map(
+    ([, ingredient]) => ingredient,
+  )
 
   const result1 = nonCauses.length
   const result2 = canonical.join(',')

@@ -33,7 +33,11 @@ const getInput = (rows: string[]): Grid<Cell> => {
   return grid
 }
 
-const MOVES: Vec2[] = [{ x: 0, y: 1 }, { x: -1, y: 1 }, { x: 1, y: 1 }]
+const MOVES: Vec2[] = [
+  { x: 0, y: 1 },
+  { x: -1, y: 1 },
+  { x: 1, y: 1 },
+]
 
 const fillWithSand = (grid: Grid<Cell>) => {
   const findAdjacentPosition = (position: Vec2): Vec2 | undefined =>

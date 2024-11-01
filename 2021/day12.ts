@@ -1,8 +1,12 @@
 import { List } from '../common'
 
 const getInput = (rows: string[]) => {
-  const routes = rows.map(r => r.split('-'))
-    .flatMap(([from, to]) => [[from, to], [to, from]])
+  const routes = rows
+    .map(r => r.split('-'))
+    .flatMap(([from, to]) => [
+      [from, to],
+      [to, from],
+    ])
     .filter(([from, to]) => from !== 'end' && to !== 'start')
 
   const mapping = {}
@@ -14,7 +18,8 @@ const getInput = (rows: string[]) => {
   return mapping
 }
 
-const cond1 = (path: string[]) => (next: string) => next.toUpperCase() === next || !path.includes(next)
+const cond1 = (path: string[]) => (next: string) =>
+  next.toUpperCase() === next || !path.includes(next)
 
 const hasNoDouble = (path: string[]) => {
   const counts = List.counts(path)
@@ -27,7 +32,10 @@ const cond2 = (path: string[]) => (next: string) =>
 
 type Cond = typeof cond1
 
-const allRoutes = (mapping: Record<string, string[]>, cond: Cond): string[][] => {
+const allRoutes = (
+  mapping: Record<string, string[]>,
+  cond: Cond,
+): string[][] => {
   const routes = (path: string[]): string[][] => {
     const step = path[path.length - 1]
     if (step === 'end') {

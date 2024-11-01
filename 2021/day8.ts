@@ -38,18 +38,25 @@ const NUMBER_SEGMENTS = [
 
 const UNIQUE_LENGTHS = [2, 3, 4, 7] // 1, 4, 7, and 8
 
-const refine = (real: string) => (options: string[], compare: [string, string[]]): string[] => {
-  const commonCharCount = Str.commonChars(real, compare[0]).length
+const refine =
+  (real: string) =>
+  (options: string[], compare: [string, string[]]): string[] => {
+    const commonCharCount = Str.commonChars(real, compare[0]).length
 
-  return options.filter(o => compare[1].some(c => Str.commonChars(c, o).length === commonCharCount))
-}
+    return options.filter(o =>
+      compare[1].some(c => Str.commonChars(c, o).length === commonCharCount),
+    )
+  }
 
 const solve = ([signal, output]: [string[], string[]]): number => {
-  const possibilities: [string, string[]][] =
-    NUMBER_SEGMENTS.map(s => [s, signal.filter(str => str.length === s.length)])
+  const possibilities: [string, string[]][] = NUMBER_SEGMENTS.map(s => [
+    s,
+    signal.filter(str => str.length === s.length),
+  ])
 
-  const refined = possibilities.map(([real, options]) =>
-    possibilities.reduce(refine(real), options)[0]) // Expects that only one match is found
+  const refined = possibilities.map(
+    ([real, options]) => possibilities.reduce(refine(real), options)[0],
+  ) // Expects that only one match is found
 
   return Num.fromDigits(output.map(v => refined.indexOf(v)))
 }
@@ -57,7 +64,12 @@ const solve = ([signal, output]: [string[], string[]]): number => {
 export default (rows: string[]) => {
   const input = getInput(rows)
 
-  const result1 = Num.sum(input.map(([, output]) => output.filter(o => UNIQUE_LENGTHS.includes(o.length)).length))
+  const result1 = Num.sum(
+    input.map(
+      ([, output]) =>
+        output.filter(o => UNIQUE_LENGTHS.includes(o.length)).length,
+    ),
+  )
   const result2 = Num.sum(input.map(solve))
 
   return [result1, result2, 521, 1016804]

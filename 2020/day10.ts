@@ -1,6 +1,7 @@
 import { List, Num } from '../common'
 
-const getGapSizes = (nums: number[]) => List.zipPairs(nums).map(([a, b]) => b - a)
+const getGapSizes = (nums: number[]) =>
+  List.zipPairs(nums).map(([a, b]) => b - a)
 
 const combinations = {
   1: 1,
@@ -20,7 +21,7 @@ export default (rows: string[]) => {
 
   const seqCombinations = List.sequenceLengths(gaps)
     // All gaps are 1 or 3
-    .map(s => s.value === 3 ? 1 : combinations[s.length])
+    .map(s => (s.value === 3 ? 1 : combinations[s.length]))
 
   const result1 = counts[1] * counts[3]
   const result2 = Num.product(seqCombinations)

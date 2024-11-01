@@ -30,7 +30,6 @@ const buildNode = remaining => {
 
 const root = buildNode(numbers)
 
-
 const metaSum = node =>
   common.sum(node.meta) + common.sum(node.children.map(metaSum))
 
@@ -38,13 +37,14 @@ const result1 = metaSum(root)
 
 console.log(result1) // 40977
 
-
 const nodeValue = node => {
   if (node.children.length === 0) {
     return metaSum(node)
   }
 
-  const referred = node.meta.map(num => node.children[num - 1]).filter(node => !!node)
+  const referred = node.meta
+    .map(num => node.children[num - 1])
+    .filter(node => !!node)
 
   return common.sum(referred.map(nodeValue))
 }

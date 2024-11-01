@@ -32,7 +32,7 @@ const SETTLING = '/'
 const STILL = '~'
 const FLOW = '|'
 
-const createWalls = (input) => {
+const createWalls = input => {
   const grid = createGrid(() => EMPTY, WIDTH, input.yRange[1] + 1)
 
   input.bars.forEach(({ x: [xMin, xMax], y: [yMin, yMax] }) => {
@@ -139,7 +139,6 @@ const situation = flowAll(createWalls(input))
 const result1 = reach(situation) - input.yRange[0] + 1
 
 console.log(result1) // 31641
-
 
 const result2 = reach(situation, [STILL])
 

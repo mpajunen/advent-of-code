@@ -3,10 +3,20 @@ import { List, Num } from '../common'
 const pairs = { '(': ')', '[': ']', '{': '}', '<': '>' } as const
 
 type Open = keyof typeof pairs
-type Close = typeof pairs[Open]
+type Close = (typeof pairs)[Open]
 
-const pointsCorrupted: Record<Close, number> = { ')': 3, ']': 57, '}': 1197, '>': 25137 }
-const pointsIncomplete: Record<Close, number> = { ')': 1, ']': 2, '}': 3, '>': 4 }
+const pointsCorrupted: Record<Close, number> = {
+  ')': 3,
+  ']': 57,
+  '}': 1197,
+  '>': 25137,
+}
+const pointsIncomplete: Record<Close, number> = {
+  ')': 1,
+  ']': 2,
+  '}': 3,
+  '>': 4,
+}
 
 const scoreIncomplete = (stack: Open[]): number =>
   stack
@@ -35,9 +45,10 @@ const parse = (row: string) => {
 const middle = <T>(values: T[]): T => values[(values.length - 1) / 2]
 
 export default (rows: string[]) => {
-  const [corrupted, incomplete] = List
-    .partition(l => l.status === 'corrupted', rows.map(parse))
-    .map(lines => lines.map(l => l.score))
+  const [corrupted, incomplete] = List.partition(
+    l => l.status === 'corrupted',
+    rows.map(parse),
+  ).map(lines => lines.map(l => l.score))
 
   const result1 = Num.sum(corrupted)
   const result2 = middle(List.sort(incomplete))

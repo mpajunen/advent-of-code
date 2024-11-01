@@ -3,7 +3,9 @@ import CycleList from './CycleList'
 
 const readInput = () => {
   const [row] = common.readDayRows(9)
-  const parse = common.parseByPattern('%i players; last marble is worth %i points')
+  const parse = common.parseByPattern(
+    '%i players; last marble is worth %i points',
+  )
 
   const [playerCount, lastMarble] = parse(row)
 
@@ -42,12 +44,10 @@ const placeMarbles = (players, finalMarble) => {
 
 const highScore = scores => Math.max(...Object.values(scores))
 
-
 const placements1 = placeMarbles(playerCount, lastMarble)
 const result1 = highScore(placements1.scores)
 
 console.log(result1) // 408679
-
 
 const MULTIPLIER = 100
 

@@ -48,9 +48,16 @@ const moveTimes = (cups: number[], times: number): Record<number, number> => {
       dict[dict[current]],
       dict[dict[dict[current]]],
     ]
-    const destValue =
-      [current - 1, current - 2, current - 3, current - 4, max, max - 1, max - 2, max - 3]
-        .filter(n => n > 0 && !pickup.includes(n))[0]
+    const destValue = [
+      current - 1,
+      current - 2,
+      current - 3,
+      current - 4,
+      max,
+      max - 1,
+      max - 2,
+      max - 3,
+    ].filter(n => n > 0 && !pickup.includes(n))[0]
 
     dict[current] = dict[pickup[2]]
     dict[pickup[2]] = dict[destValue]
@@ -79,7 +86,9 @@ export default ([row]: string[]) => {
   const input = row.split('').map(n => parseInt(n))
 
   const million = List.range(1, 1_000_000 + 1)
-  input.forEach((v, i) => { million[i] = v })
+  input.forEach((v, i) => {
+    million[i] = v
+  })
 
   const end2 = moveTimes(million, 10_000_000)
 

@@ -4,13 +4,17 @@ export type Bit = 0 | 1
 
 export const LARGE_VALUE = Number.MAX_SAFE_INTEGER
 
-export const digits = (n: number): number[] => String(n).split('').map(c => parseInt(c))
+export const digits = (n: number): number[] =>
+  String(n)
+    .split('')
+    .map(c => parseInt(c))
 
 export const fromBits = (bits: Bit[]): number => parseInt(bits.join(''), 2)
 
 export const fromDigits = (digits: number[]): number => Number(digits.join(''))
 
-export const fibonacci = (n: number): number => n < 2 ? 1 : n * fibonacci(n - 1)
+export const fibonacci = (n: number): number =>
+  n < 2 ? 1 : n * fibonacci(n - 1)
 
 export const findFactors = num =>
   List.range(1, Math.ceil(Math.sqrt(num)))

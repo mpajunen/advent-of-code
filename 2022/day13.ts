@@ -6,7 +6,10 @@ const getInput = (rows: string[]): Packet[] =>
 type Packet = number | Packet[]
 
 const compareLists = (left: Packet[], right: Packet[]) =>
-  List.zip(left, right).reduce((prev, [left, right]) => prev || compare(left, right), 0)
+  List.zip(left, right).reduce(
+    (prev, [left, right]) => prev || compare(left, right),
+    0,
+  )
 
 const compare = (left: Packet, right: Packet): number => {
   if (typeof left === 'number' && typeof right === 'number') {
@@ -24,7 +27,7 @@ export default (rows: string[]) => {
 
   const correctIndices = List.chunk(packets, 2)
     .map(([left, right]) => compare(left, right))
-    .flatMap<number>((value, index) => value < 0 ? index + 1 : [])
+    .flatMap<number>((value, index) => (value < 0 ? index + 1 : []))
 
   const sorted = [...packets, [[2]], [[6]]].sort(compare)
 

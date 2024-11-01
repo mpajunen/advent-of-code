@@ -1,7 +1,9 @@
 import { Num, Vec3 } from '../common'
 
 const getConnectedSideCount = (cubes: Vec3[]) =>
-  Num.sum(cubes.flatMap(a => cubes.map(b => Vec3.manhattan(a, b) === 1 ? 1 : 0)))
+  Num.sum(
+    cubes.flatMap(a => cubes.map(b => (Vec3.manhattan(a, b) === 1 ? 1 : 0))),
+  )
 
 const getBoxLimits = (cubes: Vec3[]): [number, number] => [
   Math.min(...cubes.flatMap(c => [c.x, c.y, c.z])) - 1,

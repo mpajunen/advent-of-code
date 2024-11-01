@@ -3,16 +3,24 @@ import { Vec2 } from './Vec2'
 
 type Val = number | string
 
-type Mapper<Value extends Val, Result> = (value: Value, coordinates: Vec2, grid: Grid<Value>) => Result
-type Reducer<Value extends Val, Result> = (acc: Result, value: Value, coordinates: Vec2, grid: Grid<Value>) => Result
+type Mapper<Value extends Val, Result> = (
+  value: Value,
+  coordinates: Vec2,
+  grid: Grid<Value>,
+) => Result
+type Reducer<Value extends Val, Result> = (
+  acc: Result,
+  value: Value,
+  coordinates: Vec2,
+  grid: Grid<Value>,
+) => Result
 
 type GetValue<T> = (coordinates: Vec2) => T
 
 const create = <T extends Val>(size: Vec2, getValue: GetValue<T>): Grid<T> => {
   const row = Array.from({ length: size.x })
-  const rows = Array.from(
-    { length: size.y },
-    (_, y) => row.map((_, x) => getValue({ x, y })),
+  const rows = Array.from({ length: size.y }, (_, y) =>
+    row.map((_, x) => getValue({ x, y })),
   )
 
   return new Grid(rows)
@@ -104,18 +112,24 @@ export class Grid<T extends Val> {
   }
 
   slice(start: number, end: number): Grid<T> {
-    return new Grid(this.rows().slice(start, end).map(r => r.slice(start, end)))
+    return new Grid(
+      this.rows()
+        .slice(start, end)
+        .map(r => r.slice(start, end)),
+    )
   }
 
   countBy(func: Mapper<T, boolean>): number {
-    return this.map((...params) => func(...params) ? 1 : 0).valueCounts()[1]
+    return this.map((...params) => (func(...params) ? 1 : 0)).valueCounts()[1]
   }
 
   filter(func: Mapper<T, boolean>): Grid<T> {
-    return this.map((value, point) => func(value, point, this) ? value : undefined)
+    return this.map((value, point) =>
+      func(value, point, this) ? value : undefined,
+    )
   }
 
-  findMax(): { max: T, point: Vec2 } {
+  findMax(): { max: T; point: Vec2 } {
     let max = this.data[0][0]
     let point = { x: 0, y: 0 }
 
@@ -155,7 +169,9 @@ export class Grid<T extends Val> {
   }
 
   map<NewT extends number | string>(func: Mapper<T, NewT>): Grid<NewT> {
-    const values = this.data.map((row, y) => row.map((value, x) => func(value, { x, y }, this)))
+    const values = this.data.map((row, y) =>
+      row.map((value, x) => func(value, { x, y }, this)),
+    )
 
     return new Grid(values)
   }
@@ -171,7 +187,9 @@ export class Grid<T extends Val> {
 
   mapPart(func: Mapper<T, T>, start: Vec2, end: Vec2): Grid<T> {
     const changeRow = (row, y) =>
-      row.map((value, x) => x >= start.y && y < start.y ? func(value, { x, y }, this) : value)
+      row.map((value, x) =>
+        x >= start.y && y < start.y ? func(value, { x, y }, this) : value,
+      )
     const change = (row, y) =>
       y >= start.y && y < end.y ? changeRow(row, y) : row
 

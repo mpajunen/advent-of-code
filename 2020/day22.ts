@@ -10,9 +10,12 @@ const playTick = (decks: Decks, recursive: boolean): Decks => {
   const [card0, ...remaining0] = decks[0]
   const [card1, ...remaining1] = decks[1]
 
-  const [winner] = recursive && card0 <= remaining0.length && card1 <= remaining1.length
-    ? play([remaining0.slice(0, card0), remaining1.slice(0, card1)], true)
-    : (card0 > card1 ? [0] : [1])
+  const [winner] =
+    recursive && card0 <= remaining0.length && card1 <= remaining1.length
+      ? play([remaining0.slice(0, card0), remaining1.slice(0, card1)], true)
+      : card0 > card1
+        ? [0]
+        : [1]
 
   return winner === 0
     ? [[...remaining0, card0, card1], remaining1]

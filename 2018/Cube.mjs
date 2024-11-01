@@ -2,17 +2,19 @@ import * as common from './common'
 
 export const ORIGIN = [0, 0, 0]
 
-
-export const add = ([xa, ya, za]) => ([xb, yb, zb]) => [xb + xa, yb + ya, zb + za]
+export const add =
+  ([xa, ya, za]) =>
+  ([xb, yb, zb]) => [xb + xa, yb + ya, zb + za]
 
 const subtract = ([xa, ya, za], [xb, yb, zb]) => [xb - xa, yb - ya, zb - za]
 
-export const multiply = num => ([x, y, z]) => [x * num, y * num, z * num]
+export const multiply =
+  num =>
+  ([x, y, z]) => [x * num, y * num, z * num]
 
 export const length = vec => common.sum(vec.map(n => Math.abs(n)))
 
 export const manhattan = a => b => length(subtract(a, b))
-
 
 const UNIT_OPTIONS = [-1, 0, 1]
 
@@ -50,4 +52,3 @@ export class Box {
     return DIR_CORNERS.map(multiply(this.radius)).map(add(this.center))
   }
 }
-
