@@ -1,6 +1,8 @@
 'use strict'
 
-const md5 = require('js-md5')
+const crypto = require('crypto')
+
+const md5 = input => crypto.createHash('md5').update(input).digest('hex')
 
 const findMd5WithPrefix = (input, prefix) => {
   const len = prefix.length
