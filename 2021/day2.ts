@@ -1,4 +1,4 @@
-import produce from 'immer'
+import { produce } from 'immer'
 import { Input } from '../common'
 
 const getInput = (rows: string[]) =>

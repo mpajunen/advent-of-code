@@ -2,7 +2,7 @@ import { Num } from '../common'
 
 const getBaseFuel = (mass: number) => Math.trunc(mass / 3) - 2
 
-const getFuel = (mass: number) => {
+const getFuel = (mass: number): number => {
   const next = getBaseFuel(mass)
 
   return next <= 0 ? 0 : next + getFuel(next)

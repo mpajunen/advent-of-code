@@ -1,4 +1,4 @@
-import produce from 'immer'
+import { produce } from 'immer'
 import { Input, List, Num } from '../common'
 
 const parse = Input.parseByPattern<number[]>(

@@ -19,7 +19,7 @@ const ROOM_COLUMNS = Object.values(TARGET_ROOM_X)
 const MOVE_COSTS = { A: 1, B: 10, C: 100, D: 1000 }
 
 const getInput = (rows: string[]) => {
-  const cells = Grid.fromStrings(rows).entries()
+  const cells = Grid.fromStrings<Occupant>(rows).entries()
 
   const hallway = cells
     .filter(isOpen)
@@ -33,7 +33,8 @@ const occupiedBy =
   (options: Readonly<Occupant[]>) =>
   ([, occupant]: Cell) =>
     List.includes(options, occupant)
-const isOccupied = occupiedBy(AMPHIPODS)
+const isOccupied = (cell: Cell): cell is Cell<Amphipod> =>
+  List.includes(AMPHIPODS, cell[1])
 const isOpen = occupiedBy([OPEN])
 const hasSame = ([, occupant]: Cell) => occupiedBy([occupant])
 

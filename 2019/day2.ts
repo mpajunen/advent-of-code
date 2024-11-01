@@ -10,6 +10,8 @@ const findOutput = (codes: number[]) => {
       }
     }
   }
+
+  throw new Error()
 }
 
 export default ([row]: string[]) => {

@@ -1,4 +1,4 @@
-import produce from 'immer'
+import { produce } from 'immer'
 import { List, Num } from '../common'
 
 type Monkey = ReturnType<typeof getMonkey>

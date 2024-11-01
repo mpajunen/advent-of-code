@@ -40,7 +40,7 @@ const evalExpr = (expr: ExprList): number => {
 
   const [first, ...rest] = flattened
 
-  const sub = List.chunk(rest, 2)
+  const sub = List.chunk(rest, 2) as [Operator, number][]
 
   return sub.reduce(op, first as number)
 }

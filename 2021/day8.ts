@@ -1,7 +1,11 @@
 import { Num, Str } from '../common'
 
+type Row = [string[], string[]]
+
 const getInput = (rows: string[]) =>
-  rows.map(row => row.split(' | ').map(part => Str.words(part).map(Str.sort)))
+  rows.map(
+    row => row.split(' | ').map(part => Str.words(part).map(Str.sort)) as Row,
+  )
 
 /*
   0:      1:      2:      3:      4:
@@ -48,7 +52,7 @@ const refine =
     )
   }
 
-const solve = ([signal, output]: [string[], string[]]): number => {
+const solve = ([signal, output]: Row): number => {
   const possibilities: [string, string[]][] = NUMBER_SEGMENTS.map(s => [
     s,
     signal.filter(str => str.length === s.length),

@@ -18,6 +18,8 @@ const parseCommand = ([commandRow, ...outputRows]: string[]): Command => {
       return { command, dir: arg }
     case 'ls':
       return { command, output: outputRows.map(parseOutput) }
+    default:
+      throw new Error(`Unknown command: ${command}`)
   }
 }
 

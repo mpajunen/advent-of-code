@@ -17,13 +17,13 @@ const getInput = (rows: string[]) => {
 
 const step =
   (rules: Rule[]) =>
-  (counts: Counts): Counts =>
+  (counts: Counts<string>): Counts<string> =>
     Counts.fromEntries(rules.map(([from, to]) => [to, counts.get(from)]))
 
 const createPairs = (polymer: string): string[] =>
   List.zipPairs(polymer.split('')).map(pair => pair.join(''))
 
-const charCounts = (pairCounts: Counts): Counts =>
+const charCounts = (pairCounts: Counts<string>): Counts<string> =>
   Counts.fromEntries(
     pairCounts
       .entries()

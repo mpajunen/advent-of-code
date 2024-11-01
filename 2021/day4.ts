@@ -31,6 +31,8 @@ const score = (draws: number[][]) => (board: Grid<number>) => {
       return { score, drawn: draw.length }
     }
   }
+
+  throw new Error()
 }
 
 export default (rows: string[]) => {

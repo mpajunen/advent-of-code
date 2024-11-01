@@ -61,7 +61,7 @@ const exampleCubeWraps = {
   4: { E: [6, 'N'], S: [5, 'N'], W: [3, 'E'], N: [1, 'S'] },
   5: { E: [6, 'W'], S: [2, 'S'], W: [3, 'S'], N: [4, 'S'] },
   6: { E: [1, 'E'], S: [2, 'W'], W: [5, 'E'], N: [4, 'E'] },
-}
+} as const
 
 const actualSides = sideGrid(`
 -12
@@ -76,9 +76,11 @@ const actualCubeWraps = {
   4: { E: [5, 'W'], S: [6, 'N'], W: [1, 'W'], N: [3, 'W'] },
   5: { E: [2, 'E'], S: [6, 'E'], W: [4, 'E'], N: [3, 'N'] },
   6: { E: [5, 'S'], S: [2, 'N'], W: [1, 'N'], N: [4, 'S'] },
-}
+} as const
 
 const directions = ['N', 'E', 'S', 'W'] as const
+
+type SideKey = 1 | 2 | 3 | 4 | 5 | 6
 
 const createCubeWrap = (map: Map, example: boolean): Wrap => {
   const sides = example ? exampleSides : actualSides
@@ -91,7 +93,7 @@ const createCubeWrap = (map: Map, example: boolean): Wrap => {
       x: Math.floor(p.x / tilesPerSide),
       y: Math.floor(p.y / tilesPerSide),
     }
-    const number = sides.get(position)
+    const number = parseInt(sides.get(position)) as SideKey
     const tileOffset = Vec2.mul(position, tilesPerSide)
     const inTile = Vec2.subtract(p, tileOffset)
 

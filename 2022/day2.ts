@@ -23,7 +23,7 @@ const score1 = ([elf, player]: Play) =>
 const score2 = ([elf, player]: Play) =>
   score(elfPicks[elf], resultPick(elfPicks[elf], resultInstruction[player]))
 
-const getInput = (rows: string[]) => rows.map(row => row.split(' '))
+const getInput = (rows: string[]) => rows.map(row => row.split(' ') as Play)
 
 export default (rows: string[]) => {
   const input = getInput(rows)
