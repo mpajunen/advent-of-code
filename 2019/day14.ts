@@ -86,7 +86,7 @@ const findMaxFuel = (reactions: Reactions, oreLimit: number): number =>
     oreLimit,
   )
 
-export default function day14(rows: string[]): [unknown, unknown] {
+export default (rows: string[]) => {
   const reactions: Reactions = Object.fromEntries(
     rows.map(getReaction).map(r => [r.output.resource, r]),
   )

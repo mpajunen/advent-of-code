@@ -24,7 +24,7 @@ class Tree<T> {
   getNodes = (): T[] => Array.from(this.edges.keys())
 }
 
-export default function day6(rows: string[]): [unknown, unknown] {
+export default (rows: string[]) => {
   const orbitPairs = rows.map(row => [row.slice(4), row.slice(0, 3)] as Orbit)
 
   const orbits = new Tree<string>(new Map(orbitPairs))

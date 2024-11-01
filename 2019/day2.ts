@@ -12,7 +12,7 @@ const findOutput = (codes: number[]) => {
   }
 }
 
-export default function day2([row]: string[]): [unknown, unknown] {
+export default ([row]: string[]) => {
   const codes = row.split(',').map(row => parseInt(row))
 
   const [result1] = IntCode.runWithInit(codes, 12, 2)

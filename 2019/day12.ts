@@ -104,7 +104,7 @@ const findAxisCycle = (initial: Moon[], axis: keyof Vec3): number => {
   }
 }
 
-export default function day12(rows: string[]): [unknown, unknown] {
+export default (rows: string[]) => {
   const moons: Moon[] = rows
     .map(Input.parseByPattern<[number, number, number]>('<x=%i, y=%i, z=%i>'))
     .map(([x, y, z]) => ({ x, y, z }))

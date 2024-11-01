@@ -11,7 +11,7 @@ const getAngleCounts = (positions: Vec2[]) => (from: Vec2) =>
 const getLaserRotation = (angle: number): number =>
   (angle >= -90 ? angle : angle + 360) + 90
 
-export default function day10(rows: string[]): [unknown, unknown] {
+export default (rows: string[]) => {
   const positions = rows.flatMap((row, y) =>
     Str.chunk(1, row).flatMap((char, x) => (char === '#' ? [{ x, y }] : [])),
   )

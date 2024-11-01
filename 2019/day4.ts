@@ -17,7 +17,7 @@ const isMatch =
     return checks.every(check => check(digits))
   }
 
-export default function day4([row]: string[]): [unknown, unknown] {
+export default ([row]: string[]) => {
   const [start, end] = Input.parseByPattern<[number, number]>('%i-%i')(row)
 
   const numbers = List.range(start, end + 1)
@@ -26,6 +26,6 @@ export default function day4([row]: string[]): [unknown, unknown] {
     numbers.filter(isMatch([hasAdjacent, isIncreasing])).length,
     numbers.filter(isMatch([hasPair, isIncreasing])).length,
     945,
-    617
+    617,
   ]
 }

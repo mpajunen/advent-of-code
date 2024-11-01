@@ -152,7 +152,7 @@ const buildModified = (maze: Maze, state: State) => {
   }
 }
 
-export default function day18(rows: string[]): [unknown, unknown] {
+export default (rows: string[]) => {
   const { maze, state } = buildInitial(rows)
   const modified = buildModified(maze, state)
 

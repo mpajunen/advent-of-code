@@ -58,7 +58,7 @@ const movingDistances = (lines: Line[], crossings: Vec2[]): number[] => {
   return distances
 }
 
-export default function day3(rows: string[]): [number, number] {
+export default (rows: string[]) => {
   const moves = rows.map(getMoves)
   const points = moves.map(m => [origin, ...List.scan(origin, m, add)])
   const lines = points.map(List.zipPairs)

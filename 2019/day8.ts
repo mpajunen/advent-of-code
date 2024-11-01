@@ -3,7 +3,7 @@ import { List, Str } from '../common'
 const WIDTH = 25
 const HEIGHT = 6
 
-export default function day8([row]: string[]): [unknown, unknown] {
+export default ([row]: string[]) => {
   const layers = Str.chunk(WIDTH * HEIGHT, row)
 
   const [checkLayer] = List.minBy(image => Str.charCounts(image)[0], layers)
@@ -25,11 +25,10 @@ export default function day8([row]: string[]): [unknown, unknown] {
   return [checkCounts[1] * checkCounts[2], text, 1806, expectedText]
 }
 
-const expectedText =`
+const expectedText = `
   ##  ##  #### ###   ##  
    # #  # #    #  # #  # 
    # #  # ###  #  # #  # 
    # #### #    ###  #### 
 #  # #  # #    # #  #  # 
- ##  #  # #    #  # #  # `
-  .slice(1) // Remove leading newline
+ ##  #  # #    #  # #  # `.slice(1) // Remove leading newline

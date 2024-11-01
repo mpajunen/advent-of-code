@@ -8,7 +8,7 @@ const getFuel = (mass: number) => {
   return next <= 0 ? 0 : next + getFuel(next)
 }
 
-export default function day1(rows: string[]): [unknown, unknown] {
+export default (rows: string[]) => {
   const masses = rows.map(row => parseInt(row))
 
   const result1 = Num.sum(masses.map(getBaseFuel))
