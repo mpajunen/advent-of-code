@@ -16,12 +16,12 @@ export const fromDigits = (digits: number[]): number => Number(digits.join(''))
 export const fibonacci = (n: number): number =>
   n < 2 ? 1 : n * fibonacci(n - 1)
 
-export const findFactors = num =>
+export const findFactors = (num: number) =>
   List.range(1, Math.ceil(Math.sqrt(num)))
     .filter(n => num % n === 0)
     .reduce((acc, n) => [...acc, n, num / n], [])
 
-export const isNumeric = n => parseFloat(n).toString() === n
+export const isNumeric = (n: string) => parseFloat(n).toString() === n
 
 export const pairSums = (values: number[]): number[] => {
   const all = []

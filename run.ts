@@ -6,13 +6,13 @@ type Day = (
   rows: string[],
 ) => [Answer, Answer, Answer | undefined, Answer | undefined]
 
-const readDayRows = (year, day) =>
+const readDayRows = (year: number, day: number) =>
   readFileSync(`./${year}/input/day${day}.txt`, 'utf8').trimEnd().split('\n')
 
 const getCode = async (year: number, day: number): Promise<Day> =>
   (await import(`./${year}/day${day}`)).default
 
-const printResult = (result: Answer, expected: Answer) => {
+const printResult = (result: Answer, expected: Answer | undefined) => {
   console.log(result)
   if (expected && result !== expected) {
     console.log(`Expected ${expected}, got ${result}!`)

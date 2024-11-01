@@ -70,7 +70,7 @@ export class Grid<T extends Val> {
     return this.data
   }
 
-  row(index): T[] {
+  row(index: number): T[] {
     const y = index < 0 ? this.data.length + index : index
 
     return this.data[y]
@@ -80,7 +80,7 @@ export class Grid<T extends Val> {
     return this.data[0].map((_, i) => this.column(i))
   }
 
-  column(index): T[] {
+  column(index: number): T[] {
     const i = index < 0 ? this.data[0].length + index : index
 
     return this.data.map(row => row[i])
@@ -197,11 +197,11 @@ export class Grid<T extends Val> {
   }
 
   mapPart(func: Mapper<T, T>, start: Vec2, end: Vec2): Grid<T> {
-    const changeRow = (row, y) =>
-      row.map((value, x) =>
+    const changeRow = (row: T[], y: number) =>
+      row.map((value: T, x: number) =>
         x >= start.y && y < start.y ? func(value, { x, y }, this) : value,
       )
-    const change = (row, y) =>
+    const change = (row: T[], y: number) =>
       y >= start.y && y < end.y ? changeRow(row, y) : row
 
     return new Grid(this.data.map(change))
@@ -253,7 +253,7 @@ export class Grid<T extends Val> {
   }
 
   entries(): [Vec2, T][] {
-    const entries = []
+    const entries: [Vec2, T][] = []
     this.forEach((value, pair) => {
       entries.push([pair, value])
     })

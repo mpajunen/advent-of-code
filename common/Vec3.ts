@@ -37,7 +37,9 @@ const facings: Rotation[] = [
 export const rotations = facings.flatMap(facingRotations)
 
 const rotateAxis = (dir: Dir, v: Vec3): number =>
-  axes.includes(dir as Axis) ? v[dir] : -rotateAxis(dir.slice(1) as Dir, v)
+  axes.includes(dir as Axis)
+    ? v[dir as Axis]
+    : -rotateAxis(dir.slice(1) as Dir, v)
 
 export const rotate = ([xDir, yDir, zDir]: Rotation, v: Vec3): Vec3 => ({
   x: rotateAxis(xDir, v),

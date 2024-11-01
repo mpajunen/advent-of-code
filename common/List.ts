@@ -13,7 +13,7 @@ export const counts = <V extends number | string>(
   return found as Record<V, number>
 }
 
-export const empty = (length, getValue = (key: number) => 0) =>
+export const empty = (length: number, getValue = (key: number) => 0) =>
   Array.from({ length }, (_, key) => getValue(key))
 
 export const exclude = <T>(values: T[], exclusion: T[]): T[] =>
@@ -165,7 +165,7 @@ export const splitBy = <T extends SplitValue>(
   values: T[],
   includeSplit = false,
 ): T[][] => {
-  const all = [[]]
+  const all: T[][] = [[]]
 
   const split =
     typeof splitter === 'function' ? splitter : (value: T) => value === splitter

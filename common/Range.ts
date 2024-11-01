@@ -6,7 +6,7 @@ const MAX = 1
 export const combine = (ranges: Range[]): Range[] =>
   ranges.reduce((earlier, current) => combineAdd(earlier, current), [])
 
-const combineAdd = (ranges: Range[], range: Range) => {
+const combineAdd = (ranges: Range[], range: Range): Range[] => {
   const index = ranges.findIndex(r => overlaps(r, range))
   if (index === -1) {
     return [...ranges, range]
