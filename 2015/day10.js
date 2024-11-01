@@ -1,10 +1,4 @@
-'use strict'
-
-const fs = require('fs')
-const R = require('ramda')
-
-const iterations = 50
-const input = fs.readFileSync('input/day10.txt', 'utf8').trim()
+import { List } from '../common'
 
 const lookAndSay = str => {
   let result = ''
@@ -29,6 +23,12 @@ const lookAndSay = str => {
   return result
 }
 
-const result1 = R.range(0, iterations).reduce(lookAndSay, input).length
+const iterate = (input, iterations) =>
+  List.range(0, iterations).reduce(lookAndSay, input)
 
-console.log(result1)
+export default ([row]) => {
+  const result1 = iterate(row, 40).length
+  const result2 = iterate(row, 50).length
+
+  return [result1, result2, 252594, 3579328]
+}
