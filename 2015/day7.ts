@@ -2,29 +2,39 @@
 
 const immutable = require('immutable')
 
-const isInt = x => /^\d+$/.test(x)
-const convertInt = x => (isInt(x) ? parseInt(x, 10) : x)
-const splitConnection = connection => connection.split(' ').reverse()
-const convertConnection = ([target, _, right, gate = null, left]) => {
+type Connection = {
+  left: number | string | undefined
+  right: number | string
+  gate: string | null
+  target: string
+}
+
+type Connections = Record<string, Connection>
+
+const isInt = (x: string) => /^\d+$/.test(x)
+const convertInt = (x: string) => (isInt(x) ? parseInt(x, 10) : x)
+const splitConnection = (connection: string) => connection.split(' ').reverse()
+const convertConnection = (connection: string[]) => {
   return {
-    left: convertInt(left),
-    right: convertInt(right),
-    gate,
-    target,
+    left: convertInt(connection[4]),
+    right: convertInt(connection[2]),
+    gate: connection[3] ?? null,
+    target: connection[0],
   }
 }
 
-const isConnectionUntaken = current => connection =>
-  current[connection.target] === undefined
-const isValueFree = current => value =>
+const isConnectionUntaken =
+  (current: Connections) => (connection: Connection) =>
+    current[connection.target] === undefined
+const isValueFree = (current: Connections) => (value: number | string) =>
   typeof value !== 'string' || current[value] !== undefined
-const isConnectionFree = current => {
+const isConnectionFree = (current: Connections) => {
   const checkValue = isValueFree(current)
 
-  return ({ left, right }) => checkValue(left) && checkValue(right)
+  return ({ left, right }: Connection) => checkValue(left) && checkValue(right)
 }
 
-const gates = {
+const gates: Record<string, (left: number, right: number) => number> = {
   AND: (left, right) => left & right,
   OR: (left, right) => left | right,
   NOT: (left, right) => ~right,
@@ -33,7 +43,10 @@ const gates = {
   null: (left, right) => right,
 }
 
-const handleConnection = (wires, { left, right, gate, target }) => {
+const handleConnection = (
+  wires: Record<string, number>,
+  { left, right, gate, target }: Connection,
+) => {
   const leftIn = typeof left === 'number' ? left : wires[left]
   const rightIn = typeof right === 'number' ? right : wires[right]
 
@@ -42,15 +55,15 @@ const handleConnection = (wires, { left, right, gate, target }) => {
   return wires
 }
 
-export default rows => {
+export default (rows: string[]) => {
   const connections = rows.map(splitConnection).map(convertConnection)
 
-  const findSingleWireConnection = wire =>
+  const findSingleWireConnection = (wire: string | number) =>
     connections.find(({ target }) => target === wire)
-  const findConnections = ({ left, right }) => {
+  const findConnections = ({ left, right }: Connection): Connection[] => {
     return findWireConnections(left).concat(...findWireConnections(right))
   }
-  const findWireConnections = wire => {
+  const findWireConnections = (wire: string | number) => {
     const direct = findSingleWireConnection(wire)
     if (direct === undefined) {
       return []
@@ -61,12 +74,12 @@ export default rows => {
     return nested.concat(direct)
   }
 
-  const findNewFreeConnections = current =>
+  const findNewFreeConnections = (current: Connections) =>
     connections
       .filter(isConnectionUntaken(current))
       .filter(isConnectionFree(current))
 
-  let sortedConnections = {}
+  let sortedConnections: Record<string, Connection> = {}
 
   while (sortedConnections['a'] === undefined) {
     findNewFreeConnections(sortedConnections).forEach(
@@ -77,7 +90,7 @@ export default rows => {
   const sortedMap = immutable.OrderedMap(sortedConnections)
   const result1 = sortedMap.reduce(handleConnection, {}).a
 
-  const replacement = {
+  const replacement: Connection = {
     left: undefined,
     right: result1,
     gate: null,
