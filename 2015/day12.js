@@ -1,10 +1,8 @@
 'use strict'
 
-const immutable = require('immutable')
-
 const getSumFunction = filter => {
   const getCollectionSum = collection =>
-    filter(collection) ? collection.reduce(getSum, 0) : 0
+    filter(collection) ? Object.values(collection).reduce(getSum, 0) : 0
 
   const getNodeSum = node =>
     typeof node === 'number'
@@ -21,14 +19,14 @@ const getSumFunction = filter => {
 const getSum1 = getSumFunction(() => true)
 
 const isNotMapWithRed = collection =>
-  !(immutable.Map.isMap(collection) && collection.includes('red'))
+  Array.isArray(collection) || !Object.values(collection).includes('red')
 const getSum2 = getSumFunction(isNotMapWithRed)
 
 export default ([row]) => {
-  const doc = immutable.fromJS(JSON.parse(row))
+  const doc = JSON.parse(row)
 
-  const result1 = doc.reduce(getSum1, 0)
-  const result2 = doc.reduce(getSum2, 0)
+  const result1 = getSum1(0, doc)
+  const result2 = getSum2(0, doc)
 
   return [result1, result2, 119433, 68466]
 }

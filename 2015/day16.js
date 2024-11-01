@@ -1,6 +1,5 @@
 'use strict'
 
-const immutable = require('immutable')
 const R = require('ramda')
 
 const buildInterests = (interests, raw) => {
@@ -61,14 +60,10 @@ const getMessageOperator = interest => {
   return operator
 }
 
-const getMessagePart = (value, interest) => {
-  return {
-    value,
-    operator: getMessageOperator(interest),
-  }
-}
+const getMessagePart = ([interest, value]) =>
+  [interest, { value, operator: getMessageOperator(interest) }]
 
-const message2 = immutable.Map(message).map(getMessagePart).toObject()
+const message2 = Object.fromEntries(Object.entries(message).map(getMessagePart))
 
 const interestMatches2 = interests => current => {
   const part = message2[current]

@@ -1,10 +1,8 @@
 'use strict'
 
-const immutable = require('immutable')
-
 const vowels = 'aeiou'.split('')
 const disallowedPairs = ['ab', 'cd', 'pq', 'xy'].map(pair => pair.split(''))
-const disallowed = immutable.Map(disallowedPairs)
+const disallowed = new Map(disallowedPairs)
 
 const isCharVowel = char => vowels.indexOf(char) !== -1
 const getWordVowels = word => word.filter(isCharVowel)

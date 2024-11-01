@@ -1,7 +1,5 @@
 'use strict'
 
-const immutable = require('immutable')
-
 type Connection = {
   left: number | string | undefined
   right: number | string
@@ -87,8 +85,10 @@ export default (rows: string[]) => {
     )
   }
 
-  const sortedMap = immutable.OrderedMap(sortedConnections)
-  const result1 = sortedMap.reduce(handleConnection, {}).a
+  const result1 = Object.values(sortedConnections).reduce(
+    handleConnection,
+    {},
+  ).a
 
   const replacement: Connection = {
     left: undefined,
@@ -97,9 +97,9 @@ export default (rows: string[]) => {
     target: 'b',
   }
 
-  const fixedMap = sortedMap.set('b', replacement)
+  const fixedMap = { ...sortedConnections, b: replacement }
 
-  const result2 = fixedMap.reduce(handleConnection, {}).a
+  const result2 = Object.values(fixedMap).reduce(handleConnection, {}).a
 
   return [result1, result2, 46065, 14134]
 }
