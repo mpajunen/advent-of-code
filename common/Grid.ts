@@ -95,6 +95,17 @@ export class Grid<T extends Val> {
     ]
   }
 
+  corners(): [Vec2, Vec2, Vec2, Vec2] {
+    const size = this.size()
+
+    return [
+      { x: 0, y: 0 },
+      { x: size.x - 1, y: 0 },
+      { x: 0, y: size.y - 1 },
+      { x: size.x - 1, y: size.y - 1 },
+    ]
+  }
+
   flipHorizontal(): Grid<T> {
     return new Grid(this.data.map(r => [...r].reverse()))
   }
