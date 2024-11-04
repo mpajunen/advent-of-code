@@ -1,6 +1,6 @@
 'use strict'
 
-import { default as R } from 'ramda'
+import { List } from '../common'
 
 const getOtherValues = (list, index) =>
   list.slice(0, index).concat(list.slice(index + 1))
@@ -29,11 +29,8 @@ const permute = (res, value, index, list) => {
 
 const sum = (sum, value) => sum + value
 
-export const getNodes = R.pipe(
-  R.map(R.props(['from', 'to'])),
-  R.flatten,
-  R.uniq,
-)
+export const getNodes = routes =>
+  List.unique(routes.flatMap(({ from, to }) => [from, to]))
 
 export const getAmounts = (places, routes) => {
   const emptyAmounts = places.map(() => [])
@@ -56,7 +53,7 @@ export const getPermutationMinMax = (perms, amounts) => {
   const permAmounts = perms.map(getPermutationAmount(amounts))
 
   return {
-    min: permAmounts.reduce(R.min),
-    max: permAmounts.reduce(R.max),
+    min: permAmounts.reduce((a, b) => Math.min(a, b), Number.MAX_SAFE_INTEGER),
+    max: permAmounts.reduce((a, b) => Math.max(a, b), 0),
   }
 }

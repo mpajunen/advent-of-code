@@ -1,9 +1,9 @@
 'use strict'
 
-const R = require('ramda')
+import { List } from '../common'
 
-const alphabet = R.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1).map(code =>
-  String.fromCharCode(code),
+const alphabet = List.range('a'.charCodeAt(0), 'z'.charCodeAt(0) + 1).map(
+  code => String.fromCharCode(code),
 )
 
 const numBase = alphabet.length

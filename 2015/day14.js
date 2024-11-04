@@ -1,7 +1,5 @@
 'use strict'
 
-const R = require('ramda')
-
 const readReindeer = str => {
   const [name, , , speed, , , duration, ...other] = str.split(' ')
 
@@ -45,7 +43,7 @@ export default rows => {
   const reindeer = rows.map(readReindeer)
 
   const totals = reindeer.map(getTotalDistance(TIME))
-  const max = totals.reduce(R.max, 0)
+  const max = Math.max(...totals)
 
   const distances = reindeer.map(getDistances(TIME))
 
@@ -72,7 +70,7 @@ export default rows => {
     }, distances.slice(0).fill(0))
 
   const pointCounts = getCounts(points)
-  const maxPoints = pointCounts.reduce(R.max, 0)
+  const maxPoints = Math.max(...pointCounts)
 
   return [max, maxPoints, 2640, 1102]
 }

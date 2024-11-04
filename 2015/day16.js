@@ -1,7 +1,5 @@
 'use strict'
 
-const R = require('ramda')
-
 const buildInterests = (interests, raw) => {
   const [name, value] = raw.split(': ')
   interests[name] = parseInt(value, 10)
@@ -36,10 +34,10 @@ perfumes: 1`
   .reduce(buildInterests, {})
 
 const interestMatches = interests => current =>
-  R.eqProps(current, interests, message)
+  interests[current] === message[current]
 
 const compareAunt = aunt =>
-  R.reject(interestMatches(aunt.interests), R.keys(aunt.interests)).length === 0
+  Object.keys(aunt.interests).every(interestMatches(aunt.interests))
 
 const getMessageOperator = interest => {
   let operator
@@ -47,21 +45,23 @@ const getMessageOperator = interest => {
   switch (interest) {
     case 'cats':
     case 'trees':
-      operator = R.gt
+      operator = (a, b) => a > b
       break
     case 'goldfish':
     case 'pomeranians':
-      operator = R.lt
+      operator = (a, b) => a < b
       break
     default:
-      operator = R.equals
+      operator = (a, b) => a === b
   }
 
   return operator
 }
 
-const getMessagePart = ([interest, value]) =>
-  [interest, { value, operator: getMessageOperator(interest) }]
+const getMessagePart = ([interest, value]) => [
+  interest,
+  { value, operator: getMessageOperator(interest) },
+]
 
 const message2 = Object.fromEntries(Object.entries(message).map(getMessagePart))
 
@@ -72,14 +72,13 @@ const interestMatches2 = interests => current => {
 }
 
 const compareAunt2 = aunt =>
-  R.reject(interestMatches2(aunt.interests), R.keys(aunt.interests)).length ===
-  0
+  Object.keys(aunt.interests).every(interestMatches2(aunt.interests))
 
 export default rows => {
   const aunts = rows.map(readAunt)
 
-  const correct = aunts.filter(compareAunt)[0]
-  const correct2 = aunts.filter(compareAunt2)[0]
+  const correct = aunts.find(compareAunt)
+  const correct2 = aunts.find(compareAunt2)
 
   return [correct.number, correct2.number, 213, 323]
 }
