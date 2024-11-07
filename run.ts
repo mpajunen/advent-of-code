@@ -15,7 +15,7 @@ const getCode = async (year: number, day: number): Promise<Day> =>
 const printResult = (result: Answer, expected: Answer | undefined) => {
   console.log(result)
   if (expected && result !== expected) {
-    console.log(`Expected ${expected}, got ${result}!`)
+    console.error(`Expected ${expected}!`)
   }
 }
 
