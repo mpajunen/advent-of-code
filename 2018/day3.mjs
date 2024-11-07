@@ -1,8 +1,7 @@
 import * as common from './common'
 import { createGrid } from './Grid'
 
-const readInput = () => {
-  const rows = common.readDayRows(3)
+const readInput = rows => {
   const parse = common.parseByPattern('#%i @ %i,%i: %ix%i')
 
   const claims = rows.map(parse).map(([number, x, y, width, height]) => ({
@@ -14,8 +13,6 @@ const readInput = () => {
 
   return { claims }
 }
-
-const { claims } = readInput()
 
 const EMPTY = -2
 const OVERLAP = -1
@@ -33,18 +30,19 @@ const addClaim = (current, claim) => {
   )
 }
 
-const grid = claims.reduce(addClaim, emptyGrid())
+export default rows => {
+  const { claims } = readInput(rows)
 
-const counts = grid.valueCounts()
+  const grid = claims.reduce(addClaim, emptyGrid())
 
-const result1 = counts[OVERLAP]
+  const counts = grid.valueCounts()
 
-console.log(result1) // 120419
+  const untouched = claims.find(
+    c => counts[c.number] === c.size.height * c.size.width,
+  )
 
-const untouched = claims.find(
-  c => counts[c.number] === c.size.height * c.size.width,
-)
+  const result1 = counts[OVERLAP]
+  const result2 = untouched.number
 
-const result2 = untouched.number
-
-console.log(result2) // 445
+  return [result1, result2, 120419, 445]
+}

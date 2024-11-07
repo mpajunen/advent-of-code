@@ -1,8 +1,7 @@
 import * as common from './common'
 import Grid from './Grid'
 
-const readInput = () => {
-  const raw = common.readDayRows(18)
+const readInput = raw => {
   const grid = new Grid(raw.map(row => row.split('')))
 
   return { grid }
@@ -67,22 +66,20 @@ const totalValue = grid => {
   return counts[TREE] * counts[YARD]
 }
 
-const input = readInput()
-
-const passed = passTime(input.grid, 10)
-
-const result1 = totalValue(passed.grid)
-
-console.log(result1) // 614812
-
 const TOTAL_TIME = 1000000000
 const CYCLE_LENGTH = 28
 const CYCLE_START = 560 // Not the actual start, just a value far enough forward with a matching phase (28 * 20)
 
 const end = (TOTAL_TIME % CYCLE_LENGTH) + CYCLE_START
 
-const phased = passTime(input.grid, end)
+export default rows => {
+  const input = readInput(rows)
 
-const result2 = totalValue(phased.grid)
+  const passed = passTime(input.grid, 10)
+  const phased = passTime(input.grid, end)
 
-console.log(result2) // 212176
+  const result1 = totalValue(passed.grid)
+  const result2 = totalValue(phased.grid)
+
+  return [result1, result2, 614812, 212176]
+}

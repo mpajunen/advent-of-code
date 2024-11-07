@@ -1,5 +1,3 @@
-const input = 320851
-
 const START_RECIPES = [3, 7]
 const START_POSITIONS = [0, 1]
 const NEXT_COUNT = 10
@@ -36,10 +34,6 @@ const process1 = trainingLength => {
   return state.recipes.slice(state.recipes.length - 10).join('')
 }
 
-const result1 = process1(input)
-
-console.log(result1) // 7116398711
-
 const process2 = searchValue => {
   const state = getInitialState()
   const OFFSET = searchValue.length
@@ -60,6 +54,11 @@ const process2 = searchValue => {
   }
 }
 
-const result2 = process2(input.toString())
+export default ([row]) => {
+  const input = Number(row)
 
-console.log(result2) // 20316365
+  const result1 = Number(process1(input))
+  const result2 = process2(row)
+
+  return [result1, result2, 7116398711, 20316365]
+}

@@ -1,20 +1,16 @@
 import * as common from './common'
 import { createGrid, manhattan } from './Grid'
 
-const readInput = () => {
-  const rows = common.readDayRows(6)
-
+const readInput = rows => {
   const coordinates = rows.map(row => row.split(', ').map(c => parseInt(c, 10)))
 
   return { coordinates }
 }
 
-const input = readInput()
-
 const GRID_SIZE = 500
 
 const findClosest = coordinates => point => {
-  const distances = coordinates.map(common.manhattan(point))
+  const distances = coordinates.map(manhattan(point))
   const minimum = Math.min(...distances)
 
   const indices = common.indicesOf(minimum, distances)
@@ -30,23 +26,22 @@ const findEdgeValues = grid =>
     ...grid.column(-1),
   ])
 
-const closestGrid = createGrid(findClosest(input.coordinates), GRID_SIZE)
-
-const edgeAreas = findEdgeValues(closestGrid)
-
-const areaSizes = closestGrid.filter(v => !edgeAreas.has(v)).valueCounts()
-
-const result1 = Math.max(...Object.values(areaSizes))
-
-console.log(result1) // 4011
-
 const TOTAL_LIMIT = 10000
 
 const findTotal = coordinates => point =>
   common.sum(coordinates.map(manhattan(point)))
 
-const totalsGrid = createGrid(findTotal(input.coordinates), GRID_SIZE)
+export default rows => {
+  const input = readInput(rows)
 
-const result2 = totalsGrid.values().filter(v => v <= TOTAL_LIMIT).length
+  const closestGrid = createGrid(findClosest(input.coordinates), GRID_SIZE)
+  const edgeAreas = findEdgeValues(closestGrid)
+  const areaSizes = closestGrid.filter(v => !edgeAreas.has(v)).valueCounts()
 
-console.log(result2) // 46054
+  const totalsGrid = createGrid(findTotal(input.coordinates), GRID_SIZE)
+
+  const result1 = Math.max(...Object.values(areaSizes))
+  const result2 = totalsGrid.values().filter(v => v <= TOTAL_LIMIT).length
+
+  return [result1, result2, 4011, 46054]
+}

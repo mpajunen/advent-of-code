@@ -1,14 +1,10 @@
 import * as common from './common'
 
-const readInput = () => {
-  const [row] = common.readDayRows(8)
-
+const readInput = row => {
   const numbers = row.split(' ').map(n => parseInt(n, 10))
 
   return { numbers }
 }
-
-const { numbers } = readInput()
 
 const buildNode = remaining => {
   let size = 2 // Headers
@@ -28,14 +24,8 @@ const buildNode = remaining => {
   return { children, meta, size }
 }
 
-const root = buildNode(numbers)
-
 const metaSum = node =>
   common.sum(node.meta) + common.sum(node.children.map(metaSum))
-
-const result1 = metaSum(root)
-
-console.log(result1) // 40977
 
 const nodeValue = node => {
   if (node.children.length === 0) {
@@ -49,6 +39,13 @@ const nodeValue = node => {
   return common.sum(referred.map(nodeValue))
 }
 
-const result2 = nodeValue(root)
+export default ([row]) => {
+  const { numbers } = readInput(row)
 
-console.log(result2) // 27490
+  const root = buildNode(numbers)
+
+  const result1 = metaSum(root)
+  const result2 = nodeValue(root)
+
+  return [result1, result2, 0, 27490]
+}

@@ -1,8 +1,7 @@
 import * as common from './common'
 import CycleList from './CycleList'
 
-const readInput = () => {
-  const [row] = common.readDayRows(9)
+const readInput = row => {
   const parse = common.parseByPattern(
     '%i players; last marble is worth %i points',
   )
@@ -11,8 +10,6 @@ const readInput = () => {
 
   return { playerCount, lastMarble }
 }
-
-const { playerCount, lastMarble } = readInput()
 
 const SPECIAL_TRIGGER = 23
 const SPECIAL_MOVEMENT = 7
@@ -44,14 +41,16 @@ const placeMarbles = (players, finalMarble) => {
 
 const highScore = scores => Math.max(...Object.values(scores))
 
-const placements1 = placeMarbles(playerCount, lastMarble)
-const result1 = highScore(placements1.scores)
-
-console.log(result1) // 408679
-
 const MULTIPLIER = 100
 
-const placements2 = placeMarbles(playerCount, lastMarble * MULTIPLIER)
-const result2 = highScore(placements2.scores) // 3443939356
+export default ([row]) => {
+  const { playerCount, lastMarble } = readInput(row)
 
-console.log(result2)
+  const placements1 = placeMarbles(playerCount, lastMarble)
+  const placements2 = placeMarbles(playerCount, lastMarble * MULTIPLIER)
+
+  const result1 = highScore(placements1.scores)
+  const result2 = highScore(placements2.scores)
+
+  return [result1, result2, 408679, 3443939356]
+}

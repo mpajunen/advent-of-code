@@ -1,11 +1,3 @@
-import * as fs from 'fs'
-
-export const readDayRows = day =>
-  fs
-    .readFileSync(`./2018/input/day${day}.txt`, 'utf8')
-    .split('\n')
-    .filter(r => !!r)
-
 export const isNumeric = n => parseFloat(n).toString() === n
 
 const parseValue = value => (isNumeric(value) ? parseFloat(value) : value)

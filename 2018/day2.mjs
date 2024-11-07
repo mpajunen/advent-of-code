@@ -1,20 +1,12 @@
 import * as common from './common'
 
-const rows = common.readDayRows(2)
-
 const letterCounts = text => common.arrayCounts(text.split(''))
 
 const hasCount = count => counts =>
   Object.entries(counts).some(([_, value]) => value === count)
 
-const rowLetterCounts = rows.map(letterCounts)
-
-const findNumberWithCount = count =>
+const findNumberWithCount = (rowLetterCounts, count) =>
   rowLetterCounts.filter(hasCount(count)).length
-
-const result1 = findNumberWithCount(2) * findNumberWithCount(3)
-
-console.log(result1) // 9633
 
 const findSameChars = word1 => word2 =>
   word2
@@ -22,7 +14,7 @@ const findSameChars = word1 => word2 =>
     .filter((char, i) => char === word1[i])
     .join('')
 
-const findMostMatchingPart = () => {
+const findMostMatchingPart = rows => {
   for (const word1 of rows) {
     for (const word2 of rows) {
       const same = findSameChars(word1)(word2)
@@ -33,6 +25,13 @@ const findMostMatchingPart = () => {
   }
 }
 
-const result2 = findMostMatchingPart()
+export default rows => {
+  const rowLetterCounts = rows.map(letterCounts)
 
-console.log(result2) // lujnogabetpmsydyfcovzixaw
+  const result1 =
+    findNumberWithCount(rowLetterCounts, 2) *
+    findNumberWithCount(rowLetterCounts, 3)
+  const result2 = findMostMatchingPart(rows)
+
+  return [result1, result2, 9633, 'lujnogabetpmsydyfcovzixaw']
+}

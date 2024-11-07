@@ -1,4 +1,3 @@
-import * as common from './common'
 import Grid, { add } from './Grid'
 
 const railReplacements = { '<': '-', '>': '-', '^': '|', v: '|' }
@@ -30,8 +29,8 @@ const createCart = (direction, position) => ({
 const comparePosition = ({ position: [xa, ya] }, { position: [xb, yb] }) =>
   ya - yb || xa - xb
 
-const readInput = () => {
-  const rawGrid = common.readDayRows(13).map(row => row.split(''))
+const readInput = rows => {
+  const rawGrid = rows.map(row => row.split(''))
 
   const tracks = rawGrid.map(row =>
     row.map(char => railReplacements[char] || char),
@@ -49,11 +48,9 @@ const readInput = () => {
   return { tracks, carts }
 }
 
-const input = readInput()
-
 const applyMovement = (point, direction) => add(point)(movements[direction])
 
-const move = cart => {
+const move = (input, cart) => {
   const {
     name,
     position: [x, y],
@@ -78,7 +75,7 @@ const checkCrash = (previous, moved, cart) =>
   moved.find(c => comparePosition(c, cart) === 0) ||
   previous.slice(moved.length).find(c => comparePosition(c, cart) === 0)
 
-const moveAll = start => {
+const moveAll = (input, start) => {
   let carts = []
 
   // Missing sort!
@@ -88,7 +85,7 @@ const moveAll = start => {
       return
     }
 
-    const newCart = move(cart)
+    const newCart = move(input, cart)
     const crash = checkCrash(start, carts, newCart)
 
     if (crash) {
@@ -105,14 +102,14 @@ const moveAll = start => {
   }
 }
 
-const findFirstCrash = carts => {
+const findFirstCrash = (input, carts) => {
   let state = {
     carts,
     crashes: [],
   }
 
   while (true) {
-    state = moveAll(state.carts)
+    state = moveAll(input, state.carts)
 
     if (state.crashes.length > 0) {
       return state.crashes[0]
@@ -120,27 +117,27 @@ const findFirstCrash = carts => {
   }
 }
 
-const firstCrash = findFirstCrash(input.carts)
-
-const result1 = firstCrash.position.join(',')
-
-console.log(result1) // 91,69
-
-const moveUntilOneLeft = carts => {
+const moveUntilOneLeft = (input, carts) => {
   let state = {
     carts,
     crashes: [],
   }
 
   while (state.carts.length > 1) {
-    state = moveAll(state.carts)
+    state = moveAll(input, state.carts)
   }
 
   return state.carts[0]
 }
 
-const finalCart = moveUntilOneLeft(input.carts)
+export default rows => {
+  const input = readInput(rows)
 
-const result2 = finalCart.position.join(',')
+  const firstCrash = findFirstCrash(input, input.carts)
+  const finalCart = moveUntilOneLeft(input, input.carts)
 
-console.log(result2) // 44,87
+  const result1 = firstCrash.position.join(',')
+  const result2 = finalCart.position.join(',')
+
+  return [result1, result2, '91,69', '44,87']
+}

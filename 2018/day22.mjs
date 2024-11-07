@@ -4,12 +4,12 @@ import { createGrid } from './Grid'
 const INDEX_X = 16807
 const INDEX_Y = 48271
 
-const input = {
-  depth: 3558,
-  target: [15, 740],
-}
+const readInput = rows => ({
+  depth: Number(rows[0].match(/\d+/g)[0]),
+  target: rows[1].match(/\d+/g).map(Number),
+})
 
-const createTypes = maxPlace => {
+const createTypes = (input, maxPlace) => {
   const erosion = createGrid(() => 0, maxPlace[0] + 1, maxPlace[1] + 1)
 
   const getIndex = ([x, y]) => {
@@ -33,25 +33,15 @@ const createTypes = maxPlace => {
   return erosion.map(e => e % 3)
 }
 
-const types = createTypes(input.target)
-
-const result1 = common.sum(types.values())
-
-console.log(result1) // 11810
-
 const MARGIN = 30
 
 const SWITCH_COST = 7
 
 const MAX_COST = 9999999
 
-const LIMITS = [input.target[0] + MARGIN, input.target[1] + MARGIN]
-
 const TOOLS = ['gear', 'neither', 'torch']
 
 const PROHIBITED = ['neither', 'torch', 'gear']
-
-const overTypes = createTypes(LIMITS)
 
 const createCost = () => ({
   gear: MAX_COST,
@@ -59,7 +49,7 @@ const createCost = () => ({
   torch: MAX_COST,
 })
 
-const tryMove = (costs, frontier, from, to) => {
+const tryMove = (overTypes, costs, frontier, from, to) => {
   const toType = overTypes.get(to)
   if (toType === undefined) {
     return
@@ -97,10 +87,10 @@ const getAdjacent = ([x, y]) => [
   [x + 1, y],
 ]
 
-const movePlace = (costs, frontier, place) =>
-  getAdjacent(place).forEach(t => tryMove(costs, frontier, place, t))
+const movePlace = (overTypes, costs, frontier, place) =>
+  getAdjacent(place).forEach(t => tryMove(overTypes, costs, frontier, place, t))
 
-const createCosts = () => {
+const createCosts = overTypes => {
   const costs = overTypes.map(createCost)
   costs.set([0, 0], {
     gear: SWITCH_COST,
@@ -113,15 +103,23 @@ const createCosts = () => {
   while (i < frontier.length) {
     const place = frontier[i]
 
-    movePlace(costs, frontier, place)
+    movePlace(overTypes, costs, frontier, place)
     i++
   }
 
   return costs
 }
 
-const costs = createCosts()
+export default rows => {
+  const input = readInput(rows)
 
-const result2 = costs.get(input.target).torch
+  const LIMITS = [input.target[0] + MARGIN, input.target[1] + MARGIN]
 
-console.log(result2) // 1015
+  const types = createTypes(input, input.target)
+  const overTypes = createTypes(input, LIMITS)
+
+  const result1 = common.sum(types.values())
+  const result2 = createCosts(overTypes).get(input.target).torch
+
+  return [result1, result2, 11810, 1015]
+}

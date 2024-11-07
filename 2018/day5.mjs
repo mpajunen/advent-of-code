@@ -2,17 +2,13 @@ import * as common from './common'
 
 const isUpperCase = value => value.toUpperCase() === value
 
-const readInput = () => {
-  const [row] = common.readDayRows(5)
-
+const readInput = row => {
   const polarities = row
     .split('')
     .map(c => ({ char: c.toLowerCase(), polarity: isUpperCase(c) }))
 
   return { polarities }
 }
-
-const { polarities } = readInput()
 
 const reactions = original => {
   const result = []
@@ -34,17 +30,18 @@ const reactions = original => {
   return result
 }
 
-const result1 = reactions(polarities).length
+export default ([row]) => {
+  const { polarities } = readInput(row)
 
-console.log(result1) // 1754
+  const result = {}
+  common.alphabet.forEach(polymer => {
+    const withoutPolymer = polarities.filter(p => p.char !== polymer)
 
-const result = {}
-common.alphabet.forEach(polymer => {
-  const withoutPolymer = polarities.filter(p => p.char !== polymer)
+    result[polymer] = reactions(withoutPolymer).length
+  })
 
-  result[polymer] = reactions(withoutPolymer).length
-})
+  const result1 = reactions(polarities).length
+  const result2 = Math.min(...Object.values(result))
 
-const result2 = Math.min(...Object.values(result))
-
-console.log(result2) // 4098
+  return [result1, result2, 11754, 4098]
+}

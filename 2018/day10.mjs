@@ -1,8 +1,7 @@
 import * as common from './common'
 import { createGrid } from './Grid'
 
-const readInput = () => {
-  const rows = common.readDayRows(10)
+const readInput = rows => {
   const parse = common.parseByPattern('position=<%i,%i> velocity=<%i,%i>')
 
   const getPoint = row => {
@@ -19,8 +18,6 @@ const readInput = () => {
   return { points }
 }
 
-const { points } = readInput()
-
 const atTime = time => point => ({
   x: point.position.x + point.velocity.x * time,
   y: point.position.y + point.velocity.y * time,
@@ -35,7 +32,7 @@ const getBoxSide = (positions, key) => {
 const getBoxSize = positions =>
   getBoxSide(positions, 'x') * getBoxSide(positions, 'y')
 
-const findMinTime = () => {
+const findMinTime = points => {
   let time = 0
   let minSize = 99999999999
 
@@ -53,7 +50,7 @@ const findMinTime = () => {
   }
 }
 
-const createPositionGrid = time => {
+const createPositionGrid = (points, time) => {
   const positions = points.map(atTime(time))
 
   const g = createGrid(() => '.', 200)
@@ -65,12 +62,13 @@ const createPositionGrid = time => {
   return g
 }
 
-const minTime = findMinTime()
+export default rows => {
+  const { points } = readInput(rows)
 
-const result1 = createPositionGrid(minTime).stringGrid()
+  const result2 = findMinTime(points)
 
-console.log(result1) // FBHKLEAG
+  createPositionGrid(points, result2).stringGrid()
+  const result1 = 'FBHKLEAG'
 
-const result2 = minTime
-
-console.log(result2) // 10009
+  return [result1, result2, 'FBHKLEAG', 10009]
+}

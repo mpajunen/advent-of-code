@@ -1,7 +1,4 @@
-import * as common from './common'
 import { createGrid } from './Grid'
-
-const readInput = () => common.readDayRows(20)[0]
 
 const FLOOR = '.'
 const DOOR = '+'
@@ -154,14 +151,11 @@ const findMaxDepth = maze => Math.max(...findAllDepths(maze))
 const findDepthOverCount = maze =>
   findAllDepths(maze).filter(n => n >= 1000).length
 
-const input = readInput()
+export default ([input]) => {
+  const maze = buildMaze(input)
 
-const maze = buildMaze(input)
+  const result1 = findMaxDepth(maze)
+  const result2 = findDepthOverCount(maze)
 
-const result1 = findMaxDepth(maze)
-
-console.log(result1) // 4184
-
-const result2 = findDepthOverCount(maze)
-
-console.log(result2) // 8596
+  return [result1, result2, 4184, 8596]
+}

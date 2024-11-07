@@ -1,8 +1,6 @@
 import * as common from './common'
 import Grid, { add } from './Grid'
 
-const readInput = () => common.readDayRows(15)
-
 const STARTING_HEALTH = 200
 const DEFAULT_DAMAGE = 3
 const CREATURES = ['E', 'G']
@@ -240,21 +238,6 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
   return { play }
 }
 
-const print = (room, creatures) => {
-  const printable = room.copy()
-
-  creatures
-    .filter(c => c.health > 0)
-    .forEach(c => {
-      printable.set(c.position, c.kind)
-    })
-
-  console.log('\n' + printable.stringGrid() + '\n')
-}
-
-const elfCount = creatures =>
-  creatures.filter(c => c.kind === 'E').filter(c => c.health > 0).length
-
 const testPlay = (input, turns, elfDamage) => {
   const start = createStart(input)
   const { score } = game(start, elfDamage).play(turns)
@@ -262,12 +245,11 @@ const testPlay = (input, turns, elfDamage) => {
   return score
 }
 
-const input = readInput()
-
-const result1 = testPlay(input)
-console.log(result1) // 188576
-
 const BOOSTED_DAMAGE = 15 // Determined empirically
 
-const result2 = testPlay(input, undefined, BOOSTED_DAMAGE)
-console.log(result2) // 57112
+export default input => {
+  const result1 = testPlay(input)
+  const result2 = testPlay(input, undefined, BOOSTED_DAMAGE)
+
+  return [result1, result2, 188576, 57112]
+}

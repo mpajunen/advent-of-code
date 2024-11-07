@@ -1,4 +1,3 @@
-import * as common from './common'
 import { instruct, operations } from './WristDevice'
 
 const getPosition = row =>
@@ -9,14 +8,12 @@ const getPosition = row =>
 
 const getInstruction = row => row.split(' ').map(n => parseInt(n, 10))
 
-const readInput = () => {
+const readInput = raw => {
   /*
 Before: [2, 3, 2, 2]
 0 3 3 0
 After:  [0, 3, 2, 2]
   */
-  const raw = common.readDayRows(16)
-
   let rowNumber = 0
 
   const examples = []
@@ -39,8 +36,6 @@ After:  [0, 3, 2, 2]
   return { examples, program }
 }
 
-const input = readInput()
-
 const exampleMatches = example => func =>
   instruct(func, example.instruction, example.before).every(
     (r, index) => r === example.after[index],
@@ -51,10 +46,6 @@ const MULTI_BEHAVIOR_LIMIT = 3
 const isMultiMatch = example =>
   Object.values(operations).filter(exampleMatches(example)).length >=
   MULTI_BEHAVIOR_LIMIT
-
-const result1 = input.examples.filter(isMultiMatch).length
-
-console.log(result1) // 605
 
 const findPossible = (example, key) => {
   const ops = Object.entries(operations)
@@ -88,14 +79,19 @@ const findOpcodes = examples => {
   return opcodes
 }
 
-const opcodes = findOpcodes(input.examples)
+export default rows => {
+  const input = readInput(rows.filter(row => !!row))
 
-const run = (registers, instruction) =>
-  instruct(operations[opcodes.get(instruction[0])], instruction, registers)
+  const opcodes = findOpcodes(input.examples)
 
-const runProgram = (program, initialRegisters = [0, 0, 0, 0]) =>
-  program.reduce(run, initialRegisters)
+  const run = (registers, instruction) =>
+    instruct(operations[opcodes.get(instruction[0])], instruction, registers)
 
-const result2 = runProgram(input.program)[0]
+  const runProgram = (program, initialRegisters = [0, 0, 0, 0]) =>
+    program.reduce(run, initialRegisters)
 
-console.log(result2) // 653
+  const result1 = input.examples.filter(isMultiMatch).length
+  const result2 = runProgram(input.program)[0]
+
+  return [result1, result2, 605, 653]
+}

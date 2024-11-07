@@ -2,8 +2,7 @@ import * as common from './common'
 
 const WEAK_DAMAGE_MULTIPLIER = 2
 
-const readInput = (boost = 0) => {
-  const rows = common.readDayRows(24)
+const readInput = (rows, boost = 0) => {
   const parseStart = common.parseByPattern('%i units each with %i hit')
   const parseEnd = common.parseByPattern(
     'an attack that does %i %w damage at initiative %i',
@@ -121,16 +120,14 @@ const getTotalCounts = units =>
     },
   )
 
-const normalFight = fight(readInput())
-
-const result1 = getTotalCounts(normalFight).infection
-
-console.log(result1) // 22083
-
 const BOOST = 65 // Empirically determined
 
-const boostFight = fight(readInput(BOOST))
+export default rows => {
+  const normalFight = fight(readInput(rows))
+  const boostFight = fight(readInput(rows, BOOST))
 
-const result2 = getTotalCounts(boostFight).system
+  const result1 = getTotalCounts(normalFight).infection
+  const result2 = getTotalCounts(boostFight).system
 
-console.log(result2) // 8975
+  return [result1, result2, 22083, 8975]
+}

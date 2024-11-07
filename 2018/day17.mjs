@@ -4,8 +4,7 @@ import { createGrid } from './Grid'
 const SPRING_AT = [500, 0]
 const WIDTH = 2000
 
-const readInput = () => {
-  const raw = common.readDayRows(17)
+const readInput = raw => {
   const parse = common.parseByPattern('%w=%i, %w=%i..%i')
 
   const getBar = row => {
@@ -23,8 +22,6 @@ const readInput = () => {
 
   return { bars, yRange: [yMin, yMax] }
 }
-
-const input = readInput()
 
 const EMPTY = '.'
 const WALL = '#'
@@ -132,14 +129,13 @@ const flowAll = grid => {
 const reach = (grid, tiles = [STILL, SETTLING, FLOW]) =>
   grid.values().filter(v => tiles.includes(v)).length
 
-const situation = flowAll(createWalls(input))
+export default rows => {
+  const input = readInput(rows)
 
-// console.log(situation.stringGrid().split('\n').map(row => row.substr(200, 400)).join('\n'))
+  const situation = flowAll(createWalls(input))
 
-const result1 = reach(situation) - input.yRange[0] + 1
+  const result1 = reach(situation) - input.yRange[0] + 1
+  const result2 = reach(situation, [STILL])
 
-console.log(result1) // 31641
-
-const result2 = reach(situation, [STILL])
-
-console.log(result2) // 26321
+  return [result1, result2, 31641, 26321]
+}

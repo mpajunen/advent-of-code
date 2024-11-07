@@ -10,7 +10,7 @@ const getSleeps = actions => {
   }
 }
 
-const readInput = () => {
+const readInput = rows => {
   const stamp = '1518-10-12 23:58'
   const parseRow = row => ({
     // [1518-10-12 23:58] Guard #421 begins shift
@@ -18,7 +18,6 @@ const readInput = () => {
     action: row.substr(stamp.length + 3),
   })
 
-  const rows = common.readDayRows(4)
   const events = rows.map(parseRow).sort((a, b) => (a.time < b.time ? -1 : 1))
 
   const nights = events.reduce((n, event) => {
@@ -48,8 +47,6 @@ const readInput = () => {
   return { sleeps }
 }
 
-const input = readInput()
-
 const MINUTES = 60
 
 const createSlept = sleeps => {
@@ -78,16 +75,15 @@ const findGuard = (comparison, slept) => {
   return { guard, max, maxAt }
 }
 
-const slept = createSlept(input.sleeps)
+export default rows => {
+  const input = readInput(rows)
 
-const sleepy = findGuard(guard => common.sum(slept[guard]), slept)
+  const slept = createSlept(input.sleeps)
+  const sleepy = findGuard(guard => common.sum(slept[guard]), slept)
+  const consistent = findGuard(guard => Math.max(...slept[guard]), slept)
 
-const result1 = sleepy.guard * sleepy.maxAt
+  const result1 = sleepy.guard * sleepy.maxAt
+  const result2 = consistent.guard * consistent.maxAt
 
-console.log(result1) // 142515
-
-const consistent = findGuard(guard => Math.max(...slept[guard]), slept)
-
-const result2 = consistent.guard * consistent.maxAt
-
-console.log(result2) // 5370
+  return [result1, result2, 142515, 5370]
+}

@@ -1,7 +1,5 @@
 import { createGrid } from './Grid'
 
-const input = 1788
-
 const getValue =
   serial =>
   ([x, y]) => {
@@ -15,8 +13,6 @@ const getValue =
 const GRID_SIZE = 300
 const SQUARE_SIZE = 3
 const INVALID = -9999
-
-const cells = createGrid(getValue(input), GRID_SIZE + 1)
 
 const createPrefixSums = data => {
   const rows = []
@@ -37,9 +33,7 @@ const createPrefixSums = data => {
   return rows
 }
 
-const prefixSums = createPrefixSums(cells.rows())
-
-const subSquareTotal = (point, size) => {
+const subSquareTotal = (prefixSums, point, size) => {
   const [x, y] = point
   if (x < 1 || x + size >= GRID_SIZE) {
     return INVALID
@@ -53,33 +47,29 @@ const subSquareTotal = (point, size) => {
   )
 }
 
-const totals = cells.map((_, point) => subSquareTotal(point, SQUARE_SIZE))
+const findLargestOfPoint =
+  prefixSums =>
+  (_, [x, y]) => {
+    let size = 0
+    let largest = INVALID
+    let largestAt = size
 
-const result1 = totals.findMax().point.join(',')
+    while (x + size <= GRID_SIZE && y + size <= GRID_SIZE) {
+      size += 1
 
-console.log(result1) // 235,35
+      const value = subSquareTotal(prefixSums, [x, y], size)
 
-const findLargestOfPoint = (_, [x, y]) => {
-  let size = 0
-  let largest = INVALID
-  let largestAt = size
-
-  while (x + size <= GRID_SIZE && y + size <= GRID_SIZE) {
-    size += 1
-
-    const value = subSquareTotal([x, y], size)
-
-    if (value > largest) {
-      largest = value
-      largestAt = size
+      if (value > largest) {
+        largest = value
+        largestAt = size
+      }
     }
+
+    return { largest, largestAt }
   }
 
-  return { largest, largestAt }
-}
-
-const findLargest = () => {
-  const all = cells.map(findLargestOfPoint)
+const findLargest = (cells, prefixSums) => {
+  const all = cells.map(findLargestOfPoint(prefixSums))
   const sizes = all.map(v => v.largest)
 
   const res = sizes.findMax()
@@ -90,6 +80,17 @@ const findLargest = () => {
   return [...place, largestAt]
 }
 
-const result2 = findLargest().join(',')
+export default ([row]) => {
+  const input = Number(row)
 
-console.log(result2) // 142,265,7
+  const cells = createGrid(getValue(input), GRID_SIZE + 1)
+  const prefixSums = createPrefixSums(cells.rows())
+  const totals = cells.map((_, point) =>
+    subSquareTotal(prefixSums, point, SQUARE_SIZE),
+  )
+
+  const result1 = totals.findMax().point.join(',')
+  const result2 = findLargest(cells, prefixSums).join(',')
+
+  return [result1, result2, '235,35', '142,265,7']
+}

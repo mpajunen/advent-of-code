@@ -1,9 +1,6 @@
-import * as common from './common'
 import { run } from './WristDevice'
 
-const readInput = () => {
-  const raw = common.readDayRows(21)
-
+const readInput = raw => {
   const [ipRow, ...rest] = raw
   const instructions = rest.map(row => {
     const [name, ...nums] = row.split(' ')
@@ -16,8 +13,6 @@ const readInput = () => {
     instructions,
   }
 }
-
-const input = readInput()
 
 /*
 17	seti	0		1			R1 = 0
@@ -124,12 +119,13 @@ const runProgram = (
 
 const INSTRUCTION_LIMIT = 200000 // Determined empirically
 
-const result = runProgram(input, INSTRUCTION_LIMIT, 0, true)
+export default rows => {
+  const input = readInput(rows)
 
-const result1 = result.first
+  const result = runProgram(input, INSTRUCTION_LIMIT, 0, true)
 
-console.log(result1) // 6619857
+  const result1 = result.first
+  const result2 = result.last
 
-const result2 = result.last
-
-console.log(result2) // 9547924
+  return [result1, result2, 6619857, 9547924]
+}

@@ -1,7 +1,6 @@
 import * as common from './common'
 
-const readInput = () => {
-  const rows = common.readDayRows(7)
+const readInput = rows => {
   const parse = common.parseByPattern(
     'Step %w must be finished before step %w can begin.',
   )
@@ -15,9 +14,7 @@ const readInput = () => {
   return { letters, rules }
 }
 
-const { letters, rules } = readInput()
-
-const findAvailable = (current, unavailable = []) => {
+const findAvailable = ({ letters, rules }, current, unavailable = []) => {
   const prohibitions = rules.filter(x => !current.includes(x[0])).map(x => x[1])
 
   return letters.filter(
@@ -28,15 +25,11 @@ const findAvailable = (current, unavailable = []) => {
   )
 }
 
-const getWorkingOrder = (current = []) => {
-  const [added] = findAvailable(current)
+const getWorkingOrder = (input, current = []) => {
+  const [added] = findAvailable(input, current)
 
-  return added ? getWorkingOrder([...current, added]) : current
+  return added ? getWorkingOrder(input, [...current, added]) : current
 }
-
-const result1 = getWorkingOrder().join('')
-
-console.log(result1) // OVXCKZBDEHINPFSTJLUYRWGAMQ
 
 const DEFAULT_COST = 60
 const WORKER_COUNT = 5
@@ -44,12 +37,8 @@ const WORKER_COUNT = 5
 const getCost = letter =>
   letter.charCodeAt(0) - 'A'.charCodeAt(0) + 1 + DEFAULT_COST
 
-const costs = letters.reduce(
-  (acc, letter) => ({ ...acc, [letter]: getCost(letter) }),
-  {},
-)
-
-const getTotalTime = (earlier, working) => {
+const getTotalTime = (input, costs, earlier, working) => {
+  const { letters } = input
   const time =
     working.length === 0 ? 0 : Math.min(...working.map(work => work.time))
   const finished = working
@@ -64,13 +53,23 @@ const getTotalTime = (earlier, working) => {
   const ongoing = working.filter(work => work.time > time)
 
   const unavailable = ongoing.map(work => work.item)
-  const started = findAvailable(done, unavailable)
+  const started = findAvailable(input, done, unavailable)
     .slice(0, WORKER_COUNT - working.length)
     .map(item => ({ item, time: costs[item] + time }))
 
-  return getTotalTime(done, [...ongoing, ...started])
+  return getTotalTime(input, costs, done, [...ongoing, ...started])
 }
 
-const result2 = getTotalTime([], [])
+export default rows => {
+  const input = readInput(rows)
 
-console.log(result2) // 955
+  const costs = input.letters.reduce(
+    (acc, letter) => ({ ...acc, [letter]: getCost(letter) }),
+    {},
+  )
+
+  const result1 = getWorkingOrder(input).join('')
+  const result2 = getTotalTime(input, costs, [], [])
+
+  return [result1, result2, 'OVXCKZBDEHINPFSTJLUYRWGAMQ', 955]
+}
