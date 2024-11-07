@@ -1,8 +1,15 @@
 {
   "compilerOptions": {
+    "exactOptionalPropertyTypes": false,
+    "forceConsistentCasingInFileNames": true,
     "lib": ["es2023"],
     "module": "node16",
     "noEmit": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": false,
+    "noImplicitReturns": true,
+    "strict": true,
+    "strictNullChecks": false,
     "target": "es2022"
   }
 }
