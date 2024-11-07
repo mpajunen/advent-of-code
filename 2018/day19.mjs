@@ -1,19 +1,5 @@
 import * as common from './common'
-import { run } from './WristDevice'
-
-const readInput = raw => {
-  const [ipRow, ...rest] = raw
-  const instructions = rest.map(row => {
-    const [name, ...nums] = row.split(' ')
-
-    return [name, ...nums.map(n => parseInt(n, 10))]
-  })
-
-  return {
-    ip: parseInt(ipRow.split(' ')[1], 10),
-    instructions,
-  }
-}
+import { parseProgram, run } from './WristDevice'
 
 const runProgram = ({ ip, instructions }, start0 = 0, optimize = false) => {
   let registers = [start0, 0, 0, 0, 0, 0]
@@ -30,7 +16,7 @@ const runProgram = ({ ip, instructions }, start0 = 0, optimize = false) => {
 }
 
 export default rows => {
-  const input = readInput(rows)
+  const input = parseProgram(rows)
 
   const result1 = runProgram(input, 0, true)
   const result2 = runProgram(input, 1, true)

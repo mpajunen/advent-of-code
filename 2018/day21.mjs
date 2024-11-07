@@ -1,18 +1,4 @@
-import { run } from './WristDevice'
-
-const readInput = raw => {
-  const [ipRow, ...rest] = raw
-  const instructions = rest.map(row => {
-    const [name, ...nums] = row.split(' ')
-
-    return [name, ...nums.map(n => parseInt(n, 10))]
-  })
-
-  return {
-    ip: parseInt(ipRow.split(' ')[1], 10),
-    instructions,
-  }
-}
+import { parseProgram, run } from './WristDevice'
 
 /*
 17	seti	0		1			R1 = 0
@@ -120,7 +106,7 @@ const runProgram = (
 const INSTRUCTION_LIMIT = 200000 // Determined empirically
 
 export default rows => {
-  const input = readInput(rows)
+  const input = parseProgram(rows)
 
   const result = runProgram(input, INSTRUCTION_LIMIT, 0, true)
 

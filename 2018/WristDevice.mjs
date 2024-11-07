@@ -34,3 +34,17 @@ export const run = (ip, instructions, registers) => {
 
   return registers
 }
+
+export const parseProgram = rows => {
+  const [ipRow, ...rest] = rows
+  const instructions = rest.map(row => {
+    const [name, ...nums] = row.split(' ')
+
+    return [name, ...nums.map(n => parseInt(n, 10))]
+  })
+
+  return {
+    ip: parseInt(ipRow.split(' ')[1], 10),
+    instructions,
+  }
+}
