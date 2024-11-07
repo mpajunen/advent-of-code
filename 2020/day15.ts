@@ -15,10 +15,6 @@ const speakUntil = (start: number[], limit: number): number => {
     prev[latest] = index
 
     index += 1
-
-    if (index % 100000 === 0) {
-      console.log(index)
-    }
   }
 
   return latest
