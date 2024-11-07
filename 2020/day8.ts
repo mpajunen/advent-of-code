@@ -27,7 +27,7 @@ const run = (instructions: Instruction[]) => {
     const instruction = instructions[state.index]
     state = executors[instruction.operation](state, instruction)
 
-    if (state.index < instructions.length) {
+    if (state.index >= instructions.length) {
       return ['terminate', state.acc]
     }
     if (ran.includes(state.index)) {
