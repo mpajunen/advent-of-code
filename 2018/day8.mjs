@@ -1,11 +1,5 @@
 import { Num } from '../common'
 
-const readInput = row => {
-  const numbers = row.split(' ').map(n => parseInt(n, 10))
-
-  return { numbers }
-}
-
 const buildNode = remaining => {
   let size = 2 // Headers
   const [childCount, metaCount] = remaining
@@ -39,7 +33,7 @@ const nodeValue = node => {
 }
 
 export default ([row]) => {
-  const { numbers } = readInput(row)
+  const numbers = row.split(' ').map(Number)
 
   const root = buildNode(numbers)
 

@@ -3,14 +3,12 @@ import { Grid, Input } from '../common'
 const readInput = rows => {
   const parse = Input.parseByPattern('#%i @ %i,%i: %ix%i')
 
-  const claims = rows.map(parse).map(([number, x, y, width, height]) => ({
+  return rows.map(parse).map(([number, x, y, width, height]) => ({
     number,
     start: { x, y },
     end: { x: x + width, y: y + height },
     size: { height, width },
   }))
-
-  return { claims }
 }
 
 const EMPTY = -2
@@ -30,7 +28,7 @@ const addClaim = (current, claim) => {
 }
 
 export default rows => {
-  const { claims } = readInput(rows)
+  const claims = readInput(rows)
 
   const grid = claims.reduce(addClaim, emptyGrid())
 

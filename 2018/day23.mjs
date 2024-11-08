@@ -4,12 +4,10 @@ import * as Cube from './Cube'
 const readInput = rows => {
   const parse = Input.parseByPattern('pos=<%i,%i,%i>, r=%i')
 
-  const bots = rows.map(parse).map(([x, y, z, radius]) => ({
+  return rows.map(parse).map(([x, y, z, radius]) => ({
     position: [x, y, z],
     radius,
   }))
-
-  return { bots }
 }
 
 const getInRadius = (bots, bot) =>
@@ -41,7 +39,7 @@ const findClosestMax = (bots, center = Cube.ORIGIN, radius = 2 ** 30) => {
 }
 
 export default rows => {
-  const { bots } = readInput(rows)
+  const bots = readInput(rows)
 
   const strongest = List.maxBy(p => p.radius, bots)[0]
 

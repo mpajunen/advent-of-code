@@ -38,13 +38,11 @@ const readInput = rows => {
     return n
   }, [])
 
-  const sleeps = nights.map(night => ({
+  return nights.map(night => ({
     guard: night.guard,
     shiftStart: night.shiftStart,
     sleeps: getSleeps(night.actions),
   }))
-
-  return { sleeps }
 }
 
 const MINUTES = 60
@@ -75,7 +73,7 @@ const findGuard = (comparison, slept) => {
 export default rows => {
   const input = readInput(rows)
 
-  const slept = createSlept(input.sleeps)
+  const slept = createSlept(input)
   const sleepy = findGuard(guard => Num.sum(slept[guard]), slept)
   const consistent = findGuard(guard => Math.max(...slept[guard]), slept)
 

@@ -1,11 +1,5 @@
 import { Grid, List, Vec2 } from '../common'
 
-const readInput = raw => {
-  const grid = new Grid(raw.map(row => row.split('')))
-
-  return { grid }
-}
-
 const OPEN = '.'
 const TREE = '|'
 const YARD = '#'
@@ -63,10 +57,10 @@ const CYCLE_START = 560 // Not the actual start, just a value far enough forward
 const end = (TOTAL_TIME % CYCLE_LENGTH) + CYCLE_START
 
 export default rows => {
-  const input = readInput(rows)
+  const input = Grid.fromStrings(rows)
 
-  const passed = passTime(input.grid, 10)
-  const phased = passTime(input.grid, end)
+  const passed = passTime(input, 10)
+  const phased = passTime(input, end)
 
   const result1 = totalValue(passed.grid)
   const result2 = totalValue(phased.grid)

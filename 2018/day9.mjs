@@ -1,15 +1,7 @@
 import { Input } from '../common'
 import CycleList from './CycleList'
 
-const readInput = row => {
-  const parse = Input.parseByPattern(
-    '%i players; last marble is worth %i points',
-  )
-
-  const [playerCount, lastMarble] = parse(row)
-
-  return { playerCount, lastMarble }
-}
+const parse = Input.parseByPattern('%i players; last marble is worth %i points')
 
 const SPECIAL_TRIGGER = 23
 const SPECIAL_MOVEMENT = 7
@@ -44,7 +36,7 @@ const highScore = scores => Math.max(...Object.values(scores))
 const MULTIPLIER = 100
 
 export default ([row]) => {
-  const { playerCount, lastMarble } = readInput(row)
+  const [playerCount, lastMarble] = parse(row)
 
   const placements1 = placeMarbles(playerCount, lastMarble)
   const placements2 = placeMarbles(playerCount, lastMarble * MULTIPLIER)

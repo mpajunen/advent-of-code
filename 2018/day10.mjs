@@ -1,20 +1,14 @@
 import { Grid, Input } from '../common'
 
-const readInput = rows => {
-  const parse = Input.parseByPattern('position=<%i,%i> velocity=<%i,%i>')
+const parse = Input.parseByPattern('position=<%i,%i> velocity=<%i,%i>')
 
-  const getPoint = row => {
-    const [px, py, vx, vy] = parse(row)
+const getPoint = row => {
+  const [px, py, vx, vy] = parse(row)
 
-    return {
-      position: { x: px, y: py },
-      velocity: { x: vx, y: vy },
-    }
+  return {
+    position: { x: px, y: py },
+    velocity: { x: vx, y: vy },
   }
-
-  const points = rows.map(getPoint)
-
-  return { points }
 }
 
 const atTime = time => point => ({
@@ -62,7 +56,7 @@ const createPositionGrid = (points, time) => {
 }
 
 export default rows => {
-  const { points } = readInput(rows)
+  const points = rows.map(getPoint)
 
   const result2 = findMinTime(points)
 

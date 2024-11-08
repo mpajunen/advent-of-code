@@ -40,9 +40,7 @@ const readInput = (rows, boost = 0) => {
     }
   }
 
-  const units = rows.filter(r => r.length > 20).map(parse)
-
-  return { units }
+  return rows.filter(r => r.length > 20).map(parse)
 }
 
 const getEffectivePower = unit => unit.count * unit.attackDamage
@@ -97,7 +95,7 @@ const makeAttack = (units, { attacker, target }) => {
   target.count -= killed
 }
 
-const fight = ({ units }) => {
+const fight = units => {
   while (true) {
     const fighting = units.filter(u => u.count > 0)
     const attacks = createAttacks(fighting)

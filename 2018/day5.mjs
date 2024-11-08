@@ -2,13 +2,8 @@ import { Str } from '../common'
 
 const isUpperCase = value => value.toUpperCase() === value
 
-const readInput = row => {
-  const polarities = row
-    .split('')
-    .map(c => ({ char: c.toLowerCase(), polarity: isUpperCase(c) }))
-
-  return { polarities }
-}
+const readInput = row =>
+  row.split('').map(c => ({ char: c.toLowerCase(), polarity: isUpperCase(c) }))
 
 const reactions = original => {
   const result = []
@@ -31,7 +26,7 @@ const reactions = original => {
 }
 
 export default ([row]) => {
-  const { polarities } = readInput(row)
+  const polarities = readInput(row)
 
   const result = {}
   Str.alphabet.split('').forEach(polymer => {

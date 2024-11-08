@@ -1,13 +1,7 @@
 import { Input, Num } from '../common'
 import { createGraph } from './Graph'
 
-const readInput = rows => {
-  const parse = Input.parseByPattern('%i,%i,%i,%i')
-
-  const points = rows.map(parse)
-
-  return { points }
-}
+const parseRow = Input.parseByPattern('%i,%i,%i,%i')
 
 const MAX = 3
 
@@ -19,9 +13,9 @@ const getConstellationCount = points =>
   createGraph(points, isClose).getDisconnectedGroups().length
 
 export default rows => {
-  const input = readInput(rows)
+  const points = rows.map(parseRow)
 
-  const result1 = getConstellationCount(input.points)
+  const result1 = getConstellationCount(points)
 
   return [result1, undefined, 377, undefined]
 }

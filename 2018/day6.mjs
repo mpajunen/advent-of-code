@@ -1,12 +1,7 @@
 import { Grid, List, Num, Vec2 } from '../common'
 
-const readInput = rows => {
-  const coordinates = rows.map(row =>
-    Vec2.fromTuple(row.split(', ').map(Number)),
-  )
-
-  return { coordinates }
-}
+const readInput = rows =>
+  rows.map(row => Vec2.fromTuple(row.split(', ').map(Number)))
 
 const GRID_SIZE = 500
 
@@ -35,11 +30,11 @@ const findTotal = coordinates => point =>
 export default rows => {
   const input = readInput(rows)
 
-  const closestGrid = Grid.create(GRID_SIZE, findClosest(input.coordinates))
+  const closestGrid = Grid.create(GRID_SIZE, findClosest(input))
   const edgeAreas = findEdgeValues(closestGrid)
   const areaSizes = closestGrid.filter(v => !edgeAreas.has(v)).valueCounts()
 
-  const totalsGrid = Grid.create(GRID_SIZE, findTotal(input.coordinates))
+  const totalsGrid = Grid.create(GRID_SIZE, findTotal(input))
 
   const result1 = Math.max(...Object.values(areaSizes))
   const result2 = totalsGrid.values().filter(v => v <= TOTAL_LIMIT).length
