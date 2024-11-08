@@ -1,4 +1,4 @@
-import * as common from './common'
+import { Str } from '../common'
 
 const isUpperCase = value => value.toUpperCase() === value
 
@@ -34,7 +34,7 @@ export default ([row]) => {
   const { polarities } = readInput(row)
 
   const result = {}
-  common.alphabet.forEach(polymer => {
+  Str.alphabet.split('').forEach(polymer => {
     const withoutPolymer = polarities.filter(p => p.char !== polymer)
 
     result[polymer] = reactions(withoutPolymer).length

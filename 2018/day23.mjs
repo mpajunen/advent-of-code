@@ -1,8 +1,8 @@
-import * as common from './common'
+import { Input, List } from '../common'
 import * as Cube from './Cube'
 
 const readInput = rows => {
-  const parse = common.parseByPattern('pos=<%i,%i,%i>, r=%i')
+  const parse = Input.parseByPattern('pos=<%i,%i,%i>, r=%i')
 
   const bots = rows.map(parse).map(([x, y, z, radius]) => ({
     position: [x, y, z],
@@ -22,8 +22,8 @@ const reachCount = (bots, radius) => position =>
   bots.filter(reachesBox(position, radius)).length
 
 const findMaxOfPositions = (bots, radius, positions) => {
-  const haveMost = common.maxBy(reachCount(bots, radius), positions)
-  const [closest] = common.minBy(m => Cube.length(m), haveMost)
+  const haveMost = List.maxBy(reachCount(bots, radius), positions)
+  const [closest] = List.minBy(m => Cube.length(m), haveMost)
 
   return closest
 }
@@ -43,7 +43,7 @@ const findClosestMax = (bots, center = Cube.ORIGIN, radius = 2 ** 30) => {
 export default rows => {
   const { bots } = readInput(rows)
 
-  const strongest = common.maxBy(p => p.radius, bots)[0]
+  const strongest = List.maxBy(p => p.radius, bots)[0]
 
   const result1 = getInRadius(bots, strongest).length
   const result2 = Cube.length(findClosestMax(bots))

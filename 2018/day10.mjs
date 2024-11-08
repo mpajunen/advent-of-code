@@ -1,8 +1,7 @@
-import { Grid } from '../common'
-import * as common from './common'
+import { Grid, Input } from '../common'
 
 const readInput = rows => {
-  const parse = common.parseByPattern('position=<%i,%i> velocity=<%i,%i>')
+  const parse = Input.parseByPattern('position=<%i,%i> velocity=<%i,%i>')
 
   const getPoint = row => {
     const [px, py, vx, vy] = parse(row)

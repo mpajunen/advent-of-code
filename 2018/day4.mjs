@@ -1,4 +1,4 @@
-import * as common from './common'
+import { DefaultDict, List, Num } from '../common'
 
 const getSleeps = actions => {
   if (actions.length < 2) {
@@ -52,7 +52,7 @@ const MINUTES = 60
 const createSlept = sleeps => {
   const addSlept = (all, sleep) => {
     sleep.sleeps.forEach(s => {
-      common.range(s.start, s.end).forEach(min => {
+      List.range(s.start, s.end).forEach(min => {
         all[sleep.guard][min]++
       })
     })
@@ -60,14 +60,11 @@ const createSlept = sleeps => {
     return all
   }
 
-  return sleeps.reduce(
-    addSlept,
-    new common.DefaultDict(() => common.emptyArray(MINUTES)),
-  )
+  return sleeps.reduce(addSlept, new DefaultDict(() => List.empty(MINUTES)))
 }
 
 const findGuard = (comparison, slept) => {
-  const [guard] = common.maxBy(comparison, Object.keys(slept))
+  const [guard] = List.maxBy(comparison, Object.keys(slept))
 
   const max = Math.max(...slept[guard])
   const maxAt = slept[guard].findIndex(s => s === max)
@@ -79,7 +76,7 @@ export default rows => {
   const input = readInput(rows)
 
   const slept = createSlept(input.sleeps)
-  const sleepy = findGuard(guard => common.sum(slept[guard]), slept)
+  const sleepy = findGuard(guard => Num.sum(slept[guard]), slept)
   const consistent = findGuard(guard => Math.max(...slept[guard]), slept)
 
   const result1 = sleepy.guard * sleepy.maxAt

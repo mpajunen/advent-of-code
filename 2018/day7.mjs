@@ -1,15 +1,16 @@
-import * as common from './common'
+import { Input, List } from '../common'
 
 const readInput = rows => {
-  const parse = common.parseByPattern(
+  const parse = Input.parseByPattern(
     'Step %w must be finished before step %w can begin.',
   )
 
   const rules = rows.map(parse)
 
-  const letters = common
-    .unique([...rules.map(x => x[0]), ...rules.map(x => x[1])])
-    .sort()
+  const letters = List.unique([
+    ...rules.map(x => x[0]),
+    ...rules.map(x => x[1]),
+  ]).sort()
 
   return { letters, rules }
 }

@@ -1,6 +1,4 @@
-import * as common from './common'
-
-const letterCounts = text => common.arrayCounts(text.split(''))
+import { Str } from '../common'
 
 const hasCount = count => counts =>
   Object.entries(counts).some(([_, value]) => value === count)
@@ -26,7 +24,7 @@ const findMostMatchingPart = rows => {
 }
 
 export default rows => {
-  const rowLetterCounts = rows.map(letterCounts)
+  const rowLetterCounts = rows.map(Str.charCounts)
 
   const result1 =
     findNumberWithCount(rowLetterCounts, 2) *

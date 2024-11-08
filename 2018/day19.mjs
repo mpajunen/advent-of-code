@@ -1,4 +1,4 @@
-import * as common from './common'
+import { Num } from '../common'
 import { parseProgram, run } from './WristDevice'
 
 const runProgram = ({ ip, instructions }, start0 = 0, optimize = false) => {
@@ -6,7 +6,7 @@ const runProgram = ({ ip, instructions }, start0 = 0, optimize = false) => {
 
   while (registers[ip] < instructions.length) {
     if (optimize && registers[ip] === 1) {
-      return common.sum(common.findFactors(registers[1]))
+      return Num.sum(Num.findFactors(registers[1]))
     }
 
     registers = run(ip, instructions, registers)

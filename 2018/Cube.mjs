@@ -1,4 +1,4 @@
-import * as common from './common'
+import { Num } from '../common'
 
 export const ORIGIN = [0, 0, 0]
 
@@ -12,7 +12,7 @@ export const multiply =
   num =>
   ([x, y, z]) => [x * num, y * num, z * num]
 
-export const length = vec => common.sum(vec.map(n => Math.abs(n)))
+export const length = vec => Num.sum(vec.map(n => Math.abs(n)))
 
 export const manhattan = a => b => length(subtract(a, b))
 

@@ -1,11 +1,10 @@
-import { Grid, Vec2 } from '../common'
-import * as common from './common'
+import { Grid, Input, Vec2 } from '../common'
 
 const SPRING_AT = [500, 0]
 const WIDTH = 2000
 
 const readInput = raw => {
-  const parse = common.parseByPattern('%w=%i, %w=%i..%i')
+  const parse = Input.parseByPattern('%w=%i, %w=%i..%i')
 
   const getBar = row => {
     const [nameA, valueA, nameB, valueB1, valueB2] = parse(row)

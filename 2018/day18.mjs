@@ -1,5 +1,4 @@
-import { Grid, Vec2 } from '../common'
-import * as common from './common'
+import { Grid, List, Vec2 } from '../common'
 
 const readInput = raw => {
   const grid = new Grid(raw.map(row => row.split('')))
@@ -22,7 +21,7 @@ const transforms = {
 }
 
 const transform = grid => (value, place) => {
-  const adjacent = common.arrayCounts(getAdjacent(grid, place))
+  const adjacent = List.counts(getAdjacent(grid, place))
 
   return transforms[value](adjacent)
 }

@@ -1,8 +1,8 @@
-import * as common from './common'
+import { Input } from '../common'
 import CycleList from './CycleList'
 
 const readInput = row => {
-  const parse = common.parseByPattern(
+  const parse = Input.parseByPattern(
     '%i players; last marble is worth %i points',
   )
 

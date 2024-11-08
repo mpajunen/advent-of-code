@@ -1,5 +1,4 @@
-import { Grid, Vec2 } from '../common'
-import * as common from './common'
+import { Grid, Num, Vec2 } from '../common'
 
 const STARTING_HEALTH = 200
 const DEFAULT_DAMAGE = 3
@@ -197,7 +196,7 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
   }
 
   const getScore = (creatures, turn) =>
-    turn * common.sum(creatures.filter(c => c.health > 0).map(c => c.health))
+    turn * Num.sum(creatures.filter(c => c.health > 0).map(c => c.health))
 
   const playTillEnd = creatures => {
     let turn = 0

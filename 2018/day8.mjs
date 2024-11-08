@@ -1,4 +1,4 @@
-import * as common from './common'
+import { Num } from '../common'
 
 const readInput = row => {
   const numbers = row.split(' ').map(n => parseInt(n, 10))
@@ -24,8 +24,7 @@ const buildNode = remaining => {
   return { children, meta, size }
 }
 
-const metaSum = node =>
-  common.sum(node.meta) + common.sum(node.children.map(metaSum))
+const metaSum = node => Num.sum(node.meta) + Num.sum(node.children.map(metaSum))
 
 const nodeValue = node => {
   if (node.children.length === 0) {
@@ -36,7 +35,7 @@ const nodeValue = node => {
     .map(num => node.children[num - 1])
     .filter(node => !!node)
 
-  return common.sum(referred.map(nodeValue))
+  return Num.sum(referred.map(nodeValue))
 }
 
 export default ([row]) => {

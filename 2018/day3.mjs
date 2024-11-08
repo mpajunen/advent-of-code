@@ -1,8 +1,7 @@
-import { Grid } from '../common'
-import * as common from './common'
+import { Grid, Input } from '../common'
 
 const readInput = rows => {
-  const parse = common.parseByPattern('#%i @ %i,%i: %ix%i')
+  const parse = Input.parseByPattern('#%i @ %i,%i: %ix%i')
 
   const claims = rows.map(parse).map(([number, x, y, width, height]) => ({
     number,

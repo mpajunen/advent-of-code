@@ -1,9 +1,9 @@
-import * as common from './common'
+import { List } from '../common'
 
 const findEdges = (vertices, checkEdge) =>
   vertices
     .map(item =>
-      common.findIndices(compare => checkEdge(item, compare), vertices),
+      List.findIndices(compare => checkEdge(item, compare), vertices),
     )
     .map((itemTo, from) => itemTo.map(to => [from, to]))
     .reduce((all, item) => [...all, ...item])
@@ -14,7 +14,7 @@ export const createGraph = (vertices, edgeExists) =>
 export default class Graph {
   constructor(vertices, edges) {
     this.vertices = vertices
-    this.neighbors = common.emptyArray(vertices.length, () => [])
+    this.neighbors = List.empty(vertices.length, () => [])
     this.edges = []
     edges.forEach(edge => {
       this.addEdge(edge)
@@ -30,10 +30,10 @@ export default class Graph {
     const groups = []
 
     const fitsGroup = index => group =>
-      common.intersection(group, this.neighbors[index]).length > 0
+      List.intersection(group, this.neighbors[index]).length > 0
 
     this.vertices.forEach((_, item) => {
-      const fitIndices = common.findIndices(fitsGroup(item), groups)
+      const fitIndices = List.findIndices(fitsGroup(item), groups)
 
       if (fitIndices.length > 0) {
         const newGroup = [item]

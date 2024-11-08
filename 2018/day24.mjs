@@ -1,10 +1,10 @@
-import * as common from './common'
+import { Input, List } from '../common'
 
 const WEAK_DAMAGE_MULTIPLIER = 2
 
 const readInput = (rows, boost = 0) => {
-  const parseStart = common.parseByPattern('%i units each with %i hit')
-  const parseEnd = common.parseByPattern(
+  const parseStart = Input.parseByPattern('%i units each with %i hit')
+  const parseEnd = Input.parseByPattern(
     'an attack that does %i %w damage at initiative %i',
   )
 
@@ -48,8 +48,8 @@ const readInput = (rows, boost = 0) => {
 const getEffectivePower = unit => unit.count * unit.attackDamage
 
 const getPowerful = units => {
-  const powerful = common.maxBy(getEffectivePower, units)
-  const faster = common.maxBy(unit => unit.initiative, powerful)
+  const powerful = List.maxBy(getEffectivePower, units)
+  const faster = List.maxBy(unit => unit.initiative, powerful)
 
   return faster[0]
 }

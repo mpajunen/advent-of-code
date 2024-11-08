@@ -1,4 +1,4 @@
-import * as common from './common'
+import { List, Num } from '../common'
 
 const LEFT_2 = 1
 const LEFT_1 = 2
@@ -21,7 +21,7 @@ const readInput = rows => {
   const rules = new Map()
   rest.forEach(row => {
     const [pattern, , to] = row.split(' ')
-    const from = common.sum(
+    const from = Num.sum(
       pattern.split('').map((char, index) => (char === '#' ? FLAGS[index] : 0)),
     )
 
@@ -32,7 +32,7 @@ const readInput = rows => {
 }
 
 const getPatternKey = (values, index) =>
-  common.sum(FLAGS.filter((_, i) => values.get(index - 2 + i)))
+  Num.sum(FLAGS.filter((_, i) => values.get(index - 2 + i)))
 
 const step = rules => values => {
   const min = Math.min(...values.keys()) - 2
@@ -49,9 +49,9 @@ const step = rules => values => {
 }
 
 const stepCount = (rules, count, values) =>
-  common.range(0, count).reduce(step(rules), values)
+  List.range(0, count).reduce(step(rules), values)
 
-const score = values => common.sum([...values.keys()])
+const score = values => Num.sum([...values.keys()])
 
 const GENERATIONS_TEST = 20
 

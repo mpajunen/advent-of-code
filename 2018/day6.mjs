@@ -1,5 +1,4 @@
-import { Grid, Vec2 } from '../common'
-import * as common from './common'
+import { Grid, List, Num, Vec2 } from '../common'
 
 const readInput = rows => {
   const coordinates = rows.map(row =>
@@ -15,7 +14,7 @@ const findClosest = coordinates => point => {
   const distances = coordinates.map(a => Vec2.manhattan(point, a))
   const minimum = Math.min(...distances)
 
-  const indices = common.indicesOf(minimum, distances)
+  const indices = List.indicesOf(minimum, distances)
 
   return indices.length > 1 ? undefined : indices[0]
 }
@@ -31,7 +30,7 @@ const findEdgeValues = grid =>
 const TOTAL_LIMIT = 10000
 
 const findTotal = coordinates => point =>
-  common.sum(coordinates.map(a => Vec2.manhattan(point, a)))
+  Num.sum(coordinates.map(a => Vec2.manhattan(point, a)))
 
 export default rows => {
   const input = readInput(rows)

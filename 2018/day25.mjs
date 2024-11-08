@@ -1,8 +1,8 @@
-import * as common from './common'
+import { Input, Num } from '../common'
 import { createGraph } from './Graph'
 
 const readInput = rows => {
-  const parse = common.parseByPattern('%i,%i,%i,%i')
+  const parse = Input.parseByPattern('%i,%i,%i,%i')
 
   const points = rows.map(parse)
 
@@ -11,7 +11,7 @@ const readInput = rows => {
 
 const MAX = 3
 
-const getDistance = (a, b) => common.sum(a.map((v, i) => Math.abs(v - b[i])))
+const getDistance = (a, b) => Num.sum(a.map((v, i) => Math.abs(v - b[i])))
 
 const isClose = (a, b) => getDistance(a, b) <= MAX
 

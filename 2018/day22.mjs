@@ -1,5 +1,4 @@
-import { Grid, Vec2 } from '../common'
-import * as common from './common'
+import { Grid, Num, Vec2 } from '../common'
 
 const INDEX_X = 16807
 const INDEX_Y = 48271
@@ -113,7 +112,7 @@ export default rows => {
   const types = createTypes(input, input.target)
   const overTypes = createTypes(input, LIMITS)
 
-  const result1 = common.sum(types.values())
+  const result1 = Num.sum(types.values())
   const result2 = createCosts(overTypes).get(input.target).torch
 
   return [result1, result2, 11810, 1015]
