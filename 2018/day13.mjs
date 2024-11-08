@@ -1,4 +1,4 @@
-import Grid, { add } from './Grid'
+import { Grid, Vec2 } from '../common'
 
 const railReplacements = { '<': '-', '>': '-', '^': '|', v: '|' }
 
@@ -19,15 +19,14 @@ const movements = { '>': [1, 0], v: [0, 1], '^': [0, -1], '<': [-1, 0] }
 const movementDirections = Object.keys(movements)
 
 const createCart = (direction, position) => ({
-  name: position.join('-'),
   direction,
   position,
   crossed: 0,
   crashed: false,
 })
 
-const comparePosition = ({ position: [xa, ya] }, { position: [xb, yb] }) =>
-  ya - yb || xa - xb
+const comparePosition = ({ position: a }, { position: b }) =>
+  a.y - b.y || a.x - b.x
 
 const readInput = rows => {
   const rawGrid = rows.map(row => row.split(''))
@@ -48,12 +47,13 @@ const readInput = rows => {
   return { tracks, carts }
 }
 
-const applyMovement = (point, direction) => add(point)(movements[direction])
+const applyMovement = (point, direction) =>
+  Vec2.add(point, Vec2.fromTuple(movements[direction]))
 
 const move = (input, cart) => {
   const {
     name,
-    position: [x, y],
+    position: { x, y },
   } = cart
   let { direction, crossed } = cart
 
@@ -136,8 +136,8 @@ export default rows => {
   const firstCrash = findFirstCrash(input, input.carts)
   const finalCart = moveUntilOneLeft(input, input.carts)
 
-  const result1 = firstCrash.position.join(',')
-  const result2 = finalCart.position.join(',')
+  const result1 = Vec2.toString(firstCrash.position)
+  const result2 = Vec2.toString(finalCart.position)
 
   return [result1, result2, '91,69', '44,87']
 }

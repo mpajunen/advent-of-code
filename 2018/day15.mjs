@@ -1,5 +1,5 @@
+import { Grid, Vec2 } from '../common'
 import * as common from './common'
-import Grid, { add } from './Grid'
 
 const STARTING_HEALTH = 200
 const DEFAULT_DAMAGE = 3
@@ -8,23 +8,16 @@ const FLOOR = '.'
 const WALL = '#'
 
 const INVALID_COST = 9999
-const MOVEMENTS = [
-  [1, 0],
-  [0, 1],
-  [-1, 0],
-  [0, -1],
-]
 
-const allAdjacent = position => MOVEMENTS.map(add(position))
+const allAdjacent = position => Vec2.adjacent(position)
 
 const createCreature = (kind, position) => ({
-  name: kind + position.join('-'),
   kind,
   position,
   health: STARTING_HEALTH,
 })
 
-const comparePosition = ([xa, ya], [xb, yb]) => ya - yb || xa - xb
+const comparePosition = (a, b) => a.y - b.y || a.x - b.x
 
 const compareCreaturePosition = (creature1, creature2) =>
   comparePosition(creature1.position, creature2.position)

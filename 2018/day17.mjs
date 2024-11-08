@@ -1,5 +1,5 @@
+import { Grid, Vec2 } from '../common'
 import * as common from './common'
-import { createGrid } from './Grid'
 
 const SPRING_AT = [500, 0]
 const WIDTH = 2000
@@ -30,12 +30,12 @@ const STILL = '~'
 const FLOW = '|'
 
 const createWalls = input => {
-  const grid = createGrid(() => EMPTY, WIDTH, input.yRange[1] + 1)
+  const grid = Grid.create({ x: WIDTH, y: input.yRange[1] + 1 }, () => EMPTY)
 
   input.bars.forEach(({ x: [xMin, xMax], y: [yMin, yMax] }) => {
-    for (let j = yMin; j <= yMax; j++) {
-      for (let i = xMin; i <= xMax; i++) {
-        grid.set([i, j], WALL)
+    for (let y = yMin; y <= yMax; y++) {
+      for (let x = xMin; x <= xMax; x++) {
+        grid.set({ x, y }, WALL)
       }
     }
   })
@@ -43,20 +43,20 @@ const createWalls = input => {
   return grid
 }
 
-const getPlaces = ([x, y]) => ({
-  at: [x, y],
-  up: [x, y - 1],
-  down: [x, y + 1],
-  left: [x - 1, y],
-  right: [x + 1, y],
+const getPlaces = p => ({
+  at: p,
+  up: Vec2.add(p, Vec2.units.N),
+  down: Vec2.add(p, Vec2.units.S),
+  left: Vec2.add(p, Vec2.units.W),
+  right: Vec2.add(p, Vec2.units.E),
 })
 
-const getValues = (grid, [x, y]) => ({
-  at: grid.get([x, y]),
-  up: grid.get([x, y - 1]),
-  down: grid.get([x, y + 1]),
-  left: grid.get([x - 1, y]),
-  right: grid.get([x + 1, y]),
+const getValues = (grid, p) => ({
+  at: grid.get(p),
+  up: grid.get(Vec2.add(p, Vec2.units.N)),
+  down: grid.get(Vec2.add(p, Vec2.units.S)),
+  left: grid.get(Vec2.add(p, Vec2.units.W)),
+  right: grid.get(Vec2.add(p, Vec2.units.E)),
 })
 
 const flow = (grid, frontier) => {
@@ -117,7 +117,7 @@ const flow = (grid, frontier) => {
 
 const flowAll = grid => {
   const [springX, springY] = SPRING_AT
-  const first = [springX, springY + 1]
+  const first = { x: springX, y: springY + 1 }
 
   grid.set(first, FLOW)
 

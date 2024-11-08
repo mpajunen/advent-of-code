@@ -1,5 +1,5 @@
+import { Grid } from '../common'
 import * as common from './common'
-import { createGrid } from './Grid'
 
 const readInput = rows => {
   const parse = common.parseByPattern('position=<%i,%i> velocity=<%i,%i>')
@@ -53,10 +53,10 @@ const findMinTime = points => {
 const createPositionGrid = (points, time) => {
   const positions = points.map(atTime(time))
 
-  const g = createGrid(() => '.', 200)
+  const g = Grid.create(200, () => '.')
 
-  positions.forEach(({ x, y }) => {
-    g.set([x, y], '#')
+  positions.forEach(p => {
+    g.set(p, '#')
   })
 
   return g

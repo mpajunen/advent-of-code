@@ -1,13 +1,13 @@
+import { Grid } from '../common'
 import * as common from './common'
-import { createGrid } from './Grid'
 
 const readInput = rows => {
   const parse = common.parseByPattern('#%i @ %i,%i: %ix%i')
 
   const claims = rows.map(parse).map(([number, x, y, width, height]) => ({
     number,
-    start: [x, y],
-    end: [x + width, y + height],
+    start: { x, y },
+    end: { x: x + width, y: y + height },
     size: { height, width },
   }))
 
@@ -18,7 +18,7 @@ const EMPTY = -2
 const OVERLAP = -1
 const GRID_SIZE = 1000
 
-const emptyGrid = () => createGrid(() => EMPTY, GRID_SIZE)
+const emptyGrid = () => Grid.create(GRID_SIZE, () => EMPTY)
 
 const addClaim = (current, claim) => {
   const { start, end } = claim

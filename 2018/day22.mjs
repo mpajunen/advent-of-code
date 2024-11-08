@@ -1,28 +1,28 @@
+import { Grid, Vec2 } from '../common'
 import * as common from './common'
-import { createGrid } from './Grid'
 
 const INDEX_X = 16807
 const INDEX_Y = 48271
 
 const readInput = rows => ({
   depth: Number(rows[0].match(/\d+/g)[0]),
-  target: rows[1].match(/\d+/g).map(Number),
+  target: Vec2.fromString(rows[1].split(' ')[1]),
 })
 
 const createTypes = (input, maxPlace) => {
-  const erosion = createGrid(() => 0, maxPlace[0] + 1, maxPlace[1] + 1)
+  const erosion = Grid.create({ x: maxPlace.x + 1, y: maxPlace.y + 1 }, () => 0)
 
-  const getIndex = ([x, y]) => {
+  const getIndex = ({ x, y }) => {
     if (x === 0 && y === 0) {
       return 0
-    } else if (x === input.target[0] && y === input.target[1]) {
+    } else if (x === input.target.x && y === input.target.y) {
       return 0
     } else if (y === 0) {
       return x * INDEX_X
     } else if (x === 0) {
       return y * INDEX_Y
     } else {
-      return erosion.get([x - 1, y]) * erosion.get([x, y - 1])
+      return erosion.get({ x: x - 1, y }) * erosion.get({ x, y: y - 1 })
     }
   }
 
@@ -66,7 +66,7 @@ const tryMove = (overTypes, costs, frontier, from, to) => {
         fromCosts[tool],
         ...Object.entries(fromCosts)
           .filter(([t]) => t !== PROHIBITED[toType])
-          .map(([t, c]) => c + SWITCH_COST),
+          .map(([_, c]) => c + SWITCH_COST),
       ) + 1
 
     if (cost < toCosts[tool]) {
@@ -80,24 +80,19 @@ const tryMove = (overTypes, costs, frontier, from, to) => {
   }
 }
 
-const getAdjacent = ([x, y]) => [
-  [x, y - 1],
-  [x, y + 1],
-  [x - 1, y],
-  [x + 1, y],
-]
-
 const movePlace = (overTypes, costs, frontier, place) =>
-  getAdjacent(place).forEach(t => tryMove(overTypes, costs, frontier, place, t))
+  Vec2.adjacent(place).forEach(t =>
+    tryMove(overTypes, costs, frontier, place, t),
+  )
 
 const createCosts = overTypes => {
   const costs = overTypes.map(createCost)
-  costs.set([0, 0], {
+  costs.set(Vec2.origin, {
     gear: SWITCH_COST,
     neither: MAX_COST,
     torch: 0,
   })
-  const frontier = [[0, 0]]
+  const frontier = [Vec2.origin]
 
   let i = 0
   while (i < frontier.length) {
@@ -113,7 +108,7 @@ const createCosts = overTypes => {
 export default rows => {
   const input = readInput(rows)
 
-  const LIMITS = [input.target[0] + MARGIN, input.target[1] + MARGIN]
+  const LIMITS = { x: input.target.x + MARGIN, y: input.target.y + MARGIN }
 
   const types = createTypes(input, input.target)
   const overTypes = createTypes(input, LIMITS)

@@ -17,9 +17,14 @@ type Reducer<Value extends Val, Result> = (
 
 type GetValue<T> = (coordinates: Vec2) => T
 
-const create = <T extends Val>(size: Vec2, getValue: GetValue<T>): Grid<T> => {
-  const row = Array.from({ length: size.x })
-  const rows = Array.from({ length: size.y }, (_, y) =>
+const create = <T extends Val>(
+  size: number | Vec2,
+  getValue: GetValue<T>,
+): Grid<T> => {
+  const max = typeof size === 'number' ? { x: size, y: size } : size
+
+  const row = Array.from({ length: max.x })
+  const rows = Array.from({ length: max.y }, (_, y) =>
     row.map((_, x) => getValue({ x, y })),
   )
 
@@ -199,7 +204,7 @@ export class Grid<T extends Val> {
   mapPart(func: Mapper<T, T>, start: Vec2, end: Vec2): Grid<T> {
     const changeRow = (row: T[], y: number) =>
       row.map((value: T, x: number) =>
-        x >= start.y && y < start.y ? func(value, { x, y }, this) : value,
+        x >= start.x && x < end.x ? func(value, { x, y }, this) : value,
       )
     const change = (row: T[], y: number) =>
       y >= start.y && y < end.y ? changeRow(row, y) : row

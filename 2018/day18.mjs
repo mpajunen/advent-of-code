@@ -1,5 +1,5 @@
+import { Grid, Vec2 } from '../common'
 import * as common from './common'
-import Grid from './Grid'
 
 const readInput = raw => {
   const grid = new Grid(raw.map(row => row.split('')))
@@ -11,17 +11,8 @@ const OPEN = '.'
 const TREE = '|'
 const YARD = '#'
 
-const getAdjacent = (grid, [x, y]) => [
-  grid.get([x - 1, y - 1]),
-  grid.get([x + 0, y - 1]),
-  grid.get([x + 1, y - 1]),
-  grid.get([x - 1, y + 0]),
-  // grid.get([x + 0, y + 0]),
-  grid.get([x + 1, y + 0]),
-  grid.get([x - 1, y + 1]),
-  grid.get([x + 0, y + 1]),
-  grid.get([x + 1, y + 1]),
-]
+const getAdjacent = (grid, position) =>
+  Vec2.allAdjacent(position).map(p => grid.get(p))
 
 const transforms = {
   [OPEN]: adjacent => (adjacent[TREE] >= 3 ? TREE : OPEN),

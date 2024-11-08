@@ -1,4 +1,4 @@
-import { createGrid } from './Grid'
+import { Grid, Vec2 } from '../common'
 
 const FLOOR = '.'
 const DOOR = '+'
@@ -50,32 +50,12 @@ const getParts = directions => {
   return parts
 }
 
-const getPlaces = (direction, [x, y]) => {
-  switch (direction) {
-    case 'N':
-      return [
-        [x + 0, y - 1],
-        [x + 0, y - 2],
-      ]
-    case 'E':
-      return [
-        [x + 1, y + 0],
-        [x + 2, y + 0],
-      ]
-    case 'S':
-      return [
-        [x + 0, y + 1],
-        [x + 0, y + 2],
-      ]
-    case 'W':
-      return [
-        [x - 1, y + 0],
-        [x - 2, y + 0],
-      ]
-  }
-}
+const getPlaces = (dir, pos) => [
+  Vec2.add(pos, Vec2.units[dir]),
+  Vec2.add(pos, Vec2.mul(Vec2.units[dir], 2)),
+]
 
-const DIRECTIONS = ['N', 'E', 'S', 'W']
+const DIRECTIONS = Object.keys(Vec2.units)
 
 const addRoute = (maze, direction, place) => {
   const [door, corridor] = getPlaces(direction, place)
@@ -111,8 +91,8 @@ const MAZE_SIZE = 320
 
 const buildMaze = (directions, size = MAZE_SIZE) => {
   const parts = getParts(directions)
-  const maze = createGrid(() => WALL, size)
-  const start = [size / 2, size / 2]
+  const maze = Grid.create(size, () => WALL)
+  const start = { x: size / 2, y: size / 2 }
   maze.set(start, FLOOR)
 
   buildParts(maze, parts, start)
@@ -122,7 +102,7 @@ const buildMaze = (directions, size = MAZE_SIZE) => {
 
 const findAllDepths = maze => {
   const size = maze.rows().length / 2
-  const start = [size, size]
+  const start = { x: size, y: size }
   const costs = maze.copy()
   costs.set(start, 0)
   const frontier = [start]
