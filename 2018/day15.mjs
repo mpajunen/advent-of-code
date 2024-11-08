@@ -198,7 +198,8 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
   const getScore = (creatures, turn) =>
     turn * Num.sum(creatures.filter(c => c.health > 0).map(c => c.health))
 
-  const playTillEnd = creatures => {
+  const play = () => {
+    const { creatures } = start
     let turn = 0
 
     while (inProgress(creatures)) {
@@ -207,41 +208,17 @@ const game = (start, elfDamage = DEFAULT_DAMAGE) => {
       playTurn(creatures)
     }
 
-    return { creatures, turn, score: getScore(creatures, turn - 1) }
+    return getScore(creatures, turn - 1)
   }
-
-  const playTurns = (creatures, turns) => {
-    let turn = 0
-
-    while (turn < turns) {
-      turn += 1
-
-      playTurn(creatures)
-    }
-
-    return { creatures, turn, score: getScore(creatures, turn - 1) }
-  }
-
-  const play = turns =>
-    turns === undefined
-      ? playTillEnd(start.creatures)
-      : playTurns(start.creatures, turns)
 
   return { play }
-}
-
-const testPlay = (input, turns, elfDamage) => {
-  const start = createStart(input)
-  const { score } = game(start, elfDamage).play(turns)
-
-  return score
 }
 
 const BOOSTED_DAMAGE = 15 // Determined empirically
 
 export default input => {
-  const result1 = testPlay(input)
-  const result2 = testPlay(input, undefined, BOOSTED_DAMAGE)
+  const result1 = game(createStart(input)).play()
+  const result2 = game(createStart(input), BOOSTED_DAMAGE).play()
 
   return [result1, result2, 188576, 57112]
 }

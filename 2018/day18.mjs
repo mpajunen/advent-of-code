@@ -14,35 +14,14 @@ const transforms = {
     adjacent[YARD] >= 1 && adjacent[TREE] >= 1 ? YARD : OPEN,
 }
 
-const transform = grid => (value, place) => {
+const transform = (value, place, grid) => {
   const adjacent = List.counts(getAdjacent(grid, place))
 
   return transforms[value](adjacent)
 }
 
-const passTime = (start, time) => {
-  let grid = start
-
-  let t = 0
-
-  let max = 0
-  let maxAt = []
-
-  while (t < time) {
-    t += 1
-    grid = grid.map(transform(grid))
-
-    const value = totalValue(grid)
-    if (value > max) {
-      max = value
-      maxAt = [t]
-    } else if (value === max) {
-      maxAt.push(t)
-    }
-  }
-
-  return { grid, max, maxAt: maxAt.pop() }
-}
+const passTime = (start, time) =>
+  List.range(0, time).reduce(grid => grid.map(transform), start)
 
 const totalValue = grid => {
   const counts = grid.valueCounts()
@@ -62,8 +41,8 @@ export default rows => {
   const passed = passTime(input, 10)
   const phased = passTime(input, end)
 
-  const result1 = totalValue(passed.grid)
-  const result2 = totalValue(phased.grid)
+  const result1 = totalValue(passed)
+  const result2 = totalValue(phased)
 
   return [result1, result2, 614812, 212176]
 }
