@@ -1,164 +1,155 @@
 import { Grid, List, Str, Vec2 } from '../common'
 
+type Maze = Grid<string>
+
 const tiles = {
   wall: '#',
   passage: '.',
-  keys: Str.alphabet.split(''),
-  doors: Str.alphabet.toUpperCase().split(''),
+  keys: Str.alphabet,
+  doors: Str.alphabet.toUpperCase(),
   entrance: '@',
-} as const
-
-// type MazeTile = typeof tiles.passage | typeof tiles.wall
-
-type Maze = {
-  grid: Grid<string>
-  targets: [Vec2, string][]
+  subEntrances: ['1', '2', '3', '4'],
 }
 
 type State = {
-  collected: string
+  collected: string[]
   distance: number
-  positions: Vec2[]
-  route: string
+  positions: string[]
 }
 
-const OPEN = -1
-const BLOCKED = -2
-const TARGET = -3
+const modifyMaze = (maze: Maze) => {
+  const start = maze.findPlace(v => v === tiles.entrance)
 
-type SpecialDistance = typeof OPEN | typeof BLOCKED | typeof TARGET
+  // Add entrances to split vaults
+  Vec2.diagonal(start).forEach((p, n) => maze.set(p, String(n + 1)))
 
-const buildInitial = (rows: string[]) => {
-  const raw = Grid.fromStrings<string>(rows)
+  // Add walls
+  Vec2.adjacent(start).forEach(p => maze.set(p, tiles.wall))
 
-  const maze = {
-    grid: raw.map(v => (v === tiles.entrance ? tiles.passage : v)),
-    targets: raw.entries().filter(([_, v]) => tiles.keys.includes(v)),
-  }
-  const state = {
-    positions: [raw.findPlace(v => v === tiles.entrance)],
-    distance: 0,
-    collected: '',
-    route: '',
-  }
-
-  return { maze, state }
+  return maze
 }
 
-const findDistances = (
-  maze: Maze,
-  state: State,
-  position: Vec2,
-): Grid<number> => {
-  const getInitial = (tile: string): SpecialDistance =>
-    tile === '#'
-      ? BLOCKED
-      : tile === '.'
-        ? OPEN
-        : state.collected.includes(tile.toLowerCase())
-          ? OPEN
-          : tiles.keys.includes(tile)
-            ? TARGET
-            : BLOCKED
+type Edge = { from: string; to: string; steps: number }
+type Move = { tile: string; distance: number }
 
-  const distances = maze.grid.map<number>(getInitial)
-
-  let next: Vec2[] = [position]
-  let distance = 0
-
-  while (next.length > 0) {
-    const current = next
-    next = []
-
-    current.forEach(p => {
-      const value = distances.get(p)
-      if (value >= 0 || value === BLOCKED) {
-        return
-      }
-
-      distances.set(p, distance)
-
-      if (value === OPEN) {
-        next.push(...Vec2.adjacent(p))
-      }
-    })
-
-    distance += 1
-  }
-
-  return distances
+type Graph = {
+  from: Record<string, Record<string, number>>
 }
 
-const findGroupMin = <T, Group extends number | string>(
-  getGroup: (item: T) => Group,
-  accessor: (v: T) => number,
-  items: T[],
-): T[] => {
-  const groups = List.groupBy(getGroup, items)
-  const groupValues: T[][] = Object.values(groups)
-
-  return groupValues.map(group => List.minBy(accessor, group)[0])
-}
-
-function findOptimalOption(maze: Maze, states: State[]): State {
-  const options = states.flatMap(findNextOptions(maze))
-  if (options.length === 0) {
-    return states[0]
-  }
-
-  const optimalOptions = findGroupMin(
-    o => o.collected,
-    o => o.distance,
-    options,
-  )
-
-  return findOptimalOption(maze, optimalOptions)
-}
-
-const findNextOptions =
+const findEdgesFrom =
   (maze: Maze) =>
-  (state: State): State[] => {
-    const allDistances = state.positions.map(p => findDistances(maze, state, p))
+  ([start, from]: [Vec2, string]) => {
+    const find = (path: Vec2[]): Edge[] => {
+      const [current] = path
+      const tile = maze.get(current)
+      if (tile !== tiles.passage && tile !== from) {
+        return [{ from, to: tile, steps: path.length - 1 }]
+      }
 
-    return allDistances.flatMap((distances, robotIndex) =>
-      List.filterMap(([position, key]) => {
-        const distance = distances.get(position)
-        if (state.collected.includes(key) || distance < 0) {
-          return undefined
-        }
+      const next = Vec2.adjacent(current)
+        .filter(p => maze.get(p) !== tiles.wall)
+        .filter(p => path.every(pp => !Vec2.equal(pp)(p)))
 
-        const positions = [...state.positions]
-        positions[robotIndex] = position
+      return next.flatMap(p => find([p, ...path]))
+    }
 
-        return {
-          collected: `${state.collected.split('').sort().join('')}${key}`,
-          positions,
-          distance: state.distance + distance,
-          route: `${state.route}${key}`,
-        }
-      }, maze.targets),
+    return find([start])
+  }
+
+const buildGraph = (maze: Maze): Graph => {
+  const allEdges = maze
+    .entries()
+    .filter(([_, v]) => v !== tiles.wall && v !== tiles.passage)
+    .flatMap(findEdgesFrom(maze))
+
+  const minLengths = {}
+  for (const edge of allEdges) {
+    minLengths[edge.from] ??= {}
+    minLengths[edge.from][edge.to] = Math.min(
+      minLengths[edge.from][edge.to] ?? Infinity,
+      edge.steps,
     )
   }
 
-const buildModified = (maze: Maze, state: State) => {
-  const grid = maze.grid.copy()
-  Vec2.adjacent(state.positions[0]).forEach(p => grid.set(p, tiles.wall))
+  return { from: minLengths }
+}
 
-  const positions = Vec2.diagonal(state.positions[0])
+const isAccessible = (state: State, tile: string) =>
+  !tiles.doors.includes(tile) || state.collected.includes(tile.toLowerCase())
 
-  return {
-    maze: { ...maze, grid },
-    state: { ...state, positions },
+const isTarget = (state: State, tile: string) =>
+  tiles.keys.includes(tile) && !state.collected.includes(tile)
+
+const getAvailableMoves = (
+  graph: Graph,
+  state: State,
+  initial: string,
+): Move[] => {
+  const distances: Record<string, number> = { [initial]: 0 }
+
+  const buildDistances = (from: string) => {
+    for (const tile of Object.keys(graph.from[from])) {
+      if (!isAccessible(state, tile)) {
+        continue
+      }
+
+      const distance = distances[from] + graph.from[from][tile]
+      if ((distances[tile] ?? Infinity) <= distance) {
+        continue
+      }
+
+      distances[tile] = distance
+
+      buildDistances(tile)
+    }
   }
+
+  buildDistances(initial)
+
+  const moves = Object.entries(distances)
+    .filter(([tile]) => isTarget(state, tile))
+    .map(([tile, distance]) => ({ tile, distance }))
+
+  return List.sortBy(m => m.distance, moves)
+}
+
+const move = (s: State, from: string) => (move: Move) => ({
+  collected: [...s.collected, move.tile].sort(),
+  distance: s.distance + move.distance,
+  positions: s.positions.map(p => (p === from ? move.tile : p)),
+})
+
+const findShortestPath = (maze: Maze, positions: string[]) => {
+  const graph = buildGraph(maze)
+  const minDistances: Record<string, number> = {}
+
+  const states: State[] = [{ collected: [], distance: 0, positions }]
+
+  for (const state of states) {
+    const key =
+      state.collected.length === tiles.keys.length
+        ? tiles.keys
+        : `${state.collected.join('')}:${state.positions.join('')}`
+    if (minDistances[key] && minDistances[key] <= state.distance) {
+      continue
+    }
+    minDistances[key] = state.distance
+
+    for (const position of state.positions) {
+      const moves = getAvailableMoves(graph, state, position)
+
+      states.push(...moves.map(move(state, position)))
+    }
+  }
+
+  return minDistances[tiles.keys]
 }
 
 export default (rows: string[]) => {
-  const { maze, state } = buildInitial(rows)
-  const modified = buildModified(maze, state)
+  const maze = Grid.fromStrings(rows)
 
-  return [
-    // findOptimalOption(maze, [state]).distance, // 6098
-    0,
-    findOptimalOption(modified.maze, [modified.state]).distance, // 1818 too high
-  ]
+  const result1 = findShortestPath(maze, [tiles.entrance])
+  const result2 = findShortestPath(modifyMaze(maze), tiles.subEntrances)
+
+  return [result1, result2, 6098, 1698]
 }
