@@ -170,8 +170,8 @@ module Grid =
         let columns = (limits.Max.X - limits.Min.X + 1)
 
         let getPosition row col : Vec =
-            { X = col - limits.Min.X
-              Y = row - limits.Min.Y }
+            { X = col + limits.Min.X
+              Y = row + limits.Min.Y }
 
         let getCell row col =
             Map.tryFind (getPosition row col) source |> Option.defaultValue defaultValue
