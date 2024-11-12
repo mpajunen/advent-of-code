@@ -6,17 +6,24 @@
 
 open Vec2
 
+type Tile =
+    | Empty = 0
+    | Wall = 1
+    | Block = 2
+    | Paddle = 3
+    | Ball = 4
+
 let drawTile tile =
     match tile with
-    | 0 -> " "
-    | 1 -> "#"
-    | 2 -> "x"
-    | 3 -> "="
-    | 4 -> "o"
+    | Tile.Empty -> " "
+    | Tile.Wall -> "#"
+    | Tile.Block -> "x"
+    | Tile.Paddle -> "="
+    | Tile.Ball -> "o"
     | _ -> failwith <| sprintf $"Invalid tile {tile}!"
 
 let draw painted =
-    painted |> Grid.fromSparseMap 0 |> Array2D.map drawTile |> Grid.toString
+    painted |> Grid.fromSparseMap Tile.Empty |> Array2D.map drawTile |> Grid.toString
 
 let debugPrint tiles = tiles |> draw |> printfn "%s"
 
@@ -33,7 +40,8 @@ let parseOutput instructions =
         |> Seq.toList
         |> List.partition (fun (pos, tile) -> pos.X = -1 && pos.Y = 0)
 
-    scores |> Seq.tryLast |> Option.map snd, tiles
+    scores |> Seq.tryLast |> Option.map snd,
+    tiles |> Seq.map (fun (pos, tile) -> pos, System.Enum.Parse(typeof<Tile>, tile.ToString()) :?> Tile)
 
 let tileCount tile =
     Map.toSeq >> Seq.countBy snd >> Seq.find (fun (k, _) -> k = tile) >> snd
@@ -56,8 +64,8 @@ let play (computer: IntCode.Computer) =
     playCommands [||]
 
     while not computer.isHalted do
-        let ball = tiles |> Map.findKey (fun _ v -> v = 4)
-        let paddle = tiles |> Map.findKey (fun _ v -> v = 3)
+        let ball = tiles |> Map.findKey (fun _ v -> v = Tile.Ball)
+        let paddle = tiles |> Map.findKey (fun _ v -> v = Tile.Paddle)
 
         let direction = sign (ball.X - paddle.X)
 
