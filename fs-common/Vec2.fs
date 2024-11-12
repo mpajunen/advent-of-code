@@ -163,6 +163,8 @@ module Grid =
     let fromRows (source: string array) =
         source |> Array.map _.ToCharArray() |> array2D
 
+    let fromString (source: string) = source.Trim().Split '\n' |> fromRows
+
     let fromSparseMap (defaultValue: 'a) (source: Map<Vec, 'a>) : Grid<'a> =
         let limits = Map.keys source |> Area.getLimits
 
