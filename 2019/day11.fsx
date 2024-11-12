@@ -16,7 +16,7 @@ let paint program originColor =
     let paintNext (color: int) =
         let out = computer.run [| color |]
 
-        int out[out.Length - 2], int out[out.Length - 1]
+        int out[0], int out[1]
 
     let rec doPaint (robot: Vec2.Actor) painted =
         let color, turn =
@@ -52,11 +52,12 @@ let solve (input: string array) =
     result1,
     result2,
     2219,
-    " #  #  ##  #### #  # #     ##  ###  ####   
+    "
+ #  #  ##  #### #  # #     ##  ###  ####   
  #  # #  # #    #  # #    #  # #  # #      
  #### #  # ###  #  # #    #  # #  # ###    
  #  # #### #    #  # #    #### ###  #      
  #  # #  # #    #  # #    #  # #    #      
- #  # #  # #     ##  #### #  # #    ####   "
+ #  # #  # #     ##  #### #  # #    ####   "[1..]
 
 DayUtils.runDay solve

@@ -115,7 +115,11 @@ type Computer(program: Program) =
         while this.canRun () do
             this.execute ()
 
-        this.output
+        let out = this.output
+
+        this.output <- [||]
+
+        out
 
 let parseProgram (input: string) = input.Split "," |> Array.map int64
 
