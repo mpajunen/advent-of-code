@@ -191,6 +191,10 @@ module Grid =
 
     let set (grid: Grid<'a>) (p: Vec) (value: 'a) = grid.[p.Y, p.X] <- value
 
+    let size (grid: Grid<'a>) =
+        { X = Array2D.length2 grid
+          Y = Array2D.length1 grid }
+
     let toString (grid: Grid<'a>) : string =
         let rowToString row =
             [| for col in 0 .. Array2D.length2 grid - 1 -> string grid.[row, col] |]
