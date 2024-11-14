@@ -125,3 +125,9 @@ let parseProgram (input: string) = input.Split "," |> Array.map int64
 
 let run program input =
     Computer program |> fun c -> c.run input
+
+let parseAscii: int64 array -> string =
+    Array.map (int >> char >> string) >> String.concat "" >> _.Trim()
+
+let marshalAscii: string seq -> int64 array =
+    Seq.map (sprintf "%s\n") >> String.concat "" >> Seq.toArray >> Array.map int64

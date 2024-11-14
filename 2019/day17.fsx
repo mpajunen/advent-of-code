@@ -23,11 +23,6 @@ let moveToString (action, count) = $"{actionToString action},{count}"
 
 let actionOptions = [ Forward; Left; Right ]
 
-let parseAscii = Seq.map (int >> char >> string) >> String.concat ""
-
-let marshalAscii =
-    String.concat "\n" >> sprintf "%s\n" >> Seq.toArray >> Array.map int64
-
 let isScaffolding grid position =
     Grid.isWithin grid position && Grid.get grid position = '#'
 
@@ -146,12 +141,12 @@ let getPathCommands cameraOutput =
 
     let all = [ mainRoutine ] @ functions @ [ videoFeed ]
 
-    all |> List.map (String.concat ",") |> marshalAscii
+    all |> List.map (String.concat ",") |> IntCode.marshalAscii
 
 let solve (input: string array) =
     let program = IntCode.parseProgram input[0]
 
-    let cameraOutput = IntCode.run program [||] |> parseAscii |> Grid.fromString
+    let cameraOutput = IntCode.run program [||] |> IntCode.parseAscii |> Grid.fromString
 
     let modified = program |> Array.copy
     modified.[0] <- 2L
