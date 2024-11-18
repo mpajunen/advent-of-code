@@ -146,6 +146,8 @@ module Grid =
                     { X = x; Y = y }, grid[y, x]
         }
 
+    let values (grid: Grid<'a>) = grid |> entries |> Seq.map snd
+
     let private matchingKeys predicate (grid: Grid<'a>) =
         seq {
             for y in 0 .. (grid.GetLength 0 - 1) do
@@ -181,6 +183,9 @@ module Grid =
         Array2D.init rows columns getCell
 
     let get (grid: Grid<'a>) (p: Vec) = grid.[p.Y, p.X]
+
+    let mapi (projection: Vec -> 'a -> 'b) =
+        Array2D.mapi (fun y x value -> projection { X = x; Y = y } value)
 
     let isWithin (grid: Grid<'a>) (p: Vec) =
         p.X >= 0 && p.X < Array2D.length2 grid && p.Y >= 0 && p.Y < Array2D.length1 grid
