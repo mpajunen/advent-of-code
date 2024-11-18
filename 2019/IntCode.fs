@@ -102,7 +102,7 @@ type Computer(program: Program) =
         | _ -> failwith <| sprintf $"Invalid instruction {instruction}."
 
     member this.canRun() =
-        match int this.state[this.ip] with
+        match (int this.state[this.ip]) % 100 with
         | 3 -> Array.length this.input > 0
         | 99 -> false
         | _ -> true
