@@ -184,6 +184,9 @@ export const splitBy = <T extends SplitValue>(
   return all
 }
 
+export const symmetricDifference = <T>(a: T[], b: T[]): T[] =>
+  [exclude(a, b), exclude(b, a)].flat()
+
 export const unique = <T>(values: T[]): T[] => Array.from(new Set(values))
 
 export const until = <T>(values: T[], condition: (value: T) => boolean) => {

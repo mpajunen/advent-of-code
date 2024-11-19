@@ -25,9 +25,9 @@ export const screenUnits: Record<'U' | 'L' | 'R' | 'D', Vec2> = {
 }
 
 const diagonalList: Vec2[] = [
+  { x: 1, y: -1 },
   { x: -1, y: -1 },
   { x: -1, y: 1 },
-  { x: 1, y: -1 },
   { x: 1, y: 1 },
 ]
 

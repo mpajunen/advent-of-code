@@ -1,4 +1,4 @@
-import { Grid, List, Str, Vec2 } from '../common'
+import { Grid, List, Num, Str, Vec2 } from '../common'
 
 type Maze = Grid<string>
 
@@ -9,6 +9,20 @@ const tiles = {
   doors: Str.alphabet.toUpperCase(),
   entrance: '@',
   subEntrances: ['1', '2', '3', '4'],
+}
+
+type RawTree = {
+  distance: number
+  tile: string
+  branches: RawTree[]
+}
+
+type Tree = {
+  distance: number
+  tile: string
+  keys: string[]
+  doors: string[]
+  branches: Tree[]
 }
 
 type State = {
@@ -29,98 +43,150 @@ const modifyMaze = (maze: Maze) => {
   return maze
 }
 
-type Edge = { from: string; to: string; steps: number }
-type Move = { tile: string; distance: number }
+type Segment = { keys: string[]; tile: string }
+type Move = Segment & { distance: number }
 
-type Graph = {
-  from: Record<string, Record<string, number>>
-}
+const buildTree = (maze: Maze, from: string): RawTree => {
+  const covered = maze.map<0 | 1>(() => 0)
 
-const findEdgesFrom =
-  (maze: Maze) =>
-  ([start, from]: [Vec2, string]) => {
-    const find = (path: Vec2[]): Edge[] => {
-      const [current] = path
-      const tile = maze.get(current)
-      if (tile !== tiles.passage && tile !== from) {
-        return [{ from, to: tile, steps: path.length - 1 }]
+  const findOptions = (position: Vec2) =>
+    Vec2.adjacent(position)
+      .filter(p => maze.get(p) !== tiles.wall)
+      .filter(p => covered.get(p) === 0)
+
+  const buildBranch = (position: Vec2, distance = 0): RawTree | [] => {
+    covered.set(position, 1)
+
+    const tile = maze.get(position)
+    const options = findOptions(position)
+
+    if (options.length === 0) return { distance, tile, branches: [] }
+
+    if (tile !== tiles.passage || options.length > 1) {
+      return {
+        distance,
+        tile,
+        branches: options.flatMap(p => buildBranch(p, 1)),
       }
-
-      const next = Vec2.adjacent(current)
-        .filter(p => maze.get(p) !== tiles.wall)
-        .filter(p => path.every(pp => !Vec2.equal(pp)(p)))
-
-      return next.flatMap(p => find([p, ...path]))
     }
 
-    return find([start])
+    return buildBranch(options[0], distance + 1)
   }
 
-const buildGraph = (maze: Maze): Graph => {
-  const allEdges = maze
-    .entries()
-    .filter(([_, v]) => v !== tiles.wall && v !== tiles.passage)
-    .flatMap(findEdgesFrom(maze))
-
-  const minLengths = {}
-  for (const edge of allEdges) {
-    minLengths[edge.from] ??= {}
-    minLengths[edge.from][edge.to] = Math.min(
-      minLengths[edge.from][edge.to] ?? Infinity,
-      edge.steps,
-    )
-  }
-
-  return { from: minLengths }
+  return buildBranch(maze.findPlace(v => v === from)) as RawTree
 }
 
-const isAccessible = (state: State, tile: string) =>
-  !tiles.doors.includes(tile) || state.collected.includes(tile.toLowerCase())
+const shouldAlwaysVisit = (tree: Tree) =>
+  tree.branches.length === 0 && tree.doors.length === 0
 
-const isTarget = (state: State, tile: string) =>
-  tiles.keys.includes(tile) && !state.collected.includes(tile)
+const pruneTree = (tree: RawTree): Tree | [] => {
+  const { distance, tile } = tree
 
-const getAvailableMoves = (
-  graph: Graph,
-  state: State,
-  initial: string,
-): Move[] => {
-  const distances: Record<string, number> = { [initial]: 0 }
+  const key = tiles.keys.includes(tile) ? tile : null
+  const door = tiles.doors.includes(tile) ? tile : null
 
-  const buildDistances = (from: string) => {
-    for (const tile of Object.keys(graph.from[from])) {
-      if (!isAccessible(state, tile)) {
-        continue
-      }
+  const branches = tree.branches.flatMap(pruneTree)
 
-      const distance = distances[from] + graph.from[from][tile]
-      if ((distances[tile] ?? Infinity) <= distance) {
-        continue
-      }
+  if (branches.length === 0 && !key) return []
 
-      distances[tile] = distance
+  if (
+    branches.length === 1 &&
+    (tile === tiles.passage || door || shouldAlwaysVisit(branches[0]))
+  ) {
+    const [branch] = branches
 
-      buildDistances(tile)
+    return {
+      distance: distance + branch.distance,
+      tile: branch.tile,
+      keys: key ? [key, ...branch.keys] : branch.keys,
+      doors: door ? [door, ...branch.doors] : branch.doors,
+      branches: branch.branches,
     }
   }
 
-  buildDistances(initial)
-
-  const moves = Object.entries(distances)
-    .filter(([tile]) => isTarget(state, tile))
-    .map(([tile, distance]) => ({ tile, distance }))
-
-  return List.sortBy(m => m.distance, moves)
+  return {
+    distance,
+    tile,
+    keys: key ? [key] : [],
+    doors: door ? [door] : [],
+    branches,
+  }
 }
+
+const buildTrees = (maze: Maze) =>
+  tiles.subEntrances.map(e => buildTree(maze, e)).flatMap(pruneTree)
+
+const canAccess = (currentKeys: string[]) => (branch: Tree) =>
+  branch.doors.every(d => currentKeys.includes(d.toLowerCase()))
+
+const hasKeysToCollect = (currentKeys: string[]) => (segment: Segment) =>
+  segment.keys.some(k => !currentKeys.includes(k))
+
+const getTreeOptions = (currentKeys: string[], tree: Tree): Segment[] => {
+  const branches = tree.branches.filter(canAccess(currentKeys))
+  if (branches.length === 0) return []
+
+  const keys = [...currentKeys, ...tree.keys]
+
+  return [branches, branches.flatMap(b => getTreeOptions(keys, b))]
+    .flat()
+    .filter(hasKeysToCollect(keys))
+    .map(o => ({
+      keys: [...tree.keys, ...o.keys],
+      tile: o.tile,
+    }))
+}
+
+const getTreeRouteTo = (tile: string, tree: Tree): Tree[] => {
+  if (tree.tile === tile) return [tree]
+  if (tree.branches.length === 0) return []
+
+  const route = tree.branches.flatMap(t => getTreeRouteTo(tile, t))
+
+  return route.length > 0 ? [tree, ...route] : []
+}
+
+const getRouteTo = (trees: Tree[], tile: string) =>
+  trees.flatMap(tree => getTreeRouteTo(tile, tree))
+
+const getRouteBetween = (trees: Tree[], from: string, to: string) =>
+  List.symmetricDifference(getRouteTo(trees, from), getRouteTo(trees, to))
+
+const routeDistance = (route: Tree[]) => Num.sum(route.map(t => t.distance))
+
+// Distance between two sub-entrances
+const treeRootDistance = ([from, to]: Tree[]) =>
+  Math.abs(Number(from.tile) - Number(to.tile)) % 2 === 1 ? 2 : 4
+
+const rootDistance = (from: string, route: Tree[]) => {
+  if (from === tiles.entrance) return 2 // Distance from entrance to sub-entrance
+
+  const roots = route.filter(t => tiles.subEntrances.includes(t.tile))
+
+  return roots.length === 2 ? treeRootDistance(roots) : 0
+}
+
+const getDistance = (trees: Tree[]) => (from: string, to: string) => {
+  const route = getRouteBetween(trees, from, to)
+
+  return routeDistance(route) + rootDistance(from, route)
+}
+
+const getAvailableMoves = (trees: Tree[], state: State, from: string) =>
+  trees.flatMap(tree =>
+    getTreeOptions(state.collected, tree).map(o => ({
+      ...o,
+      distance: getDistance(trees)(from, o.tile),
+    })),
+  )
 
 const move = (s: State, from: string) => (move: Move) => ({
-  collected: [...s.collected, move.tile].sort(),
+  collected: List.unique([...s.collected, ...move.keys]).sort(),
   distance: s.distance + move.distance,
   positions: s.positions.map(p => (p === from ? move.tile : p)),
 })
 
-const findShortestPath = (maze: Maze, positions: string[]) => {
-  const graph = buildGraph(maze)
+const findShortestPath = (trees: Tree[], positions: string[]) => {
   const minDistances: Record<string, number> = {}
 
   const states: State[] = [{ collected: [], distance: 0, positions }]
@@ -135,8 +201,10 @@ const findShortestPath = (maze: Maze, positions: string[]) => {
     }
     minDistances[key] = state.distance
 
-    for (const position of state.positions) {
-      const moves = getAvailableMoves(graph, state, position)
+    for (const [key, position] of state.positions.entries()) {
+      // With multiple robots, only look for moves in the corresponding tree:
+      const robotTrees = positions.length === 1 ? trees : [trees[key]]
+      const moves = getAvailableMoves(robotTrees, state, position)
 
       states.push(...moves.map(move(state, position)))
     }
@@ -148,8 +216,10 @@ const findShortestPath = (maze: Maze, positions: string[]) => {
 export default (rows: string[]) => {
   const maze = Grid.fromStrings(rows)
 
-  const result1 = findShortestPath(maze, [tiles.entrance])
-  const result2 = findShortestPath(modifyMaze(maze), tiles.subEntrances)
+  const trees = buildTrees(modifyMaze(maze))
+
+  const result1 = findShortestPath(trees, [tiles.entrance])
+  const result2 = findShortestPath(trees, tiles.subEntrances)
 
   return [result1, result2, 6098, 1698]
 }
