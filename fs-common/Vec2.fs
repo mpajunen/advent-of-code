@@ -115,6 +115,9 @@ module Actor =
         { actor with
             Position = add actor.Position <| Move.unit actor.Facing }
 
+    let forwardSteps (steps: int) (actor: Actor) =
+        { actor with
+            Position = Move.apply actor.Position <| Move.create actor.Facing steps }
 
 type Area = { Min: Vec; Max: Vec }
 
