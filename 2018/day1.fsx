@@ -2,19 +2,19 @@
 
 #load "../fs-common/DayUtils.fs"
 
-let scanSums numbers = (Array.scan (+) 0 numbers)[1..]
+let scanSums = Array.scan (+) 0 >> Array.tail
 
-let findFirstFast (numbers: int array) =
-    let mutable current = 0
-    let mutable found = Set.empty
+let rec findFirstDuplicate cycle rollingSums =
+    let offset = Array.last rollingSums * cycle
 
-    while not (Set.contains current found) do
-        found <- Set.add current found
+    let duplicate =
+        rollingSums
+        |> Array.map ((+) offset)
+        |> Array.tryFind (fun x -> Array.contains x rollingSums)
 
-        let index = Set.count found % numbers.Length
-        current <- current + numbers.[index]
-
-    current
+    match duplicate with
+    | Some x -> x
+    | None -> findFirstDuplicate (cycle + 1) rollingSums
 
 let solve (input: string array) =
     let numbers = input |> Array.map int
@@ -22,7 +22,7 @@ let solve (input: string array) =
     let rollingSums = numbers |> scanSums
 
     let result1 = rollingSums |> Array.last
-    let result2 = numbers |> findFirstFast
+    let result2 = rollingSums |> findFirstDuplicate 1
 
     result1, result2, 400, 232
 
