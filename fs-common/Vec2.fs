@@ -68,7 +68,7 @@ module Move =
         | 'L' -> Dir.Left
         | 'R' -> Dir.Right
         | 'U' -> Dir.Up
-        | _ -> raise <| new System.Exception(sprintf "Invalid direction %c." dir)
+        | _ -> failwith $"Invalid direction {dir}."
 
     let unit (dir: Dir) =
         match dir with
