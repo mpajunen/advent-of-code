@@ -1,6 +1,7 @@
 #!/usr/bin/env -S dotnet fsi
 
 #load "../fs-common/DayUtils.fs"
+#load "../fs-common/Hash.fs"
 #load "../fs-common/Input.fs"
 #load "../fs-common/Vec2.fs"
 
