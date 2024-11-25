@@ -14,16 +14,12 @@ let executeParsed initialC =
     if c <> 0 then // jnz c 2, jnz 1 5
         c <- 7 // cpy 7 c
 
-        while c <> 0 do // jnz c -2
-            d <- d + 1 // inc d
-            c <- c - 1 // dec c
+        d <- d + c
 
     while d <> 0 do // jnz d -6
         c <- a // cpy a c
 
-        while b <> 0 do // jnz b -2
-            a <- a + 1 // inc a
-            b <- b - 1 // dec b
+        a <- a + b
 
         b <- c // cpy c b
         d <- d - 1 // dec d
@@ -33,9 +29,7 @@ let executeParsed initialC =
     while c <> 0 do // jnz c -5
         d <- 14 // cpy 14 d
 
-        while d <> 0 do // jnz d -2
-            a <- a + 1 // inc a
-            d <- d - 1 // dec d
+        a <- a + d
 
         c <- c - 1 // dec c
 
