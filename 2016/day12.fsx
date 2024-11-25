@@ -5,26 +5,17 @@
 
 // Manually parsed
 let executeParsed initialC =
-    let mutable a, b, c, d = 0, 0, initialC, 0
-
-    a <- 1 // cpy 1 a
-    b <- 1 // cpy 1 b
-    d <- 26 // cpy 26 d
+    let mutable a, b, c, d = 1, 1, initialC, 26
 
     if c <> 0 then // jnz c 2, jnz 1 5
         d <- d + 7
 
-    while d <> 0 do // jnz d -6
+    for _ in 1..d do
         c <- a // cpy a c
-
         a <- a + b
-
         b <- c // cpy c b
-        d <- d - 1 // dec d
 
-    a <- a + 13 * 14
-
-    a
+    a + 13 * 14
 
 let solve (input: string array) =
     let result1 = executeParsed 0
