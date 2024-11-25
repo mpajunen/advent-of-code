@@ -9,6 +9,7 @@
     <Compile Include="fs-common/Hash.fs" />
     <Compile Include="fs-common/Input.fs" />
     <Compile Include="fs-common/Vec2.fs" />
+    <Compile Include="2016/Assembunny.fs" />
     <Compile Include="2019/IntCode.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
