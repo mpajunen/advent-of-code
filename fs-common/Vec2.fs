@@ -193,6 +193,9 @@ module Grid =
     let isWithin (grid: Grid<'a>) (p: Vec) =
         p.X >= 0 && p.X < Array2D.length2 grid && p.Y >= 0 && p.Y < Array2D.length1 grid
 
+    let adjacentPositions (grid: Grid<'a>) (p: Vec) =
+        Move.adjacent p |> List.filter (isWithin grid)
+
     let rows (grid: Grid<'a>) =
         [| for y in 0 .. Array2D.length1 grid - 1 do
                yield grid[y, *] |]
