@@ -9,28 +9,36 @@ let invertChar =
     | '1' -> '0'
     | _ -> failwith "Invalid character."
 
-let invert = Seq.rev >> Seq.map (invertChar >> string) >> String.concat ""
-
-let curve (s: string) = s + "0" + invert s
-
-let rec curveFill n (s: string) =
-    if s.Length >= n then s[.. n - 1] else curveFill n (curve s)
-
-let rec reduce (s: string) =
-    if s = "" then
-        ""
+let rec charAt (initial: string) patternLength index =
+    if index < initial.Length then
+        initial[index]
     else
-        (if s[0] = s[1] then "1" else "0") + reduce (s[2..])
+        let prevLength = (patternLength - 1) / 2
 
-let rec checksum (s: string) =
-    let reduced = reduce s
+        match compare index prevLength with
+        | 0 -> '0'
+        | -1 -> charAt initial prevLength index
+        | 1 -> charAt initial prevLength (patternLength - 1 - index) |> invertChar
+        | _ -> failwith "Invalid comparison."
 
-    if reduced.Length % 2 = 1 then reduced else checksum reduced
+let checksumN fillLength (initial: string) =
+    let rec checksumChar checkLength index =
+        if checkLength >= fillLength then
+            charAt initial checkLength index
+        else
+            let a = checksumChar (checkLength * 2 + 1) (index * 2)
+            let b = checksumChar (checkLength * 2 + 1) (index * 2 + 1)
+
+            if a = b then '1' else '0'
+
+    { 0 .. initial.Length - 1 }
+    |> Seq.map (checksumChar initial.Length >> string)
+    |> String.concat ""
 
 let solve (input: string array) =
-    let result1 = input[0] |> curveFill 272 |> checksum
-    let result2 = 0
+    let result1 = input[0] |> checksumN 272
+    let result2 = input[0] |> checksumN 35651584
 
-    result1, result2, "11111000111110000", 0
+    result1, result2, "11111000111110000", "10111100110110100"
 
 DayUtils.runDay solve
