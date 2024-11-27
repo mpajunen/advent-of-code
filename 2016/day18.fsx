@@ -11,18 +11,17 @@ let nextRow row = [ true ] @ row @ [ true ] |> nextTiles
 
 let safeCount = Seq.filter id >> Seq.length
 
-let rec countSafe rowsLeft row =
-    if rowsLeft = 0 then
-        0
-    else
-        (row |> safeCount) + countSafe (rowsLeft - 1) (row |> nextRow)
+let countSafe rowCount initial =
+    { 1..rowCount }
+    |> Seq.fold (fun (row, count) _ -> nextRow row, count + safeCount row) (initial, 0)
+    |> snd
 
 let solve (input: string array) =
     let initialSafe = input[0].ToCharArray() |> Array.toList |> List.map ((=) '.') // Safe = true, trap = false
 
     let result1 = initialSafe |> countSafe 40
-    let result2 = 0
+    let result2 = initialSafe |> countSafe 400_000
 
-    result1, result2, 2035, 0
+    result1, result2, 2035, 20000577
 
 DayUtils.runDay solve
