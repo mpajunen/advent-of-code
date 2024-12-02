@@ -13,17 +13,14 @@ type Node =
       Available: int
       UsedRatio: int }
 
-let rowPattern = "/dev/grid/node-x(\d+)-y(\d+) +(\d+)T +(\d+)T +(\d+)T +(\d+)%"
-
 let parseNode =
-    function
-    | Input.ParseRegex rowPattern row ->
-        { Position = { X = int row[0]; Y = int row[1] }
-          Size = int row[2]
-          Used = int row[3]
-          Available = int row[4]
-          UsedRatio = int row[5] }
-    | s -> failwith $"Failed to parse row {s}"
+    Input.parseAllInts
+    >> fun row ->
+        { Position = { X = row[0]; Y = row[1] }
+          Size = row[2]
+          Used = row[3]
+          Available = row[4]
+          UsedRatio = row[5] }
 
 let isViablePair a b =
     a.Used > 0 && a.Used <= b.Available && a.Position <> b.Position
@@ -32,11 +29,25 @@ let findViablePairs nodes =
     nodes
     |> Array.collect (fun a -> nodes |> Array.choose (fun b -> if isViablePair a b then Some(a, b) else None))
 
-// Observations from data:
-// - There's a wall of almost full large nodes, with a single gap
-// - Data in any other node can be moved to a neighboring node, provided that node is empty
-// - Data in any two of the other nodes can't be combined to fit in a single node
-// - There's a single empty node
+(*
+The data looks like this:
+
+X.....G
+.......
+.......
+.######
+.......
+...._..
+.......
+
+Where:
+
+  X is the node that can be accessed directly.
+  G is the goal data.
+  _ is an empty node: data from small nodes can be moved here, emptying that node in turn.
+  . are small nodes: data can be moved to a neighboring node provided that node is empty.
+  # are large nodes: data can't be moved. There's a single gap in the large node wall.
+*)
 
 let findFewestSteps nodes =
     let empty = nodes |> Array.find (fun n -> n.Used = 0)
