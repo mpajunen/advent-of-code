@@ -5,10 +5,11 @@ type Source =
     | Value of int
 
 type Instruction =
-    | Copy of Source * string
+    | Copy of Source * Source
     | Increment of string
     | Decrement of string
-    | JumpNonZero of Source * int
+    | JumpNonZero of Source * Source
+    | Toggle of string
 
 type State =
     { Instructions: Instruction[]
@@ -17,15 +18,16 @@ type State =
 
 let parseSource =
     function
-    | Input.ParseRegex "(\d+)" [ value ] -> Value(int value)
+    | Input.ParseRegex "(-?\d+)" [ value ] -> Value(int value)
     | s -> Register(s)
 
 let parseInstruction =
     function
-    | Input.ParseRegex "cpy (\w+) (\w)" [ source; register ] -> Copy(parseSource source, register)
+    | Input.ParseRegex "cpy (-?\w+) (\w)" [ source; register ] -> Copy(parseSource source, Register(register))
     | Input.ParseRegex "inc (\w)" [ register ] -> Increment(register)
     | Input.ParseRegex "dec (\w)" [ register ] -> Decrement(register)
-    | Input.ParseRegex "jnz (\w+) (-?\d+)" [ source; offset ] -> JumpNonZero(parseSource source, int offset)
+    | Input.ParseRegex "jnz (-?\w+) (-?\w+)" [ source; offset ] -> JumpNonZero(parseSource source, parseSource offset)
+    | Input.ParseRegex "tgl (\w)" [ register ] -> Toggle(register) // Value not supported
     | s -> failwith $"Unknown instruction {s}"
 
 let getValue (registers: Map<string, int>) =
@@ -35,18 +37,42 @@ let getValue (registers: Map<string, int>) =
 
 let changeRegisters s =
     function
-    | Copy(source, r) -> getValue s.Registers source |> Map.add r
+    | Copy(source, register) ->
+        match register with
+        | Register r -> getValue s.Registers source |> Map.add r
+        | Value _ -> id
     | Increment r -> s.Registers[r] + 1 |> Map.add r
     | Decrement r -> s.Registers[r] - 1 |> Map.add r
     | _ -> id
 
 let changeIp s =
     function
-    | JumpNonZero(source, offset) -> if (getValue s.Registers source) <> 0 then offset else 1
+    | JumpNonZero(source, offset) ->
+        if (getValue s.Registers source) <> 0 then
+            (getValue s.Registers offset)
+        else
+            1
     | _ -> 1
+
+let toggleInstruction =
+    function
+    | Copy(source, register) -> JumpNonZero(source, register)
+    | Increment(register) -> Decrement(register)
+    | Decrement(register) -> Increment(register)
+    | JumpNonZero(source, offset) -> Copy(source, offset)
+    | Toggle(offset) -> Increment(offset)
+
+let changeInstructions state =
+    function
+    | Toggle(register) ->
+        let index = state.Ip + state.Registers[register]
+
+        Array.mapi (fun i -> if i = index then toggleInstruction else id)
+    | _ -> id
 
 let execInstruction s instruction =
     { s with
+        Instructions = s.Instructions |> changeInstructions s instruction
         Registers = s.Registers |> changeRegisters s instruction
         Ip = s.Ip + changeIp s instruction }
 
