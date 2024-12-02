@@ -1,39 +1,66 @@
 module Assembunny
 
+type Source =
+    | Register of string
+    | Value of int
+
 type Instruction =
-    | CopyValue of int * string
-    | CopyRegister of string * string
+    | Copy of Source * string
     | Increment of string
     | Decrement of string
-    | JumpValue of int * int
-    | JumpRegister of string * int
+    | JumpNonZero of Source * int
+
+type State =
+    { Instructions: Instruction[]
+      Registers: Map<string, int>
+      Ip: int }
+
+let parseSource =
+    function
+    | Input.ParseRegex "(\d+)" [ value ] -> Value(int value)
+    | s -> Register(s)
 
 let parseInstruction =
     function
-    | Input.ParseRegex "cpy (\d+) (\w)" [ value; register ] -> CopyValue(int value, register)
-    | Input.ParseRegex "cpy (\w) (\w)" [ from; register ] -> CopyRegister(from, register)
+    | Input.ParseRegex "cpy (\w+) (\w)" [ source; register ] -> Copy(parseSource source, register)
     | Input.ParseRegex "inc (\w)" [ register ] -> Increment(register)
     | Input.ParseRegex "dec (\w)" [ register ] -> Decrement(register)
-    | Input.ParseRegex "jnz (\d+) (-?\d+)" [ value; offset ] -> JumpValue(int value, int offset)
-    | Input.ParseRegex "jnz (\w) (-?\d+)" [ register; offset ] -> JumpRegister(register, int offset)
+    | Input.ParseRegex "jnz (\w+) (-?\d+)" [ source; offset ] -> JumpNonZero(parseSource source, int offset)
     | s -> failwith $"Unknown instruction {s}"
 
-let execInstruction (registers, ip) instruction =
-    match instruction with
-    | CopyValue(value, register) -> registers |> Map.add register value, ip + 1
-    | CopyRegister(from, register) -> registers |> Map.add register registers[from], ip + 1
-    | Increment(register) -> registers |> Map.add register (registers[register] + 1), ip + 1
-    | Decrement(register) -> registers |> Map.add register (registers[register] - 1), ip + 1
-    | JumpValue(value, offset) -> registers, ip + (if value <> 0 then offset else 1)
-    | JumpRegister(register, offset) -> registers, ip + (if registers[register] <> 0 then offset else 1)
+let getValue (registers: Map<string, int>) =
+    function
+    | Register(register) -> registers[register]
+    | Value(value) -> value
+
+let changeRegisters s =
+    function
+    | Copy(source, r) -> getValue s.Registers source |> Map.add r
+    | Increment r -> s.Registers[r] + 1 |> Map.add r
+    | Decrement r -> s.Registers[r] - 1 |> Map.add r
+    | _ -> id
+
+let changeIp s =
+    function
+    | JumpNonZero(source, offset) -> if (getValue s.Registers source) <> 0 then offset else 1
+    | _ -> 1
+
+let execInstruction s instruction =
+    { s with
+        Registers = s.Registers |> changeRegisters s instruction
+        Ip = s.Ip + changeIp s instruction }
 
 let initialRegisters = [ 'a' .. 'd' ] |> List.map (fun c -> string c, 0) |> Map
 
-let execute (instructions: Instruction[]) =
-    let rec exec (instructions: Instruction[]) registers ip =
-        if ip >= instructions.Length then
-            registers
-        else
-            instructions[ip] |> execInstruction (registers, ip) ||> exec instructions
+let initialState registers instructions =
+    { Instructions = instructions
+      Registers = registers
+      Ip = 0 }
 
-    exec instructions initialRegisters 0
+let rec exec state =
+    if state.Ip >= state.Instructions.Length then
+        state.Registers
+    else
+        state.Instructions[state.Ip] |> execInstruction state |> exec
+
+let execute = initialState initialRegisters >> exec
