@@ -10,22 +10,10 @@ let loopBlock s =
     let mutable a, b, c, d =
         s.Registers["a"], s.Registers["b"], s.Registers["c"], s.Registers["d"]
 
-    while d <> 0 do // jnz d -5
-        c <- b // cpy b c
-
-        while c <> 0 do // jnz c -2
-            a <- a + 1 // inc a
-            c <- c - 1 // dec c
-
-        d <- d - 1 // dec d
-
-    b <- b - 1 // dec b
-    c <- b // cpy b c
-    d <- c // cpy c d
-
-    while d <> 0 do // jnz d -2
-        d <- d - 1 // dec d
-        c <- c + 1 // inc c
+    a <- a + b * d
+    b <- b - 1
+    c <- b + b
+    d <- 0
 
     { s with
         Registers = [ "a", a; "b", b; "c", c; "d", d ] |> Map
