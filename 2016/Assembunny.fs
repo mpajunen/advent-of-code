@@ -13,6 +13,7 @@ type Instruction =
 
 type State =
     { Instructions: Instruction[]
+      Replacements: Map<int, State -> State>
       Registers: Map<string, int>
       Ip: int }
 
@@ -78,15 +79,18 @@ let execInstruction s instruction =
 
 let initialRegisters = [ 'a' .. 'd' ] |> List.map (fun c -> string c, 0) |> Map
 
-let initialState registers instructions =
+let initialState replacements registers instructions =
     { Instructions = instructions
+      Replacements = replacements
       Registers = registers
       Ip = 0 }
 
 let rec exec state =
     if state.Ip >= state.Instructions.Length then
         state.Registers
+    else if state.Replacements.ContainsKey state.Ip then
+        state |> state.Replacements[state.Ip] |> exec
     else
         state.Instructions[state.Ip] |> execInstruction state |> exec
 
-let execute = initialState initialRegisters >> exec
+let execute = initialState Map.empty initialRegisters >> exec
