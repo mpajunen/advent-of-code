@@ -23,20 +23,14 @@ let loopBlock2 s =
     let mutable a, b, c, d =
         s.Registers["a"], s.Registers["b"], s.Registers["c"], s.Registers["d"]
 
-    // cpy 2 c, jnz b 2, jnz 1 6, dec b, dec c, jnz c -4, inc a, jnz 1 -7
-    c <- 2
-
-    while b <> 0 do
-        b <- b - 1
-        c <- c - 1
-
-        if c = 0 then
-            a <- a + 1
-            c <- 2
+    // cpy 2 c, jnz b 2, jnz 1 6, dec b, dec c, jnz c -4, inc a, jnz 1 -7, cpy 2 b
+    a <- a + b / 2
+    c <- if b % 2 = 0 then 2 else 1
+    b <- 2
 
     { s with
         Registers = [ "a", a; "b", b; "c", c; "d", d ] |> Map
-        Ip = s.Ip + 8 }
+        Ip = s.Ip + 9 }
 
 let replacements = Map [ 2, loopBlock1; 12, loopBlock2 ]
 
