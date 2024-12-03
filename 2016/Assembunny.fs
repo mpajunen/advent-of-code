@@ -10,12 +10,14 @@ type Instruction =
     | Decrement of string
     | JumpNonZero of Source * Source
     | Toggle of string
+    | Output of string
 
 type State =
     { Instructions: Instruction[]
       Replacements: Map<int, State -> State>
       Registers: Map<string, int>
-      Ip: int }
+      Ip: int
+      Output: int option }
 
 let parseSource =
     function
@@ -29,6 +31,7 @@ let parseInstruction =
     | Input.ParseRegex "dec (\w)" [ register ] -> Decrement(register)
     | Input.ParseRegex "jnz (-?\w+) (-?\w+)" [ source; offset ] -> JumpNonZero(parseSource source, parseSource offset)
     | Input.ParseRegex "tgl (\w)" [ register ] -> Toggle(register) // Value not supported
+    | Input.ParseRegex "out (\w)" [ register ] -> Output(register) // Value not supported
     | s -> failwith $"Unknown instruction {s}"
 
 let getValue (registers: Map<string, int>) =
@@ -62,6 +65,7 @@ let toggleInstruction =
     | Decrement(register) -> Increment(register)
     | JumpNonZero(source, offset) -> Copy(source, offset)
     | Toggle(offset) -> Increment(offset)
+    | Output(register) -> Increment(register)
 
 let changeInstructions state =
     function
@@ -71,11 +75,17 @@ let changeInstructions state =
         Array.mapi (fun i -> if i = index then toggleInstruction else id)
     | _ -> id
 
+let changeOutput s =
+    function
+    | Output(register) -> Some s.Registers[register]
+    | _ -> None
+
 let execInstruction s instruction =
     { s with
         Instructions = s.Instructions |> changeInstructions s instruction
         Registers = s.Registers |> changeRegisters s instruction
-        Ip = s.Ip + changeIp s instruction }
+        Ip = s.Ip + changeIp s instruction
+        Output = changeOutput s instruction }
 
 let initialRegisters = [ 'a' .. 'd' ] |> List.map (fun c -> string c, 0) |> Map
 
@@ -83,14 +93,30 @@ let initialState replacements registers instructions =
     { Instructions = instructions
       Replacements = replacements
       Registers = registers
-      Ip = 0 }
+      Ip = 0
+      Output = None }
+
+let execStep state =
+    if state.Replacements.ContainsKey state.Ip then
+        state |> state.Replacements[state.Ip]
+    else
+        state.Instructions[state.Ip] |> execInstruction state
 
 let rec exec state =
     if state.Ip >= state.Instructions.Length then
         state.Registers
-    else if state.Replacements.ContainsKey state.Ip then
-        state |> state.Replacements[state.Ip] |> exec
     else
-        state.Instructions[state.Ip] |> execInstruction state |> exec
+        state |> execStep |> exec
+
+let rec execToOutput initial =
+    let mutable state = initial
+
+    seq {
+        while true do
+            state <- state |> execStep
+
+            if state.Output.IsSome then
+                yield state.Output.Value
+    }
 
 let execute = initialState Map.empty initialRegisters >> exec
