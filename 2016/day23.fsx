@@ -28,8 +28,8 @@ let solve (input: string array) =
     let instructions = input |> Array.map parseInstruction
 
     let result1 = instructions |> init 7 |> exec |> (fun registers -> registers["a"])
-    let result2 = 0
+    let result2 = instructions |> init 12 |> exec |> (fun registers -> registers["a"])
 
-    result1, result2, 10223, 0
+    result1, result2, 10223, 479006783
 
 DayUtils.runDay solve
