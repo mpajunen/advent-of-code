@@ -12,12 +12,10 @@ let rec getMults enabled =
         | _ -> (int a * int b, enabled) :: getMults enabled rest
     | _ -> []
 
-let solve (input: string array) =
+DayUtils.runDay (fun input ->
     let mults = input |> String.concat "" |> getMults true
 
     let result1 = mults |> List.sumBy fst
     let result2 = mults |> List.filter snd |> List.sumBy fst
 
-    result1, result2, 156388521, 75920122
-
-DayUtils.runDay solve
+    result1, result2, 156388521, 75920122)
