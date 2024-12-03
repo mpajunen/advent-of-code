@@ -35,11 +35,6 @@ let isOuter (grid: Grid<char>) p =
 
     p.X <= 1 || p.Y <= 1 || p.X = size.X - 2 || p.Y = size.Y - 2
 
-let destinationName (name: string) =
-    if name.EndsWith "-o" then name.Replace("-o", "-i")
-    else if name.EndsWith "-i" then name.Replace("-i", "-o")
-    else name
-
 let buildRoutes grid =
     let getPortal (p, tile) =
         if isPortalTile tile then
