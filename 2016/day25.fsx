@@ -6,8 +6,42 @@
 
 open Assembunny
 
+let loopBlock1 s =
+    let mutable a, b, c, d =
+        s.Registers["a"], s.Registers["b"], s.Registers["c"], s.Registers["d"]
+
+    // cpy 362 b, inc d, dec b, jnz b -2, dec c, jnz c -5
+    d <- d + 362 * c
+    b <- 0
+    c <- 0
+
+    { s with
+        Registers = [ "a", a; "b", b; "c", c; "d", d ] |> Map
+        Ip = s.Ip + 6 }
+
+let loopBlock2 s =
+    let mutable a, b, c, d =
+        s.Registers["a"], s.Registers["b"], s.Registers["c"], s.Registers["d"]
+
+    // cpy 2 c, jnz b 2, jnz 1 6, dec b, dec c, jnz c -4, inc a, jnz 1 -7
+    c <- 2
+
+    while b <> 0 do
+        b <- b - 1
+        c <- c - 1
+
+        if c = 0 then
+            a <- a + 1
+            c <- 2
+
+    { s with
+        Registers = [ "a", a; "b", b; "c", c; "d", d ] |> Map
+        Ip = s.Ip + 8 }
+
+let replacements = Map [ 2, loopBlock1; 12, loopBlock2 ]
+
 let init initialA =
-    initialRegisters |> Map.add "a" initialA |> initialState Map.empty
+    initialRegisters |> Map.add "a" initialA |> initialState replacements
 
 let validClock = { 0..9 } |> Seq.map (fun n -> n % 2)
 
