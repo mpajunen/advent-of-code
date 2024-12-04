@@ -9,6 +9,16 @@ module Vec =
 
     let length (v: Vec) = abs v.X + abs v.Y
 
+    let unitsCardinal =
+        [ 1, 0; 0, 1; -1, 0; 0, -1 ] |> List.map (fun (x, y) -> { X = x; Y = y })
+
+    let unitsDiagonal =
+        [ 1, 1; -1, 1; -1, -1; 1, -1 ] |> List.map (fun (x, y) -> { X = x; Y = y })
+
+    let unitsAll =
+        [ 1, 0; 1, 1; 0, 1; -1, 1; -1, 0; -1, -1; 0, -1; 1, -1 ]
+        |> List.map (fun (x, y) -> { X = x; Y = y })
+
 let manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
 
 let add (a: Vec) (b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
@@ -97,8 +107,7 @@ module Move =
     let turnRight = turn_ 1
 
     let adjacent (point: Vec) =
-        [ { X = 0; Y = 1 }; { X = -1; Y = 0 }; { X = 1; Y = 0 }; { X = 0; Y = -1 } ]
-        |> List.map (add point)
+        Vec.unitsCardinal |> List.map (add point)
 
 type Actor = { Position: Vec; Facing: Dir }
 
@@ -151,6 +160,8 @@ module Grid =
 
     let values (grid: Grid<'a>) = grid |> entries |> Seq.map snd
 
+    let keys (grid: Grid<'a>) = grid |> entries |> Seq.map fst
+
     let private matchingKeys predicate (grid: Grid<'a>) =
         seq {
             for y in 0 .. (grid.GetLength 0 - 1) do
@@ -192,6 +203,9 @@ module Grid =
 
     let isWithin (grid: Grid<'a>) (p: Vec) =
         p.X >= 0 && p.X < Array2D.length2 grid && p.Y >= 0 && p.Y < Array2D.length1 grid
+
+    let tryGet (grid: Grid<'a>) (p: Vec) =
+        if isWithin grid p then Some grid.[p.Y, p.X] else None
 
     let adjacentPositions (grid: Grid<'a>) (p: Vec) =
         Move.adjacent p |> List.filter (isWithin grid)
