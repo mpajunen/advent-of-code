@@ -220,6 +220,11 @@ module Grid =
         { X = Array2D.length2 grid
           Y = Array2D.length1 grid }
 
+    let rotate (grid: Grid<'a>) = grid |> cols |> Array.rev |> array2D
+
+    let rotations (grid: Grid<'a>) =
+        List.scan (fun acc _ -> acc |> rotate) grid [ 1..3 ]
+
     let toString (grid: Grid<'a>) : string =
         let rowToString row =
             [| for col in 0 .. Array2D.length2 grid - 1 -> string grid.[row, col] |]
