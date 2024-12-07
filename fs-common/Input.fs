@@ -2,8 +2,12 @@ module Input
 
 open System.Text.RegularExpressions
 
-let parseAllInts str =
-    [ for m in Regex.Matches(str, "-?\d+") -> int m.Value ]
+let parseAllX convert str =
+    [ for m in Regex.Matches(str, "-?\d+") -> convert m.Value ]
+
+let parseAllInts = parseAllX int
+
+let parseAllLongs = parseAllX int64
 
 let (|ParseRegex|_|) regex str =
     let m = Regex(regex).Match(str)
