@@ -1,6 +1,16 @@
 module Vec2
 
-type Vec = { X: int; Y: int }
+type Vec =
+    { X: int
+      Y: int }
+
+    static member (+)(a: Vec, b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
+
+    static member (-)(a: Vec, b: Vec) = { X = a.X - b.X; Y = a.Y - b.Y }
+
+    static member (*)(vec: Vec, multiplier: int) =
+        { X = vec.X * multiplier
+          Y = vec.Y * multiplier }
 
 let origin = { X = 0; Y = 0 }
 
