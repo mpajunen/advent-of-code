@@ -11,3 +11,4 @@ Some solutions to [Advent of Code](https://adventofcode.com/) puzzles.
 - [2021, TypeScript](2021)
 - [2022, TypeScript](2022)
 - [2023, F#](2023)
+- [2024, F#](2024)
