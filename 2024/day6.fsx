@@ -6,36 +6,40 @@
 open Vec2
 
 let moveInside map extraBlock =
-    let rec move path guard =
+    let rec findNext guard =
         let forward = guard |> Actor.forward
         let tile = forward.Position |> Grid.tryGet map
 
-        let next =
-            match tile, extraBlock = Some forward.Position with
-            | None, _ -> None
-            | Some '#', _
-            | Some _, true -> Some(guard |> Actor.turn Right)
-            | Some _, false -> Some forward
+        match tile, extraBlock = Some forward.Position with
+        | None, _ -> guard, true
+        | Some '#', _
+        | Some _, true -> guard |> Actor.turn Right, false
+        | Some _, false -> forward |> findNext
 
-        match next with
-        | _ when Set.contains forward path -> path, true
-        | None -> path, false
-        | Some g -> move (Set.add g path) g
+    let rec move path =
+        findNext
+        >> function
+            | guard, _ when List.contains guard path -> path, true
+            | guard, true -> guard :: path, false
+            | guard, false -> move (guard :: path) guard
 
     let start =
         map |> Grid.findKey ((=) '^') |> (fun p -> { Position = p; Facing = Up })
 
-    move (Set [ start ]) start
+    move [ start ] start
 
 let findBlockPositions map =
-    Set.filter (Some >> moveInside map >> snd)
+    List.filter (Some >> moveInside map >> snd)
+
+let getPositions = List.pairwise >> List.collect (Line.points) >> List.distinct
 
 DayUtils.runDay (fun input ->
     let map = input |> Grid.fromRows
 
-    let positions = moveInside map None |> fst |> Set.map _.Position
+    let corners = moveInside map None |> fst |> List.map _.Position
+    let positions = corners |> getPositions
 
-    let result1 = positions |> Set.count
-    let result2 = positions |> findBlockPositions map |> Set.count
+    let result1 = positions |> List.length
+    let result2 = positions |> findBlockPositions map |> List.length
 
     result1, result2, 5177, 1686)

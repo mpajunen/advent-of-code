@@ -67,6 +67,14 @@ module Line =
                 None
         | (_, _) -> None
 
+    let points (line: Line) =
+        let a, b = line
+
+        if a.X = b.X then
+            [ for y in min a.Y b.Y .. max a.Y b.Y -> { X = a.X; Y = y } ]
+        else
+            [ for x in min a.X b.X .. max a.X b.X -> { X = x; Y = a.Y } ]
+
 type Dir =
     | Down
     | Left
