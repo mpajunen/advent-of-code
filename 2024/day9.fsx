@@ -2,53 +2,70 @@
 
 #load "../fs-common/DayUtils.fs"
 
-let getTotalBlocks =
-    Array.indexed
-    >> Array.filter (fun (index, _) -> index % 2 = 0)
-    >> Array.sumBy snd
+type File = { Id: int; Size: int }
 
-let filesFromEnd map =
-    seq {
-        for index in (Array.length map - 1) .. -2 .. 0 do
-            for _ in 1 .. map[index] do
-                yield index
-    }
+type Block =
+    { Files: File list
+      Free: int
+      Total: int }
 
-let compactChecksum blockSizes =
-    let totalBlocks = blockSizes |> getTotalBlocks
+let buildBlock index size =
+    if index % 2 = 0 then
+        { Files = [ { Id = index / 2; Size = size } ]
+          Free = 0
+          Total = size }
+    else
+        { Files = []
+          Free = size
+          Total = size }
 
-    let mutable index = 0
-    let mutable startIndex = 0
-    let mutable endIndex = Array.length blockSizes - 1
+let compact canSplit (blocks: Block array) =
+    let findSpace required =
+        blocks |> Array.findIndex (fun block -> block.Free >= required)
 
-    let mutable checksum = 0L
+    let rec placeFile file =
+        let index = findSpace <| if canSplit then 1 else file.Size
+        let block = blocks[index]
 
-    let fromEnd = filesFromEnd(blockSizes).GetEnumerator()
+        let size = min file.Size block.Free
 
-    while startIndex <= endIndex do
-        let mapValue = blockSizes[startIndex]
+        blocks[index] <-
+            { block with
+                Files = blocks[index].Files @ [ { file with Size = size } ]
+                Free = block.Free - size }
 
-        for _ in 1 .. (min mapValue (totalBlocks - index)) do
-            let fileId =
-                if startIndex % 2 = 0 then
-                    startIndex / 2
-                else
-                    fromEnd.MoveNext() |> ignore
-                    endIndex <- fromEnd.Current
+        if file.Size > size then
+            placeFile { file with Size = file.Size - size }
 
-                    endIndex / 2
+    for index in (Array.length blocks - 1) .. -1 .. 0 do
+        let block = blocks[index]
 
-            checksum <- checksum + int64 (fileId * index)
-            index <- index + 1
+        blocks[index] <-
+            { block with
+                Files = []
+                Free = block.Total }
 
-        startIndex <- startIndex + 1
+        block.Files |> List.iter placeFile
 
-    checksum
+    blocks
+
+let blockChecksum startIndex =
+    List.collect (fun file -> List.replicate file.Size file.Id)
+    >> List.mapi (fun i id -> (id * (startIndex + i)) |> int64)
+    >> List.sum
+
+let rec checksum index =
+    function
+    | [] -> 0L
+    | block :: rest -> blockChecksum index block.Files + checksum (index + block.Total) rest
+
+let compactChecksum allowSplit =
+    Array.mapi buildBlock >> compact allowSplit >> Array.toList >> checksum 0
 
 DayUtils.runDay (fun input ->
     let blockSizes = input[0].ToCharArray() |> Array.map (string >> int)
 
-    let result1 = blockSizes |> compactChecksum
-    let result2 = 0
+    let result1 = blockSizes |> compactChecksum true
+    let result2 = blockSizes |> compactChecksum false
 
-    result1, result2, 6241633730082L, 0)
+    result1, result2, 6241633730082L, 6265268809555L)
