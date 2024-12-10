@@ -1,0 +1,30 @@
+#!/usr/bin/env -S dotnet fsi
+
+#load "../fs-common/DayUtils.fs"
+#load "../fs-common/Vec2.fs"
+
+open Vec2
+
+let score unique grid =
+    let rec trails position =
+        match position |> Grid.get grid with
+        | 9 -> [ position ]
+        | tile ->
+            Grid.adjacentPositions grid position
+            |> List.filter (fun p -> Grid.get grid p = tile + 1)
+            |> List.collect trails
+
+    let tileScore position =
+        match position |> Grid.get grid with
+        | 0 -> position |> trails |> (if unique then List.distinct else id) |> List.length
+        | _ -> 0
+
+    grid |> Grid.keys |> Seq.sumBy tileScore
+
+DayUtils.runDay (fun input ->
+    let grid = input |> Grid.fromRows |> Array2D.map (string >> int)
+
+    let result1 = grid |> score true
+    let result2 = grid |> score false
+
+    result1, result2, 574, 1238)
