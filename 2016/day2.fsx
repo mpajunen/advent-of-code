@@ -30,7 +30,7 @@ let getKeys (keyPad: string) allMoves =
         Grid.isWithin keyGrid p && Grid.get keyGrid p <> '.'
 
     let rec applyMove position move =
-        let changedPosition = position |> add move
+        let changedPosition = position + move
 
         if isOnKey changedPosition then
             changedPosition

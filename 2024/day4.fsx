@@ -34,7 +34,7 @@ M.S
 let gridMatches patterns grid =
     let tileMatches position =
         let matchesPattern =
-            List.forall (fun (offset, tile) -> Grid.tryGet grid (add position offset) = Some tile)
+            List.forall (fun (offset, tile) -> Grid.tryGet grid (position + offset) = Some tile)
 
         patterns |> List.filter matchesPattern |> List.length
 

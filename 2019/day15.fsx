@@ -43,8 +43,6 @@ let opposite dir =
 
 let allDirections = [ Vec2.Up; Vec2.Down; Vec2.Left; Vec2.Right ]
 
-let move position dir = Vec2.add position <| Move.unit dir
-
 let explore program =
     let computer = IntCode.Computer program
 
@@ -53,13 +51,13 @@ let explore program =
     let mutable moves = []
 
     let inDirection position dir =
-        let p = move position dir
+        let p = position + Move.unit dir
         Map.tryFind p tiles
 
     let tryMoveTo dir =
         let out = computer.run [| dirCommand dir |]
 
-        let position = move droidPosition dir
+        let position = droidPosition + Move.unit dir
         let tile =
             match out[0] with
             | 0L -> Wall
@@ -78,7 +76,7 @@ let explore program =
 
         computer.run [| dirCommand dir |] |> ignore
 
-        droidPosition <- move droidPosition dir
+        droidPosition <- droidPosition + Move.unit dir
         moves <- moves.Tail
 
     let rec explore_ () =

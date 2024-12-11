@@ -57,7 +57,7 @@ let rec findLimit scan lower upper =
 let rec findFinal scanner current =
     let next =
         [ { X = -1; Y = -1 }; { X = 0; Y = -1 }; { X = -1; Y = 0 } ]
-        |> List.map (Vec2.add current)
+        |> List.map ((+) current)
         |> List.tryFind (canLandOn scanner)
 
     match next with

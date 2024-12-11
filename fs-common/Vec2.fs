@@ -31,15 +31,6 @@ module Vec =
 
 let manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
 
-let add (a: Vec) (b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
-
-let subtract (a: Vec) (b: Vec) = { X = a.X - b.X; Y = a.Y - b.Y }
-
-let multiply (vec: Vec) (multiplier: int) =
-    { X = vec.X * multiplier
-      Y = vec.Y * multiplier }
-
-
 type Line = Vec * Vec
 
 module Line =
@@ -105,9 +96,9 @@ module Move =
         | Dir.Right -> { X = 1; Y = 0 }
         | Dir.Up -> { X = 0; Y = -1 }
 
-    let toVec (move: Move) = multiply (unit move.Dir) move.Steps
+    let toVec (move: Move) = unit move.Dir * move.Steps
 
-    let apply (point: Vec) (move: Move) = add point <| toVec move
+    let apply (point: Vec) (move: Move) = point + toVec move
 
     let private directions = [ Dir.Up; Dir.Right; Dir.Down; Dir.Left ]
 
@@ -125,7 +116,7 @@ module Move =
     let turnRight = turn_ 1
 
     let adjacent (point: Vec) =
-        Vec.unitsCardinal |> List.map (add point)
+        Vec.unitsCardinal |> List.map ((+) point)
 
 type Actor = { Position: Vec; Facing: Dir }
 
@@ -140,7 +131,7 @@ module Actor =
 
     let forward (actor: Actor) =
         { actor with
-            Position = add actor.Position <| Move.unit actor.Facing }
+            Position = actor.Position + Move.unit actor.Facing }
 
     let forwardSteps (steps: int) (actor: Actor) =
         { actor with

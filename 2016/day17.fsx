@@ -32,7 +32,7 @@ let getOpenDoors s =
     |> List.choose (fun i -> if isDoorOpen hash[i] then Some directions[i] else None)
 
 let move position =
-    Move.findDir >> Move.unit >> Vec2.add position
+    Move.findDir >> Move.unit >> (+) position
 
 let getNextStates state =
     let dirs = state |> getOpenDoors
