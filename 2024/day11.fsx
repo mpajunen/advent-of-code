@@ -4,17 +4,19 @@
 #load "../fs-common/Func.fs"
 #load "../fs-common/Input.fs"
 
-let blinkOnce n =
-    if n = 0L then
-        [ 1L ]
-    else
-        let digits = string n
-        let len = digits.Length
+let getDigitCount =
+    function
+    | 0L -> 1
+    | n -> n |> float |> log10 |> floor |> int |> (+) 1
 
-        if len % 2 = 0 then
-            [ int64 digits[0 .. len / 2 - 1]; int64 digits[len / 2 ..] ]
-        else
-            [ n * 2024L ]
+let blinkOnce n =
+    match n, getDigitCount n with
+    | _, digitCount when digitCount % 2 = 0 ->
+        let divisor = pown 10L (digitCount / 2)
+
+        [ n / divisor; n % divisor ]
+    | 0L, _ -> [ 1L ]
+    | _ -> [ n * 2024L ]
 
 let countStone recur blinks stone =
     if blinks = 0L then
