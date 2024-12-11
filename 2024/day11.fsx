@@ -18,11 +18,10 @@ let blinkOnce n =
     | 0L, _ -> [ 1L ]
     | _ -> [ n * 2024L ]
 
-let countStone recur blinks stone =
-    if blinks = 0L then
-        1L
-    else
-        stone |> blinkOnce |> List.sumBy (recur (blinks - 1L))
+let countStone recur =
+    function
+    | 0 -> fun _ -> 1L
+    | blinks -> blinkOnce >> List.sumBy (recur (blinks - 1))
 
 let countStones = Func.memoize2 countStone >> List.sumBy // :)
 
