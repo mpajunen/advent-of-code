@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="fs-common/DayUtils.fs" />
+    <Compile Include="fs-common/Func.fs" />
     <Compile Include="fs-common/Hash.fs" />
     <Compile Include="fs-common/Input.fs" />
     <Compile Include="fs-common/Vec2.fs" />

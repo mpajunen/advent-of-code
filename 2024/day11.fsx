@@ -1,9 +1,8 @@
 #!/usr/bin/env -S dotnet fsi
 
 #load "../fs-common/DayUtils.fs"
+#load "../fs-common/Func.fs"
 #load "../fs-common/Input.fs"
-
-open System.Collections.Generic
 
 let blinkOnce n =
     if n = 0L then
@@ -17,19 +16,13 @@ let blinkOnce n =
         else
             [ n * 2024L ]
 
-let countStones totalBlinks initialStones =
-    let cache = Dictionary()
+let countStone recur blinks stone =
+    if blinks = 0L then
+        1L
+    else
+        stone |> blinkOnce |> List.sumBy (recur (blinks - 1L))
 
-    let rec countStone blinks (stone: int64) =
-        if blinks = 0L then
-            1L
-        else
-            if not <| cache.ContainsKey(blinks, stone) then
-                cache[(blinks, stone)] <- stone |> blinkOnce |> List.sumBy (countStone (blinks - 1L))
-
-            cache[(blinks, stone)]
-
-    initialStones |> List.sumBy (countStone totalBlinks)
+let countStones = Func.memoize2 countStone >> List.sumBy // :)
 
 DayUtils.runDay (fun input ->
     let initial = input[0] |> Input.parseAllLongs
