@@ -23,7 +23,7 @@ let countStone recur =
     | 0 -> fun _ -> 1L
     | blinks -> blinkOnce >> List.sumBy (recur (blinks - 1))
 
-let countStones = Func.memoize2 countStone >> List.sumBy // :)
+let countStones = Func.memoizeRec2 countStone >> List.sumBy // :)
 
 DayUtils.runDay (fun input ->
     let initial = input[0] |> Input.parseAllLongs

@@ -5,6 +5,17 @@ open System.Collections.Generic
 let memoize f =
     let cache = Dictionary()
 
+    fun x ->
+        match cache.TryGetValue x with
+        | true, result -> result
+        | _ ->
+            let result = f x
+            cache[x] <- result
+            result
+
+let memoizeRec f =
+    let cache = Dictionary()
+
     let rec g x =
         match cache.TryGetValue x with
         | true, result -> result
@@ -15,7 +26,7 @@ let memoize f =
 
     g
 
-let memoize2 f =
+let memoizeRec2 f =
     let cache = Dictionary()
 
     let rec g x y =
