@@ -62,6 +62,6 @@ let solve (input: string array) =
     let result1 = [ input[0] |> getInitial ] |> findShortestPath
     let result2 = input[0] |> getInitial |> findLongestPath
 
-    result1, result2, "RDDRULDDRR", 123
+    result1, result2, "RDDRULDDRR", 766
 
 DayUtils.runDay solve
