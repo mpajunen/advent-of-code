@@ -9,7 +9,7 @@ let getDigitCount =
     | 0L -> 1
     | n -> n |> float |> log10 |> floor |> int |> (+) 1
 
-let blinkOnce n =
+let blinkStone n =
     match n, getDigitCount n with
     | _, digitCount when digitCount % 2 = 0 ->
         let divisor = pown 10L (digitCount / 2)
@@ -18,15 +18,18 @@ let blinkOnce n =
     | 0L, _ -> [ 1L ]
     | _ -> [ n * 2024L ]
 
-let countStone recur =
-    function
-    | 0 -> fun _ -> 1L
-    | blinks -> blinkOnce >> List.sumBy (recur (blinks - 1))
+let blinkOnce =
+    List.collect (fun (stone, count) -> stone |> blinkStone |> List.map (fun s -> s, count))
+    >> List.groupBy fst
+    >> List.map (fun (stone, counts) -> stone, counts |> List.sumBy snd)
 
-let countStones = Func.memoizeRec2 countStone >> List.sumBy // :)
+let rec countStones =
+    function
+    | 0 -> List.sumBy snd
+    | blinks -> blinkOnce >> countStones (blinks - 1)
 
 DayUtils.runDay (fun input ->
-    let initial = input[0] |> Input.parseAllLongs
+    let initial = input[0] |> Input.parseAllLongs |> List.map (fun x -> x, 1L)
 
     let result1 = initial |> countStones 25
     let result2 = initial |> countStones 75
