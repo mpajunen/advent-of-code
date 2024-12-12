@@ -8,36 +8,34 @@ open Vec2
 let getRegions grid =
     let processed = grid |> Array2D.map (fun _ -> false)
 
-    let rec getRegionTiles plant position =
-        if Grid.get processed position || Grid.get grid position <> plant then
+    let rec getRegion plant tile =
+        if Grid.get processed tile then
             []
         else
-            Grid.set processed position true
+            Grid.set processed tile true
 
-            position
-            :: List.collect (getRegionTiles plant) (Grid.adjacentPositions grid position)
+            let neighbors, edges =
+                Move.directions
+                |> List.partition ((+) tile >> Grid.tryGet grid >> (=) (Some plant))
+
+            (tile, edges) :: (neighbors |> List.collect ((+) tile >> getRegion plant))
 
     [ for position in grid |> Grid.keys do
           if not <| Grid.get processed position then
               let plant = Grid.get grid position
-              let region = getRegionTiles plant position
 
-              yield region ]
+              yield getRegion plant position ]
 
-let tileFences region tile =
-    Move.directions
-    |> List.filter (fun dir -> not <| List.contains (tile + Move.unit dir) region)
-    |> List.map (fun dir -> tile, dir)
-
-let regionFences region = List.collect (tileFences region) region
+let regionFences =
+    List.collect (fun (tile, edges) -> edges |> List.map (fun edge -> tile, edge))
 
 let earlierTiles tile = [ tile + Dir.Left; tile + Dir.Up ]
 
-let isFirstTile tiles =
-    earlierTiles >> List.exists (fun t -> List.contains t tiles) >> not
+let dirSideCount dirTiles =
+    let isFirstTile =
+        earlierTiles >> List.exists (fun t -> List.contains t dirTiles) >> not
 
-let dirSideCount tiles =
-    tiles |> List.filter (isFirstTile tiles) |> List.length
+    dirTiles |> List.filter isFirstTile |> List.length
 
 // Count sides of region one direction at a time
 let sideCount = List.groupBy snd >> List.sumBy (snd >> List.map fst >> dirSideCount)

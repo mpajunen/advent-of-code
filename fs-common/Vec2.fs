@@ -100,13 +100,6 @@ module Move =
         | 'U' -> Dir.Up
         | _ -> failwith $"Invalid direction {dir}."
 
-    let unit (dir: Dir) =
-        match dir with
-        | Dir.Down -> { X = 0; Y = 1 }
-        | Dir.Left -> { X = -1; Y = 0 }
-        | Dir.Right -> { X = 1; Y = 0 }
-        | Dir.Up -> { X = 0; Y = -1 }
-
     let toVec (move: Move) = Dir.unit move.Dir * move.Steps
 
     let apply (point: Vec) (move: Move) = point + toVec move
