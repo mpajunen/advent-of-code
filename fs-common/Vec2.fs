@@ -100,7 +100,7 @@ module Move =
 
     let apply (point: Vec) (move: Move) = point + toVec move
 
-    let private directions = [ Dir.Up; Dir.Right; Dir.Down; Dir.Left ]
+    let directions = [ Dir.Up; Dir.Right; Dir.Down; Dir.Left ]
 
     let private turn_ offset from =
         List.findIndex (fun d -> d = from) directions

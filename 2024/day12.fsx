@@ -1,7 +1,6 @@
 #!/usr/bin/env -S dotnet fsi
 
 #load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
 #load "../fs-common/Vec2.fs"
 
 open Vec2
@@ -10,9 +9,7 @@ let getRegions grid =
     let processed = grid |> Array2D.map (fun _ -> false)
 
     let rec getRegionTiles plant position =
-        if Grid.get processed position then
-            []
-        else if Grid.get grid position <> plant then
+        if Grid.get processed position || Grid.get grid position <> plant then
             []
         else
             Grid.set processed position true
@@ -27,36 +24,32 @@ let getRegions grid =
 
               yield region ]
 
-let allDirs = [ Dir.Up; Dir.Right; Dir.Down; Dir.Left ]
-
 let tileFences region tile =
-    List.filter (Move.unit >> (+) tile >> (fun t -> not <| List.contains t region)) allDirs
+    Move.directions
+    |> List.filter (fun dir -> not <| List.contains (tile + Move.unit dir) region)
+    |> List.map (fun dir -> tile, dir)
 
-let regionFences region =
-    List.sumBy (tileFences region >> List.length) region
+let regionFences region = List.collect (tileFences region) region
 
-let regionSides region =
-    let allTileFences = region |> List.map (fun tile -> tile, tileFences region tile)
+let earlierTiles tile =
+    [ tile + Move.unit Dir.Left; tile + Move.unit Dir.Up ]
 
-    let fenceMap = allTileFences |> Map
+let isFirstTile tiles =
+    earlierTiles >> List.exists (fun t -> List.contains t tiles) >> not
 
-    allTileFences
-    |> List.sumBy (fun (tile, fences) ->
-        let left =
-            fenceMap |> Map.tryFind (tile + Move.unit Dir.Left) |> Option.defaultValue []
+let dirSideCount tiles =
+    tiles |> List.filter (isFirstTile tiles) |> List.length
 
-        let up = fenceMap |> Map.tryFind (tile + Move.unit Dir.Up) |> Option.defaultValue []
-
-        fences
-        |> List.filter (fun f -> not <| List.contains f left && not <| List.contains f up)
-        |> List.length)
+// Count sides of region one direction at a time
+let sideCount = List.groupBy snd >> List.sumBy (snd >> List.map fst >> dirSideCount)
 
 DayUtils.runDay (fun input ->
-    let grid = input |> Grid.fromRows
+    let regions = input |> Grid.fromRows |> getRegions
 
-    let regions = grid |> getRegions
+    let sizes = regions |> List.map List.length
+    let fences = regions |> List.map regionFences
 
-    let result1 = regions |> List.sumBy (fun r -> List.length r * regionFences r)
-    let result2 = regions |> List.sumBy (fun r -> List.length r * regionSides r)
+    let result1 = fences |> List.map List.length |> List.map2 (*) sizes |> List.sum
+    let result2 = fences |> List.map sideCount |> List.map2 (*) sizes |> List.sum
 
     result1, result2, 1363484, 838988)
