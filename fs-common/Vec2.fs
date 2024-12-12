@@ -72,6 +72,17 @@ type Dir =
     | Right
     | Up
 
+    static member unit(dir: Dir) =
+        match dir with
+        | Dir.Down -> { X = 0; Y = 1 }
+        | Dir.Left -> { X = -1; Y = 0 }
+        | Dir.Right -> { X = 1; Y = 0 }
+        | Dir.Up -> { X = 0; Y = -1 }
+
+    static member (+)(a: Dir, b: Vec) = Dir.unit a + b
+
+    static member (+)(a: Vec, b: Dir) = a + Dir.unit b
+
 type Turn =
     | Left
     | Right
@@ -96,7 +107,7 @@ module Move =
         | Dir.Right -> { X = 1; Y = 0 }
         | Dir.Up -> { X = 0; Y = -1 }
 
-    let toVec (move: Move) = unit move.Dir * move.Steps
+    let toVec (move: Move) = Dir.unit move.Dir * move.Steps
 
     let apply (point: Vec) (move: Move) = point + toVec move
 
@@ -131,7 +142,7 @@ module Actor =
 
     let forward (actor: Actor) =
         { actor with
-            Position = actor.Position + Move.unit actor.Facing }
+            Position = actor.Position + actor.Facing }
 
     let forwardSteps (steps: int) (actor: Actor) =
         { actor with

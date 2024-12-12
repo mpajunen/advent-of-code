@@ -51,13 +51,12 @@ let explore program =
     let mutable moves = []
 
     let inDirection position dir =
-        let p = position + Move.unit dir
-        Map.tryFind p tiles
+        Map.tryFind (position + dir) tiles
 
     let tryMoveTo dir =
         let out = computer.run [| dirCommand dir |]
 
-        let position = droidPosition + Move.unit dir
+        let position = droidPosition + dir
         let tile =
             match out[0] with
             | 0L -> Wall
@@ -76,7 +75,7 @@ let explore program =
 
         computer.run [| dirCommand dir |] |> ignore
 
-        droidPosition <- droidPosition + Move.unit dir
+        droidPosition <- droidPosition + dir
         moves <- moves.Tail
 
     let rec explore_ () =

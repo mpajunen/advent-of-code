@@ -31,12 +31,9 @@ let getOpenDoors s =
     [ 0 .. directions.Length - 1 ]
     |> List.choose (fun i -> if isDoorOpen hash[i] then Some directions[i] else None)
 
-let move position =
-    Move.findDir >> Move.unit >> (+) position
-
 let getNextStates state =
     let dirs = state |> getOpenDoors
-    let positions = dirs |> List.map (move state.Position)
+    let positions = dirs |> List.map (Move.findDir >> (+) state.Position)
 
     List.zip dirs positions
     |> List.filter (snd >> isWithinGrid)

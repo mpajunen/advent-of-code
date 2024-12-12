@@ -21,7 +21,7 @@ let keyPad2 =
 ..D..
 "
 
-let parseRow = Seq.toArray >> Seq.map (Move.findDir >> Move.unit)
+let parseRow = Seq.toArray >> Seq.map Move.findDir
 
 let getKeys (keyPad: string) allMoves =
     let keyGrid = keyPad.Trim() |> Grid.fromString
@@ -29,7 +29,7 @@ let getKeys (keyPad: string) allMoves =
     let isOnKey p =
         Grid.isWithin keyGrid p && Grid.get keyGrid p <> '.'
 
-    let rec applyMove position move =
+    let rec applyMove position (move: Dir) =
         let changedPosition = position + move
 
         if isOnKey changedPosition then

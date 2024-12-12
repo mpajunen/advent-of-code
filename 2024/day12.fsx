@@ -31,8 +31,7 @@ let tileFences region tile =
 
 let regionFences region = List.collect (tileFences region) region
 
-let earlierTiles tile =
-    [ tile + Move.unit Dir.Left; tile + Move.unit Dir.Up ]
+let earlierTiles tile = [ tile + Dir.Left; tile + Dir.Up ]
 
 let isFirstTile tiles =
     earlierTiles >> List.exists (fun t -> List.contains t tiles) >> not
