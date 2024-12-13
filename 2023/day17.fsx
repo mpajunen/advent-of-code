@@ -30,7 +30,7 @@ let getCosts (map: Grid<int>) minMove maxMove =
         | true, n -> n
 
     let getPriority crucible =
-        (manhattan crucible.Position goal) * 2
+        (Vec.manhattan crucible.Position goal) * 2
         + if hasFacingPenalty crucible then 5 * minMove else 0
 
     let addPosition (crucible, cost) =

@@ -32,8 +32,8 @@ let parseInput (input: string array) =
 
 // Add "normal" distance and distance caused by expansion separately, then combine
 let pairDistance expansionFactor ((aBase, aExp), (bBase, bExp)) =
-    (manhattan aBase bBase |> int64)
-    + (manhattan aExp bExp |> int64) * (expansionFactor - 1L)
+    (Vec.manhattan aBase bBase |> int64)
+    + (Vec.manhattan aExp bExp |> int64) * (expansionFactor - 1L)
 
 let solve (input: string array) =
     let pairs = input |> parseInput |> uniquePairs

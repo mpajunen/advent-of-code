@@ -4,20 +4,22 @@ type Vec =
     { X: int
       Y: int }
 
-    static member (+)(a: Vec, b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
+    static member inline (+)(a: Vec, b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
 
-    static member (-)(a: Vec, b: Vec) = { X = a.X - b.X; Y = a.Y - b.Y }
+    static member inline (-)(a: Vec, b: Vec) = { X = a.X - b.X; Y = a.Y - b.Y }
 
-    static member (*)(vec: Vec, multiplier: int) =
+    static member inline (*)(vec: Vec, multiplier: int) =
         { X = vec.X * multiplier
           Y = vec.Y * multiplier }
+
+    static member inline length(v: Vec) = abs v.X + abs v.Y
+
+    static member inline manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
 
 let origin = { X = 0; Y = 0 }
 
 module Vec =
     let create y x = { X = x; Y = y }
-
-    let length (v: Vec) = abs v.X + abs v.Y
 
     let unitsCardinal =
         [ 1, 0; 0, 1; -1, 0; 0, -1 ] |> List.map (fun (x, y) -> { X = x; Y = y })
@@ -29,8 +31,6 @@ module Vec =
         [ 1, 0; 1, 1; 0, 1; -1, 1; -1, 0; -1, -1; 0, -1; 1, -1 ]
         |> List.map (fun (x, y) -> { X = x; Y = y })
 
-let manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
-
 type Line = Vec * Vec
 
 module Line =
@@ -39,7 +39,7 @@ module Line =
     let private isCommonY ((a, b): Line) (y: int) = min a.Y b.Y <= y && y <= max a.Y b.Y
 
     let includesPoint (point: Vec) ((a, b): Line) =
-        manhattan a point + manhattan point b = manhattan a b
+        Vec.manhattan a point + Vec.manhattan point b = Vec.manhattan a b
 
     let getIntersection (a: Line) (b: Line) : Option<Vec> =
         let a1, a2 = a

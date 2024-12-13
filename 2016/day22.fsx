@@ -60,9 +60,9 @@ let findFewestSteps nodes =
     let maxX = nodes |> Array.maxBy (fun n -> n.Position.X)
     let goalDataStart = { X = maxX.Position.X; Y = 0 }
 
-    manhattan empty.Position gap.Position // Move the empty node to the gap
-    + manhattan gap.Position goalDataStart // Move the empty node to the wanted data node
-    + 5 * (manhattan goalDataStart origin - 1) // Move goal data toward origin by cycling the empty node
+    Vec.manhattan empty.Position gap.Position // Move the empty node to the gap
+    + Vec.manhattan gap.Position goalDataStart // Move the empty node to the wanted data node
+    + 5 * (Vec.manhattan goalDataStart origin - 1) // Move goal data toward origin by cycling the empty node
 
 let solve (input: string array) =
     let nodes = input[2..] |> Array.map parseNode
