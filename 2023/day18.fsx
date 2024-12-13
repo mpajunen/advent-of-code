@@ -16,7 +16,7 @@ let parse2 (parts: string array) =
 let getVec parse (row: string) =
     row.Split(" ") |> parse ||> Move.create |> Move.toVec
 
-let getCorners = Array.scan add origin
+let getCorners = Array.scan (+) origin
 
 let determinant (a, b) =
     int64 a.X * int64 b.Y - int64 a.Y * int64 b.X

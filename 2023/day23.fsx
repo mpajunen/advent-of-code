@@ -10,7 +10,7 @@ let getAdjacent (point: Vec) =
       { X = -1; Y = 0 }, '<'
       { X = 1; Y = 0 }, '>'
       { X = 0; Y = -1 }, '^' ]
-    |> List.map (fun (dp, slope) -> add dp point, slope)
+    |> List.map (fun (dp, slope) -> dp + point, slope)
 
 type Graph = Map<Vec, (Vec * int) list>
 
