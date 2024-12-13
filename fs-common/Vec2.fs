@@ -1,20 +1,28 @@
 module Vec2
 
-type Vec =
-    { X: int
-      Y: int }
+type Vec_<'T
+    when 'T: comparison
+    and 'T: (static member (+): 'T * 'T -> 'T)
+    and 'T: (static member (-): 'T * 'T -> 'T)
+    and 'T: (static member (*): 'T * 'T -> 'T)
+    and 'T: (static member Abs: 'T -> 'T)> =
+    { X: 'T
+      Y: 'T }
 
-    static member inline (+)(a: Vec, b: Vec) = { X = a.X + b.X; Y = a.Y + b.Y }
+    static member inline (+)(a: Vec_<'T>, b: Vec_<'T>) : Vec_<'T> = { X = a.X + b.X; Y = a.Y + b.Y }
 
-    static member inline (-)(a: Vec, b: Vec) = { X = a.X - b.X; Y = a.Y - b.Y }
+    static member inline (-)(a: Vec_<'T>, b: Vec_<'T>) = { X = a.X - b.X; Y = a.Y - b.Y }
 
-    static member inline (*)(vec: Vec, multiplier: int) =
+    static member inline (*)(vec: Vec_<'T>, multiplier: 'T) =
         { X = vec.X * multiplier
           Y = vec.Y * multiplier }
 
-    static member inline length(v: Vec) = abs v.X + abs v.Y
+    static member inline length(v: Vec_<'T>) = abs v.X + abs v.Y
 
-    static member inline manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
+    static member inline manhattan (a: Vec_<'T>) (b: Vec_<'T>) = abs (a.X - b.X) + abs (a.Y - b.Y)
+
+type Vec64 = Vec_<int64>
+type Vec = Vec_<int>
 
 let origin = { X = 0; Y = 0 }
 
