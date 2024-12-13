@@ -28,27 +28,17 @@ let parseMachine =
 // b = (Target.Y * ButtonA.X - Target.X * ButtonA.Y) / (ButtonB.Y * ButtonA.X - ButtonB.X * ButtonA.Y)
 
 let getB m =
+    let left = m.Target.Y * m.ButtonA.X - m.Target.X * m.ButtonA.Y
     let det = m.ButtonB.Y * m.ButtonA.X - m.ButtonB.X * m.ButtonA.Y
 
-    if det = 0L then
-        None
-    else
-        Some((m.Target.Y * m.ButtonA.X - m.Target.X * m.ButtonA.Y) / det)
+    if left % det <> 0L then None else Some(left / det)
 
 let getA m b =
     (m.Target.X - b * m.ButtonB.X) / m.ButtonA.X
 
-let checkWin m a b =
-    a * m.ButtonA.X + b * m.ButtonB.X = m.Target.X
-    && a * m.ButtonA.Y + b * m.ButtonB.Y = m.Target.Y
-
 let tryGetWin machine =
     match getB machine with
-    | Some b when b >= 0L ->
-        let a = getA machine b
-
-        // TODO: Remove checkWin
-        if checkWin machine a b then Some(a, b) else None
+    | Some b when b >= 0L -> Some(getA machine b, b)
     | _ -> None
 
 let cost (a, b) = a * 3L + b
