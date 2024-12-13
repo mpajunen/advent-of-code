@@ -43,6 +43,8 @@ let tryGetWin machine =
 
 let cost (a, b) = a * 3L + b
 
+let machineCost = tryGetWin >> Option.map cost >> Option.defaultValue 0L
+
 let extraPosition = 10000000000000L
 
 let fixTarget m =
@@ -54,9 +56,7 @@ let fixTarget m =
 DayUtils.runDay (fun input ->
     let machines = input |> Array.chunkBySize 4 |> Array.map parseMachine
 
-    let result1 = machines |> Array.choose tryGetWin |> Array.sumBy cost
-
-    let result2 =
-        machines |> Array.map fixTarget |> Array.choose tryGetWin |> Array.sumBy cost
+    let result1 = machines |> Array.sumBy machineCost
+    let result2 = machines |> Array.sumBy (fixTarget >> machineCost)
 
     result1, result2, 29023L, 96787395375634L)
