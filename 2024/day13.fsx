@@ -2,8 +2,9 @@
 
 #load "../fs-common/DayUtils.fs"
 #load "../fs-common/Input.fs"
+#load "../fs-common/Vec2.fs"
 
-type Vec = { X: int64; Y: int64 }
+type Vec = Vec2.Vec64
 
 type Machine =
     { ButtonA: Vec
@@ -14,7 +15,7 @@ let parseMachine =
     String.concat ""
     >> Input.parseAllLongs
     >> List.chunkBySize 2
-    >> List.map (fun r -> { X = r[0]; Y = r[1] })
+    >> List.map (fun r -> { Vec.X = r[0]; Vec.Y = r[1] })
     >> (fun r ->
         { ButtonA = r[0]
           ButtonB = r[1]
@@ -28,8 +29,8 @@ let parseMachine =
 // b = (Target.Y * ButtonA.X - Target.X * ButtonA.Y) / (ButtonB.Y * ButtonA.X - ButtonB.X * ButtonA.Y)
 
 let getB m =
-    let left = m.Target.Y * m.ButtonA.X - m.Target.X * m.ButtonA.Y
-    let det = m.ButtonB.Y * m.ButtonA.X - m.ButtonB.X * m.ButtonA.Y
+    let left = Vec.determinant m.ButtonA m.Target
+    let det = Vec.determinant m.ButtonA m.ButtonB
 
     if left % det <> 0L then None else Some(left / det)
 
@@ -43,13 +44,13 @@ let tryGetWin machine =
 
 let cost (a, b) = a * 3L + b
 
-let extraPosition = 10000000000000L
+let extraDistance =
+    { Vec.X = 10000000000000L
+      Vec.Y = 10000000000000L }
 
 let fixTarget m =
     { m with
-        Target =
-            { X = m.Target.X + extraPosition
-              Y = m.Target.Y + extraPosition } }
+        Target = m.Target + extraDistance }
 
 DayUtils.runDay (fun input ->
     let machines = input |> Array.chunkBySize 4 |> Array.map parseMachine

@@ -21,6 +21,8 @@ type Vec_<'T
 
     static member inline manhattan (a: Vec_<'T>) (b: Vec_<'T>) = abs (a.X - b.X) + abs (a.Y - b.Y)
 
+    static member inline determinant (a: Vec_<'T>) (b: Vec_<'T>) = a.X * b.Y - a.Y * b.X
+
 type Vec64 = Vec_<int64>
 type Vec = Vec_<int>
 
