@@ -94,9 +94,13 @@ module Move =
 
     let findDir (dir: char) =
         match dir with
+        | 'v'
         | 'D' -> Dir.Down
+        | '<'
         | 'L' -> Dir.Left
+        | '>'
         | 'R' -> Dir.Right
+        | '^'
         | 'U' -> Dir.Up
         | _ -> failwith $"Invalid direction {dir}."
 
