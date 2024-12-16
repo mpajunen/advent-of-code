@@ -41,7 +41,10 @@ let getPositionEntries (routes: Dictionary<Actor, int>) position =
     |> Seq.map (fun pair -> pair.Key, pair.Value)
 
 let getFinish maze routes =
-    maze |> Grid.findKey ((=) 'E') |> getPositionEntries routes |> Seq.toList
+    let all = maze |> Grid.findKey ((=) 'E') |> getPositionEntries routes
+    let minimum = all |> Seq.map snd |> Seq.min
+
+    all |> Seq.filter (fun (_, points) -> points = minimum) |> Seq.toList
 
 let getBestPlaces finish (routes: Dictionary<Actor, int>) =
     let getPrevious (reindeer, steps) =
@@ -62,7 +65,7 @@ DayUtils.runDay (fun input ->
     let routes = maze |> getRoutes
     let finish = routes |> getFinish maze
 
-    let result1 = finish |> Seq.map snd |> Seq.min
+    let result1 = snd finish[0]
     let result2 = getBestPlaces finish routes |> List.length
 
     result1, result2, 114476, 508)
