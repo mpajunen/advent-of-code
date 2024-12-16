@@ -83,6 +83,8 @@ type Dir =
 
     static member (+)(a: Vec, b: Dir) = a + Dir.unit b
 
+    static member (-)(a: Vec, b: Dir) = a - Dir.unit b
+
 type Turn =
     | Left
     | Right
@@ -140,6 +142,10 @@ module Actor =
     let forward (actor: Actor) =
         { actor with
             Position = actor.Position + actor.Facing }
+
+    let backward (actor: Actor) =
+        { actor with
+            Position = actor.Position - actor.Facing }
 
     let forwardSteps (steps: int) (actor: Actor) =
         { actor with
