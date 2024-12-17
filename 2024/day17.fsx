@@ -59,6 +59,32 @@ let changeOutput reg output =
     | 5, n -> output @ [ int ((getComboVal reg n) % 8L) ]
     | _ -> output
 
+(*
+2,4,
+1,5,
+7,5,
+1,6,
+0,3,
+4,2,
+5,5,
+3,0
+*)
+
+let runManual reg =
+    let mutable a, b, c = reg.A, reg.B, reg.C
+    let mutable output = []
+
+    while a <> 0L do // 3,0
+        b <- a % 8L // 2,4
+        b <- b ^^^ 5L // 1,5
+        c <- a / (pown 2L <| int b) // 7,5
+        b <- b ^^^ 6L // 1,6
+        a <- a / (pown 2L 3) // 0,3
+        b <- b ^^^ c // 4,2
+        output <- (b % 8L) :: output // 5,5
+
+    output |> List.rev
+
 let execInstruction (program: int list) s =
     let instruction = program[s.Ip], program[s.Ip + 1]
 
