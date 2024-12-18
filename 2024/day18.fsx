@@ -30,23 +30,23 @@ let getPathLength bytes =
 
     findPath [ origin, 0 ]
 
-let getFirstBlocker (bytes: Vec array) =
-    let rec findByte low high =
+let binarySearch predicate low high =
+    let rec find low high =
         let mid = (low + high) / 2
 
-        if low = high then
-            bytes[low]
-        else if bytes[..mid] |> getPathLength = 999_999 then
-            findByte low mid
-        else
-            findByte (mid + 1) high
+        if low = high then low
+        else if predicate mid then find low mid
+        else find (mid + 1) high
 
-    findByte 1024 (bytes.Length - 1)
+    find low high
+
+let getFirstBlockerIndex (bytes: Vec array) =
+    binarySearch (fun i -> bytes[..i] |> getPathLength = 999_999) 1024 (bytes.Length - 1)
 
 DayUtils.runDay (fun input ->
     let bytes = input |> Array.map Vec.fromString
 
     let result1 = bytes[..1024] |> getPathLength
-    let result2 = bytes |> getFirstBlocker |> _.toString
+    let result2 = bytes |> getFirstBlockerIndex |> (fun index -> bytes[index].toString)
 
     result1, result2, 384, "36,10")
