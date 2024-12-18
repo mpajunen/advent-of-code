@@ -16,6 +16,13 @@ type Vec =
 
     static member inline manhattan (a: Vec) (b: Vec) = abs (a.X - b.X) + abs (a.Y - b.Y)
 
+    static member inline fromString(s: string) =
+        match s.Split ',' with
+        | [| x; y |] -> { X = int x; Y = int y }
+        | _ -> failwith $"Invalid vector format: {s}."
+
+    member inline v.toString = $"{v.X},{v.Y}"
+
 let origin = { X = 0; Y = 0 }
 
 module Vec =
@@ -232,6 +239,9 @@ module Grid =
 
     let adjacentPositions (grid: Grid<'a>) (p: Vec) =
         Move.adjacent p |> List.filter (isWithin grid)
+
+    let adjacentAvailablePositions (predicate: 'a -> bool) (grid: Grid<'a>) (p: Vec) =
+        adjacentPositions grid p |> List.filter (fun p -> predicate grid[p.Y, p.X])
 
     let rows (grid: Grid<'a>) =
         [| for y in 0 .. Array2D.length1 grid - 1 do
