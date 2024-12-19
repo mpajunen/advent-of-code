@@ -1,8 +1,7 @@
 #!/usr/bin/env -S dotnet fsi
 
 #load "../fs-common/DayUtils.fs"
-
-open System.Collections.Generic
+#load "../fs-common/Func.fs"
 
 let firstChar s =
     if String.length s = 0 then None else Some s[0]
@@ -15,25 +14,13 @@ let parseRow (row: string) =
 let unfold (conditions, groups) =
     conditions |> List.replicate 5 |> String.concat "?", groups |> List.replicate 5 |> List.concat
 
-let cache = Dictionary()
-
-let rec countArrangements row =
-    match cache.TryGetValue(row) with
-    | true, count -> count
-    | _ ->
-        let count = countArrangementsNext row
-
-        cache.[row] <- count
-
-        count
-
-and countArrangementsNext row =
+let rec countArrangementsNext recur row =
     let noGroupNext (conditions, groups) =
         match firstChar conditions, groups with
         | None, [] -> 1L
         | None, _ -> 0L
         | Some '#', _ -> 0L
-        | _ -> countArrangements (conditions[1..], groups)
+        | _ -> recur (conditions[1..], groups)
 
     let rec groupNext (conditions, groups) =
         match firstChar conditions, groups with
@@ -44,6 +31,8 @@ and countArrangementsNext row =
         | _, size :: remaining -> groupNext (conditions[1..], size - 1 :: remaining)
 
     groupNext row + noGroupNext row
+
+let countArrangements = Func.memoizeRec countArrangementsNext
 
 let solve (input: string array) =
     let result1 = input |> Array.sumBy (parseRow >> countArrangements)
