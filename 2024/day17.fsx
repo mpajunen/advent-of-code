@@ -3,12 +3,15 @@
 #load "../fs-common/DayUtils.fs"
 #load "../fs-common/Input.fs"
 
-type Registers = { A: int64; B: int64; C: int64 }
+type Registers =
+    { mutable A: int64
+      mutable B: int64
+      mutable C: int64 }
 
 type State =
-    { Registers: Registers
-      Output: int list
-      Ip: int }
+    { mutable Registers: Registers
+      mutable Output: int list
+      mutable Ip: int }
 
 let parseComputer input =
     let rows = input |> Array.map Input.parseAllInts
@@ -29,54 +32,36 @@ let getComboVal reg =
 
 let getDenominator reg n = getComboVal reg n |> int |> pown 2L
 
-let changeRegisters reg =
+let execInstruction s =
+    let reg = s.Registers
+
+    s.Ip <- s.Ip + 2
+
     function
-    | 0, n ->
-        { reg with
-            A = reg.A / (getDenominator reg n) }
-    | 1, n -> { reg with B = reg.B ^^^ n }
-    | 2, n ->
-        { reg with
-            B = (getComboVal reg n) % 8L }
-    | 3, _ -> reg
-    | 4, _ -> { reg with B = reg.B ^^^ reg.C }
-    | 5, _ -> reg
-    | 6, n ->
-        { reg with
-            B = reg.A / (getDenominator reg n) }
-    | 7, n ->
-        { reg with
-            C = reg.A / (getDenominator reg n) }
+    | 0, n -> reg.A <- reg.A / (getDenominator reg n)
+    | 1, n -> reg.B <- reg.B ^^^ n
+    | 2, n -> reg.B <- (getComboVal reg n) % 8L
+    | 3, n ->
+        if reg.A <> 0 then
+            s.Ip <- n
+    | 4, _ -> reg.B <- reg.B ^^^ reg.C
+    | 5, n -> s.Output <- s.Output @ [ int ((getComboVal reg n) % 8L) ]
+    | 6, n -> reg.B <- reg.A / (getDenominator reg n)
+    | 7, n -> reg.C <- reg.A / (getDenominator reg n)
     | instruction -> failwith $"Invalid instruction {instruction}."
 
-let changeIp reg ip =
-    function
-    | 3, n when reg.A <> 0 -> n
-    | _ -> ip + 2
+let getInstruction (program: int list) s = program[s.Ip], program[s.Ip + 1]
 
-let changeOutput reg output =
-    function
-    | 5, n -> output @ [ int ((getComboVal reg n) % 8L) ]
-    | _ -> output
+let run program registers =
+    let state =
+        { Registers = registers
+          Output = []
+          Ip = 0 }
 
-let execInstruction (program: int list) s =
-    let instruction = program[s.Ip], program[s.Ip + 1]
+    while state.Ip < List.length program do
+        state |> getInstruction program |> execInstruction state
 
-    { Registers = changeRegisters s.Registers instruction
-      Output = changeOutput s.Registers s.Output instruction
-      Ip = changeIp s.Registers s.Ip instruction }
-
-let rec exec program =
-    function
-    | state when state.Ip >= List.length program -> state.Output
-    | state -> state |> execInstruction program |> exec program
-
-let init registers =
-    { Registers = registers
-      Output = []
-      Ip = 0 }
-
-let run program = init >> exec program
+    state.Output
 
 let getA = List.rev >> List.mapi (fun i x -> int64 x * pown 8L i) >> List.sum
 
