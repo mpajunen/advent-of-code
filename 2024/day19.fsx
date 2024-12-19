@@ -1,23 +1,22 @@
 #!/usr/bin/env -S dotnet fsi
 
 #load "../fs-common/DayUtils.fs"
-#load "../fs-common/Func.fs"
 
-let getOptionCount' recur (patterns: string[]) =
-    function
-    | "" -> 1L
-    | (design: string) ->
-        patterns
-        |> Array.sumBy (fun pattern ->
-            if design.StartsWith pattern then
-                design[pattern.Length ..] |> recur patterns
-            else
-                0L)
+let getOptionCount (patterns, patternMaxLength) (design: string) =
+    let counts = Array.create (design.Length + 1) 0L
+    counts[0] <- 1L
 
-let getOptionCount = Func.memoizeRec2 getOptionCount'
+    for i in 0 .. design.Length - 1 do
+        for j in i .. min (i + patternMaxLength) design.Length - 1 do
+            if Set.contains design[i..j] patterns then
+                counts[j + 1] <- counts[j + 1] + counts[i]
+
+    counts[design.Length]
 
 DayUtils.runDay (fun input ->
-    let patterns = input[0].Split ", "
+    let patterns =
+        input[0].Split ", " |> fun p -> Set p, p |> Array.map String.length |> Array.max
+
     let designs = input[2..]
 
     let counts = designs |> Array.map (getOptionCount patterns)
