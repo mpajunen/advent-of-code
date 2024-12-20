@@ -21,7 +21,7 @@ let parseOperation =
 let rowCount = 6
 let colCount = 50
 
-let initialScreen = Array2D.init rowCount colCount (fun _ _ -> false)
+let initialScreen = Array2D.create rowCount colCount false
 
 let getTransform (screen: bool[,]) =
     function

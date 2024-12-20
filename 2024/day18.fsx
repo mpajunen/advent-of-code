@@ -15,7 +15,7 @@ let getPathLength bytes =
     let getAdjacent =
         bytes |> Set |> getMaze |> Grid.adjacentAvailablePositions ((=) '.')
 
-    let distances = Array2D.init size size (fun _ _ -> 999_999)
+    let distances = Array2D.create size size 999_999
 
     let rec findPath =
         function

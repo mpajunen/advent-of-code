@@ -39,7 +39,7 @@ let bioDiversityRating =
     >> Seq.mapi (fun i tile -> if tile = '#' then pown 2 i else 0)
     >> Seq.sum
 
-let emptyLevel = Array2D.init 5 5 (fun _ _ -> '.')
+let emptyLevel = Array2D.create 5 5 '.'
 let center = { X = 2; Y = 2 }
 
 let edges: (((Vec -> bool) * Vec * (Grid<char> -> char array)) list) =
