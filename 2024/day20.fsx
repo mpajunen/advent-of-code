@@ -5,45 +5,31 @@
 
 open Vec2
 
-let buildPath (maze: char[,]) =
-    let start = maze |> Grid.findKey ((=) 'S')
-
+let buildPath maze =
     let getAdjacent = Grid.adjacentAvailablePositions ((<>) '#') maze
 
     let rec findPath path position =
-        let previous = List.head path
-
-        let next = getAdjacent position |> List.tryFind (fun p -> p <> previous)
-
-        match next with
+        match position |> getAdjacent |> List.tryFind (fun p -> Some p <> List.tryHead path) with
         | Some p -> findPath (position :: path) p
         | None -> position :: path
 
-    getAdjacent start |> List.head |> findPath [ start ] |> List.rev
+    maze |> Grid.findKey ((=) 'S') |> findPath [] |> List.rev |> List.indexed
 
-let findCheats timeLimit path =
-    let costs = path |> List.indexed |> List.map (fun (i, p) -> p, i) |> Map
-
-    let getPositionCheats position =
-        let baseCost = Map.find position costs
-
+let getCheatCount timeLimit path =
+    let getPositionCheatCount (baseCost, from) =
         path
-        |> List.filter (fun p -> Vec.manhattan p position <= timeLimit)
-        |> List.choose (fun p ->
-            let distance = Vec.manhattan p position
-            let cost = Map.find p costs
-            let saved = cost - distance - baseCost
+        |> List.sumBy (fun (cost, p) ->
+            let distance = Vec.manhattan from p
+            let saved = cost - baseCost - distance
 
-            if saved >= 100 then Some(saved) else None)
+            if distance <= timeLimit && saved >= 100 then 1 else 0)
 
-    path |> List.collect getPositionCheats
+    path |> List.sumBy getPositionCheatCount
 
 DayUtils.runDay (fun input ->
-    let maze = input |> Grid.fromRows
+    let path = input |> Grid.fromRows |> buildPath
 
-    let path = maze |> buildPath
-
-    let result1 = path |> findCheats 2 |> List.length
-    let result2 = path |> findCheats 20 |> List.length
+    let result1 = path |> getCheatCount 2
+    let result2 = path |> getCheatCount 20
 
     result1, result2, 1409, 1012821)
