@@ -40,7 +40,7 @@ let solve (input: string array) =
     let costs = int input[0] |> getCosts
 
     let result1 = costs[39, 31]
-    let result2 = costs |> Grid.countOf (fun c -> c > 0 && c <= 50)
+    let result2 = costs |> Grid.countOf (fun c -> c >= 0 && c <= 50)
 
     result1, result2, 96, 141
 
