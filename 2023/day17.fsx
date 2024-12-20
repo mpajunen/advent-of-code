@@ -21,7 +21,7 @@ let getCosts (map: Grid<int>) minMove maxMove =
           X = Array2D.length2 map - 1 }
 
     let costs = Dictionary()
-    let front = SortedSet() // Priority queue, sort of
+    let front = PriorityQueue()
     let mutable pathCost = LARGE
 
     let getPreviousCost crucible =
@@ -36,7 +36,7 @@ let getCosts (map: Grid<int>) minMove maxMove =
     let addPosition (crucible, cost) =
         if cost < getPreviousCost crucible then
             costs[crucible] <- cost
-            front.Add(getPriority crucible + cost, crucible) |> ignore
+            front.Enqueue(crucible, getPriority crucible + cost)
 
         if crucible.Position = goal && cost < pathCost then
             pathCost <- cost
@@ -57,10 +57,7 @@ let getCosts (map: Grid<int>) minMove maxMove =
     startingPositions |> List.iter addPosition
 
     while front.Count > 0 do
-        let item = front.Min
-        front.Remove item |> ignore
-
-        let _, crucible = item
+        let crucible = front.Dequeue()
 
         if costs[crucible] < pathCost then
             crucible |> getPossibleMoves |> List.iter addPosition

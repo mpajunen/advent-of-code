@@ -3,6 +3,8 @@
 #load "../fs-common/DayUtils.fs"
 #load "../fs-common/Vec2.fs"
 
+open System.Collections.Generic
+
 open Vec2
 
 type Side =
@@ -136,10 +138,12 @@ let targetLevel level (portal: Portal) =
 let fastestRecursiveRoute (routes: Routes) =
     let mutable visited = Set.empty
 
-    let mutable frontier =
-        [ { Portal = { Name = START; Side = Outer }
-            Level = 0 },
-          0 ]
+    let start =
+        { Portal = { Name = START; Side = Outer }
+          Level = 0 }
+
+    let frontier = PriorityQueue()
+    frontier.Enqueue((start, 0), 0)
 
     let mutable candidate = 999_999
 
@@ -158,7 +162,7 @@ let fastestRecursiveRoute (routes: Routes) =
                 None)
 
     let rec findRoute () =
-        let current, distance = List.head frontier
+        let current, distance = frontier.Dequeue()
 
         if distance > candidate then
             candidate
@@ -167,9 +171,8 @@ let fastestRecursiveRoute (routes: Routes) =
 
             findRoute ()
         else
-            let nextPositions = findNextPositions current distance
-
-            frontier <- List.tail frontier @ nextPositions |> List.sortBy snd
+            for next in findNextPositions current distance do
+                frontier.Enqueue(next, snd next)
 
             findRoute ()
 

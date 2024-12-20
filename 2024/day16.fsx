@@ -27,19 +27,17 @@ let getRoutes maze =
         getStates next >> List.filter (fun (r, _) -> Grid.get maze r.Position <> '#')
 
     let start = maze |> Grid.findKey ((=) 'S')
-    let mutable frontier = [ { Position = start; Facing = Dir.Right }, 0 ]
+    let frontier = PriorityQueue()
+    frontier.Enqueue(({ Position = start; Facing = Dir.Right }, 0), 0)
 
-    while frontier.Length > 0 do
-        let reindeer, points = frontier |> List.head
+    while frontier.Count > 0 do
+        let reindeer, points = frontier.Dequeue()
 
-        frontier <- frontier |> List.tail
-
-        match routes.TryGetValue reindeer with
-        | true, p when p <= points -> ()
-        | _ ->
+        if not <| routes.ContainsKey reindeer then
             routes[reindeer] <- points
 
-            frontier <- (reindeer, points) |> getNext |> (@) frontier |> List.sortBy snd
+            for next in getNext (reindeer, points) do
+                frontier.Enqueue(next, snd next)
 
     routes
 
