@@ -16,15 +16,13 @@ let getNext =
     |> List.reduce (>>)
 
 let getSecrets secret =
-    [ 1..2000 ] |> List.scan (fun s _ -> getNext s) secret
-
-let keyCap = 100_000_000L
+    [| 1..2000 |] |> Array.scan (fun s _ -> getNext s) secret
 
 let modulo n m = (n % m + m) % m
 
-let nextKey key n = modulo (key * 100L + n) keyCap
+let nextKey key n = modulo (key * 100L + n) 100_000_000L
 
-let getSequences (secrets: int64 list) =
+let getSequences (secrets: int64 array) =
     let seqs = Array.create secrets.Length (0L, 0L)
 
     let mutable key = 0L
@@ -52,11 +50,9 @@ let getCounts allSecrets =
     counts
 
 DayUtils.runDay (fun input ->
-    let initial = input |> Array.map int64
+    let allSecrets = input |> Array.map (int64 >> getSecrets)
 
-    let allSecrets = initial |> Array.map getSecrets
-
-    let result1 = allSecrets |> Array.sumBy List.last
+    let result1 = allSecrets |> Array.sumBy Array.last
     let result2 = allSecrets |> getCounts |> _.Values |> Seq.max
 
     result1, result2, 16619522798L, 1854L)
