@@ -20,7 +20,7 @@ DayUtils.runDay (fun input ->
     let locks, keys = all |> Array.partition fst
 
     let result1 =
-        locks
-        |> Array.sumBy (fun (_, l) -> keys |> Array.sumBy (fun (_, k) -> if fitsLock l k then 1 else 0))
+        Array.allPairs locks keys
+        |> Array.sumBy (fun ((_, l), (_, k)) -> if fitsLock l k then 1 else 0)
 
     result1, (), 3162, ())

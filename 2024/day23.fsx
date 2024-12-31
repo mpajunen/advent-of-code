@@ -3,7 +3,7 @@
 #load "../fs-common/DayUtils.fs"
 
 let parseRow (row: string) =
-    row.Split "-" |> fun c -> if c[0] < c[1] then c[0], c[1] else c[1], c[0]
+    row.Split "-" |> Array.sort |> (fun c -> c[0], c[1])
 
 type Graph = Map<string, Set<string>>
 
@@ -23,30 +23,35 @@ let getGraph connections =
     |> Array.map (fun c -> c, if grouped.ContainsKey c then grouped[c] else Set.empty)
     |> Map
 
-let getOptions (graph: Graph) (clique, remaining) =
+let getRemaining (graph: Graph) =
+    function
+    | [] -> graph.Keys |> Seq.toList
+    | latest :: _ -> graph[latest] |> Set.toList
+
+let getOptions (graph: Graph) clique =
     let canAdd computer =
         clique |> List.forall (fun c -> graph[c].Contains computer)
 
-    let options = remaining |> List.filter canAdd
-
-    options |> List.mapi (fun i computer -> computer :: clique, options[i + 1 ..])
+    getRemaining graph clique
+    |> List.filter canAdd
+    |> List.map (fun computer -> computer :: clique)
 
 let getTriplets (graph: Graph) =
-    let rec find (clique, remaining) =
+    let rec find clique =
         if List.length clique = 3 then
             [ clique ]
         else
-            getOptions graph (clique, remaining) |> List.collect find
+            getOptions graph clique |> List.collect find
 
-    find ([], graph.Keys |> Seq.toList)
+    find []
 
 let getLargest (graph: Graph) =
-    let rec find (clique, remaining) =
-        match getOptions graph (clique, remaining) with
+    let rec find clique =
+        match getOptions graph clique with
         | [] -> clique
         | options -> options |> List.map find |> Seq.maxBy Seq.length
 
-    find ([], graph.Keys |> Seq.toList) |> List.rev
+    find [] |> List.rev
 
 let hasTStart = List.exists (fun (t: string) -> t.StartsWith "t")
 
