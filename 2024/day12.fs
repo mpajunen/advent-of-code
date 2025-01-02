@@ -37,13 +37,14 @@ let dirSideCount dirTiles =
 // Count sides of region one direction at a time
 let sideCount = List.groupBy snd >> List.sumBy (snd >> List.map fst >> dirSideCount)
 
-let solve = DayUtils.solveDay (fun input ->
-    let regions = input |> Grid.fromRows |> getRegions
+let solve =
+    DayUtils.solveDay (fun input ->
+        let regions = input |> Grid.fromRows |> getRegions
 
-    let sizes = regions |> List.map List.length
-    let fences = regions |> List.map regionFences
+        let sizes = regions |> List.map List.length
+        let fences = regions |> List.map regionFences
 
-    let result1 = fences |> List.map List.length |> List.map2 (*) sizes |> List.sum
-    let result2 = fences |> List.map sideCount |> List.map2 (*) sizes |> List.sum
+        let result1 = fences |> List.map List.length |> List.map2 (*) sizes |> List.sum
+        let result2 = fences |> List.map sideCount |> List.map2 (*) sizes |> List.sum
 
-    result1, result2, 1363484, 838988)
+        result1, result2, 1363484, 838988)

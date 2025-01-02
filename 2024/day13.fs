@@ -50,10 +50,11 @@ let fixTarget m =
             { X = m.Target.X + extraPosition
               Y = m.Target.Y + extraPosition } }
 
-let solve = DayUtils.solveDay (fun input ->
-    let machines = input |> Array.chunkBySize 4 |> Array.map parseMachine
+let solve =
+    DayUtils.solveDay (fun input ->
+        let machines = input |> Array.chunkBySize 4 |> Array.map parseMachine
 
-    let result1 = machines |> Array.sumBy machineCost
-    let result2 = machines |> Array.sumBy (fixTarget >> machineCost)
+        let result1 = machines |> Array.sumBy machineCost
+        let result2 = machines |> Array.sumBy (fixTarget >> machineCost)
 
-    result1, result2, 29023L, 96787395375634L)
+        result1, result2, 29023L, 96787395375634L)

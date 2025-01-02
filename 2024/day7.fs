@@ -17,13 +17,14 @@ let isValid operators (target, numbers) =
 
     numbers |> check
 
-let solve = DayUtils.solveDay (fun input ->
-    let equations = input |> Array.map (Input.parseAllLongs >> fun x -> x[0], x[1..])
+let solve =
+    DayUtils.solveDay (fun input ->
+        let equations = input |> Array.map (Input.parseAllLongs >> fun x -> x[0], x[1..])
 
-    let valid, invalid = equations |> Array.partition (isValid [ (+); (*) ])
-    let valid2 = invalid |> Array.filter (isValid [ (+); (*); concat ])
+        let valid, invalid = equations |> Array.partition (isValid [ (+); (*) ])
+        let valid2 = invalid |> Array.filter (isValid [ (+); (*); concat ])
 
-    let result1 = valid |> Array.sumBy fst
-    let result2 = valid2 |> Array.sumBy fst |> (+) result1
+        let result1 = valid |> Array.sumBy fst
+        let result2 = valid2 |> Array.sumBy fst |> (+) result1
 
-    result1, result2, 1620690235709L, 145397611075341L)
+        result1, result2, 1620690235709L, 145397611075341L)

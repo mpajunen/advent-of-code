@@ -18,10 +18,11 @@ let score unique grid =
 
     grid |> Grid.keys |> Seq.sumBy tileScore
 
-let solve = DayUtils.solveDay (fun input ->
-    let grid = input |> Grid.fromRows |> Array2D.map (string >> int)
+let solve =
+    DayUtils.solveDay (fun input ->
+        let grid = input |> Grid.fromRows |> Array2D.map (string >> int)
 
-    let result1 = grid |> score true
-    let result2 = grid |> score false
+        let result1 = grid |> score true
+        let result2 = grid |> score false
 
-    result1, result2, 574, 1238)
+        result1, result2, 574, 1238)

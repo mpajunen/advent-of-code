@@ -60,10 +60,11 @@ let rec checksum index =
 let compactChecksum allowSplit =
     Array.mapi buildBlock >> compact allowSplit >> Array.toList >> checksum 0
 
-let solve = DayUtils.solveDay (fun input ->
-    let blockSizes = input[0].ToCharArray() |> Array.map (string >> int)
+let solve =
+    DayUtils.solveDay (fun input ->
+        let blockSizes = input[0].ToCharArray() |> Array.map (string >> int)
 
-    let result1 = blockSizes |> compactChecksum true
-    let result2 = blockSizes |> compactChecksum false
+        let result1 = blockSizes |> compactChecksum true
+        let result2 = blockSizes |> compactChecksum false
 
-    result1, result2, 6241633730082L, 6265268809555L)
+        result1, result2, 6241633730082L, 6265268809555L)

@@ -53,10 +53,11 @@ let getLargest (graph: Graph) =
 
 let hasTStart = List.exists (fun (t: string) -> t.StartsWith "t")
 
-let solve = DayUtils.solveDay (fun input ->
-    let graph = input |> Array.map parseRow |> getGraph
+let solve =
+    DayUtils.solveDay (fun input ->
+        let graph = input |> Array.map parseRow |> getGraph
 
-    let result1 = graph |> getTriplets |> List.filter hasTStart |> List.length
-    let result2 = graph |> getLargest |> String.concat ","
+        let result1 = graph |> getTriplets |> List.filter hasTStart |> List.length
+        let result2 = graph |> getLargest |> String.concat ","
 
-    result1, result2, 1175, "bw,dr,du,ha,mm,ov,pj,qh,tz,uv,vq,wq,xw")
+        result1, result2, 1175, "bw,dr,du,ha,mm,ov,pj,qh,tz,uv,vq,wq,xw")

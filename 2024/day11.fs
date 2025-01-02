@@ -21,10 +21,11 @@ let countStone recur =
 
 let countStones = Func.memoizeRec2 countStone >> List.sumBy // :)
 
-let solve = DayUtils.solveDay (fun input ->
-    let initial = input[0] |> Input.parseAllLongs
+let solve =
+    DayUtils.solveDay (fun input ->
+        let initial = input[0] |> Input.parseAllLongs
 
-    let result1 = initial |> countStones 25
-    let result2 = initial |> countStones 75
+        let result1 = initial |> countStones 25
+        let result2 = initial |> countStones 75
 
-    result1, result2, 199986L, 236804088748754L)
+        result1, result2, 199986L, 236804088748754L)

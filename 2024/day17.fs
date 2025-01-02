@@ -82,10 +82,11 @@ let findInitialValue program registers =
 
     findDigits [] |> List.head |> getA
 
-let solve = DayUtils.solveDay (fun input ->
-    let registers, program = input |> parseComputer
+let solve =
+    DayUtils.solveDay (fun input ->
+        let registers, program = input |> parseComputer
 
-    let result1 = registers |> run program |> List.map string |> String.concat ","
-    let result2 = findInitialValue program registers
+        let result1 = registers |> run program |> List.map string |> String.concat ","
+        let result2 = findInitialValue program registers
 
-    result1, result2, "6,5,4,7,1,6,0,3,1", 106086382266778L)
+        result1, result2, "6,5,4,7,1,6,0,3,1", 106086382266778L)

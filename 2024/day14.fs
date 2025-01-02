@@ -54,10 +54,11 @@ let findChristmasTreeTime robots =
 
     findTime 1
 
-let solve = DayUtils.solveDay (fun input ->
-    let robots = input |> Array.map parseRobot
+let solve =
+    DayUtils.solveDay (fun input ->
+        let robots = input |> Array.map parseRobot
 
-    let result1 = robots |> getPositionsAfter 100 |> getSafetyFactor
-    let result2 = robots |> findChristmasTreeTime
+        let result1 = robots |> getPositionsAfter 100 |> getSafetyFactor
+        let result2 = robots |> findChristmasTreeTime
 
-    result1, result2, 232253028, 8179)
+        result1, result2, 232253028, 8179)

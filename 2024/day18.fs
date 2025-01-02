@@ -40,10 +40,11 @@ let binarySearch predicate low high =
 let getFirstBlockerIndex (bytes: Vec array) =
     binarySearch (fun i -> bytes[..i] |> getPathLength = 999_999) 1024 (bytes.Length - 1)
 
-let solve = DayUtils.solveDay (fun input ->
-    let bytes = input |> Array.map Vec.fromString
+let solve =
+    DayUtils.solveDay (fun input ->
+        let bytes = input |> Array.map Vec.fromString
 
-    let result1 = bytes[..1024] |> getPathLength
-    let result2 = bytes |> getFirstBlockerIndex |> (fun index -> bytes[index].toString)
+        let result1 = bytes[..1024] |> getPathLength
+        let result2 = bytes |> getFirstBlockerIndex |> (fun index -> bytes[index].toString)
 
-    result1, result2, 384, "36,10")
+        result1, result2, 384, "36,10")

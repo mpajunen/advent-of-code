@@ -23,10 +23,11 @@ let getCheatCount timeLimit path =
 
     path |> List.sumBy getPositionCheatCount
 
-let solve = DayUtils.solveDay (fun input ->
-    let path = input |> Grid.fromRows |> buildPath
+let solve =
+    DayUtils.solveDay (fun input ->
+        let path = input |> Grid.fromRows |> buildPath
 
-    let result1 = path |> getCheatCount 2
-    let result2 = path |> getCheatCount 20
+        let result1 = path |> getCheatCount 2
+        let result2 = path |> getCheatCount 20
 
-    result1, result2, 1409, 1012821)
+        result1, result2, 1409, 1012821)

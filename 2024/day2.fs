@@ -13,10 +13,11 @@ let dampenedOptions level =
 let isSafeDampened level =
     isSafe level || level |> dampenedOptions |> Seq.exists isSafe
 
-let solve = DayUtils.solveDay (fun input ->
-    let levels = input |> Array.map Input.parseAllInts
+let solve =
+    DayUtils.solveDay (fun input ->
+        let levels = input |> Array.map Input.parseAllInts
 
-    let result1 = levels |> Array.filter isSafe |> Array.length
-    let result2 = levels |> Array.filter isSafeDampened |> Array.length
+        let result1 = levels |> Array.filter isSafe |> Array.length
+        let result2 = levels |> Array.filter isSafeDampened |> Array.length
 
-    result1, result2, 402, 455)
+        result1, result2, 402, 455)

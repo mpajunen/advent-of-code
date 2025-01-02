@@ -31,11 +31,12 @@ let pairHarmonicNodes grid (a, b) =
 let getAntinodeCount getForPair =
     Seq.collect getForPair >> Seq.distinct >> Seq.length
 
-let solve = DayUtils.solveDay (fun input ->
-    let grid = input |> Grid.fromRows
-    let antennaPairs = grid |> getAntennas |> getAntennaPairs
+let solve =
+    DayUtils.solveDay (fun input ->
+        let grid = input |> Grid.fromRows
+        let antennaPairs = grid |> getAntennas |> getAntennaPairs
 
-    let result1 = antennaPairs |> getAntinodeCount (pairBasicNodes grid)
-    let result2 = antennaPairs |> getAntinodeCount (pairHarmonicNodes grid)
+        let result1 = antennaPairs |> getAntinodeCount (pairBasicNodes grid)
+        let result2 = antennaPairs |> getAntinodeCount (pairHarmonicNodes grid)
 
-    result1, result2, 413, 1417)
+        result1, result2, 413, 1417)

@@ -37,10 +37,11 @@ let gridMatches patterns grid =
 
     grid |> Grid.keys |> Seq.sumBy tileMatches
 
-let solve = DayUtils.solveDay (fun input ->
-    let grid = input |> Grid.fromRows
+let solve =
+    DayUtils.solveDay (fun input ->
+        let grid = input |> Grid.fromRows
 
-    let result1 = grid |> gridMatches xmasPatterns
-    let result2 = grid |> gridMatches masXPatterns
+        let result1 = grid |> gridMatches xmasPatterns
+        let result2 = grid |> gridMatches masXPatterns
 
-    result1, result2, 2571, 1992)
+        result1, result2, 2571, 1992)

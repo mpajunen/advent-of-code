@@ -11,15 +11,16 @@ let getOptionCount (patterns, patternMaxLength) (design: string) =
 
     counts[design.Length]
 
-let solve = DayUtils.solveDay (fun input ->
-    let patterns =
-        input[0].Split ", " |> fun p -> Set p, p |> Array.map String.length |> Array.max
+let solve =
+    DayUtils.solveDay (fun input ->
+        let patterns =
+            input[0].Split ", " |> fun p -> Set p, p |> Array.map String.length |> Array.max
 
-    let designs = input[2..]
+        let designs = input[2..]
 
-    let counts = designs |> Array.map (getOptionCount patterns)
+        let counts = designs |> Array.map (getOptionCount patterns)
 
-    let result1 = counts |> Array.filter (fun c -> c > 0) |> Array.length
-    let result2 = counts |> Array.sum
+        let result1 = counts |> Array.filter (fun c -> c > 0) |> Array.length
+        let result2 = counts |> Array.sum
 
-    result1, result2, 247, 692596560138745L)
+        result1, result2, 247, 692596560138745L)

@@ -87,8 +87,9 @@ let getMinComplexity depth input =
     |> Array.zip input
     |> Array.sumBy complexity
 
-let solve = DayUtils.solveDay (fun input ->
-    let result1 = input |> getMinComplexity 2
-    let result2 = input |> getMinComplexity 25
+let solve =
+    DayUtils.solveDay (fun input ->
+        let result1 = input |> getMinComplexity 2
+        let result2 = input |> getMinComplexity 25
 
-    result1, result2, 177814, 220493992841852L)
+        result1, result2, 177814, 220493992841852L)

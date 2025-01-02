@@ -30,13 +30,14 @@ let findBlockPositions map =
 
 let getPositions = List.pairwise >> List.collect (Line.points) >> List.distinct
 
-let solve = DayUtils.solveDay (fun input ->
-    let map = input |> Grid.fromRows
+let solve =
+    DayUtils.solveDay (fun input ->
+        let map = input |> Grid.fromRows
 
-    let corners = moveInside map None |> fst |> List.map _.Position
-    let positions = corners |> getPositions
+        let corners = moveInside map None |> fst |> List.map _.Position
+        let positions = corners |> getPositions
 
-    let result1 = positions |> List.length
-    let result2 = positions |> findBlockPositions map |> List.length
+        let result1 = positions |> List.length
+        let result2 = positions |> findBlockPositions map |> List.length
 
-    result1, result2, 5177, 1686)
+        result1, result2, 5177, 1686)

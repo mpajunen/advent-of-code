@@ -59,13 +59,14 @@ let getBestPlaces finish (routes: Dictionary<Actor, int>) =
 
     finish |> List.collect getPaths |> List.distinct
 
-let solve = DayUtils.solveDay (fun input ->
-    let maze = input |> Grid.fromRows
+let solve =
+    DayUtils.solveDay (fun input ->
+        let maze = input |> Grid.fromRows
 
-    let routes = maze |> getRoutes
-    let finish = routes |> getFinish maze
+        let routes = maze |> getRoutes
+        let finish = routes |> getFinish maze
 
-    let result1 = snd finish[0]
-    let result2 = getBestPlaces finish routes |> List.length
+        let result1 = snd finish[0]
+        let result2 = getBestPlaces finish routes |> List.length
 
-    result1, result2, 114476, 508)
+        result1, result2, 114476, 508)

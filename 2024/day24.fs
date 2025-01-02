@@ -132,12 +132,13 @@ let rec findInvalidGates gates =
 
         [ a; b ] @ findInvalidGates (swap gates a b)
 
-let solve = DayUtils.solveDay (fun input ->
-    let splitAt = input |> Array.findIndex ((=) "")
-    let initial = input[0 .. splitAt - 1] |> Array.map parseInitial |> Map
-    let gates = input[splitAt + 1 ..] |> Array.map parseGate |> Map
+let solve =
+    DayUtils.solveDay (fun input ->
+        let splitAt = input |> Array.findIndex ((=) "")
+        let initial = input[0 .. splitAt - 1] |> Array.map parseInitial |> Map
+        let gates = input[splitAt + 1 ..] |> Array.map parseGate |> Map
 
-    let result1 = getOutDecimal initial gates
-    let result2 = findInvalidGates gates |> List.sort |> String.concat ","
+        let result1 = getOutDecimal initial gates
+        let result2 = findInvalidGates gates |> List.sort |> String.concat ","
 
-    result1, result2, 55114892239566L, "cdj,dhm,gfm,mrb,qjd,z08,z16,z32")
+        result1, result2, 55114892239566L, "cdj,dhm,gfm,mrb,qjd,z08,z16,z32")

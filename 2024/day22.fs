@@ -47,10 +47,11 @@ let getCounts allSecrets =
 
     counts
 
-let solve = DayUtils.solveDay (fun input ->
-    let allSecrets = input |> Array.map (int64 >> getSecrets)
+let solve =
+    DayUtils.solveDay (fun input ->
+        let allSecrets = input |> Array.map (int64 >> getSecrets)
 
-    let result1 = allSecrets |> Array.sumBy Array.last
-    let result2 = allSecrets |> getCounts |> _.Values |> Seq.max
+        let result1 = allSecrets |> Array.sumBy Array.last
+        let result2 = allSecrets |> getCounts |> _.Values |> Seq.max
 
-    result1, result2, 16619522798L, 1854L)
+        result1, result2, 16619522798L, 1854L)

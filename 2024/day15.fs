@@ -58,15 +58,16 @@ let scaleTile =
 
 let scaleMap = Array.map (Seq.map scaleTile >> String.concat "")
 
-let solve = DayUtils.solveDay (fun input ->
-    let splitAt = input |> Array.findIndex ((=) "")
-    let rawMap, rawMoves = input[.. splitAt - 1], input[splitAt + 1 ..]
+let solve =
+    DayUtils.solveDay (fun input ->
+        let splitAt = input |> Array.findIndex ((=) "")
+        let rawMap, rawMoves = input[.. splitAt - 1], input[splitAt + 1 ..]
 
-    let map = rawMap |> Grid.fromRows
-    let scaledMap = rawMap |> scaleMap |> Grid.fromRows
-    let moves = rawMoves |> String.concat "" |> Seq.map Move.findDir |> Seq.toArray
+        let map = rawMap |> Grid.fromRows
+        let scaledMap = rawMap |> scaleMap |> Grid.fromRows
+        let moves = rawMoves |> String.concat "" |> Seq.map Move.findDir |> Seq.toArray
 
-    let result1 = makeMoves map moves |> boxGpsSum
-    let result2 = makeMoves scaledMap moves |> boxGpsSum
+        let result1 = makeMoves map moves |> boxGpsSum
+        let result2 = makeMoves scaledMap moves |> boxGpsSum
 
-    result1, result2, 1527563, 1521635)
+        result1, result2, 1527563, 1521635)
