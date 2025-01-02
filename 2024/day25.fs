@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day25
 
 open Vec2
 
@@ -14,7 +11,7 @@ let parsePattern (rows: string[]) =
 
 let fitsLock = Array.forall2 (fun l k -> l + k <= patternSize)
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let all = input |> Array.chunkBySize (patternSize + 1) |> Array.map parsePattern
 
     let locks, keys = all |> Array.partition fst

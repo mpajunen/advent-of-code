@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day4
 
 open Vec2
 
@@ -40,7 +37,7 @@ let gridMatches patterns grid =
 
     grid |> Grid.keys |> Seq.sumBy tileMatches
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let grid = input |> Grid.fromRows
 
     let result1 = grid |> gridMatches xmasPatterns

@@ -1,6 +1,7 @@
 module Program =
     let getSolver (year, day) =
         match year with
+        | 2024 -> Year2024.Year.solvers[day - 1]
         | _ -> failwith $"Invalid year: {year}"
 
     let runDay date =

@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day5
 
 let isValidUpdate rules =
     List.pairwise >> List.forall (fun pair -> Set.contains pair rules)
@@ -11,7 +8,7 @@ let sortUpdate rules =
 
 let middle (update: int list) = update[update.Length / 2]
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let splitAt = input |> Array.findIndex ((=) "")
     let parsed = input |> Array.map Input.parseAllInts
     let rules = parsed[0 .. splitAt - 1] |> Array.map (fun r -> r[0], r[1]) |> Set

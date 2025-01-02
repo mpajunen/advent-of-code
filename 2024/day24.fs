@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day24
 
 type Operation =
     | And
@@ -135,7 +132,7 @@ let rec findInvalidGates gates =
 
         [ a; b ] @ findInvalidGates (swap gates a b)
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let splitAt = input |> Array.findIndex ((=) "")
     let initial = input[0 .. splitAt - 1] |> Array.map parseInitial |> Map
     let gates = input[splitAt + 1 ..] |> Array.map parseGate |> Map

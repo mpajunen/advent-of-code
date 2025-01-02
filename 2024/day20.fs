@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day20
 
 open Vec2
 
@@ -26,7 +23,7 @@ let getCheatCount timeLimit path =
 
     path |> List.sumBy getPositionCheatCount
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let path = input |> Grid.fromRows |> buildPath
 
     let result1 = path |> getCheatCount 2

@@ -1,6 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
+module Year2024.Day23
 
 let parseRow (row: string) =
     row.Split "-" |> Array.sort |> (fun c -> c[0], c[1])
@@ -55,7 +53,7 @@ let getLargest (graph: Graph) =
 
 let hasTStart = List.exists (fun (t: string) -> t.StartsWith "t")
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let graph = input |> Array.map parseRow |> getGraph
 
     let result1 = graph |> getTriplets |> List.filter hasTStart |> List.length

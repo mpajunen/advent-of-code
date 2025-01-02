@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day16
 
 open System.Collections.Generic
 
@@ -62,7 +59,7 @@ let getBestPlaces finish (routes: Dictionary<Actor, int>) =
 
     finish |> List.collect getPaths |> List.distinct
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let maze = input |> Grid.fromRows
 
     let routes = maze |> getRoutes

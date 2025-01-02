@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day7
 
 let rec findMultiplier b multiplier =
     if multiplier > b then
@@ -20,7 +17,7 @@ let isValid operators (target, numbers) =
 
     numbers |> check
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let equations = input |> Array.map (Input.parseAllLongs >> fun x -> x[0], x[1..])
 
     let valid, invalid = equations |> Array.partition (isValid [ (+); (*) ])

@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day10
 
 open Vec2
 
@@ -21,7 +18,7 @@ let score unique grid =
 
     grid |> Grid.keys |> Seq.sumBy tileScore
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let grid = input |> Grid.fromRows |> Array2D.map (string >> int)
 
     let result1 = grid |> score true

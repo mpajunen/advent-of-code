@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day8
 
 open Vec2
 
@@ -34,7 +31,7 @@ let pairHarmonicNodes grid (a, b) =
 let getAntinodeCount getForPair =
     Seq.collect getForPair >> Seq.distinct >> Seq.length
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let grid = input |> Grid.fromRows
     let antennaPairs = grid |> getAntennas |> getAntennaPairs
 

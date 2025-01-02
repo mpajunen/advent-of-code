@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../fs-common/fs-common.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="day*.fs" />
+    <Compile Include="year.fs" />
+  </ItemGroup>
+</Project>

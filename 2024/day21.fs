@@ -1,8 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Func.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day21
 
 open Vec2
 
@@ -91,7 +87,7 @@ let getMinComplexity depth input =
     |> Array.zip input
     |> Array.sumBy complexity
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let result1 = input |> getMinComplexity 2
     let result2 = input |> getMinComplexity 25
 

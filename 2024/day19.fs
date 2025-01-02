@@ -1,6 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
+module Year2024.Day19
 
 let getOptionCount (patterns, patternMaxLength) (design: string) =
     let counts = Array.create (design.Length + 1) 0L
@@ -13,7 +11,7 @@ let getOptionCount (patterns, patternMaxLength) (design: string) =
 
     counts[design.Length]
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let patterns =
         input[0].Split ", " |> fun p -> Set p, p |> Array.map String.length |> Array.max
 

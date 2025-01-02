@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day12
 
 open Vec2
 
@@ -40,7 +37,7 @@ let dirSideCount dirTiles =
 // Count sides of region one direction at a time
 let sideCount = List.groupBy snd >> List.sumBy (snd >> List.map fst >> dirSideCount)
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let regions = input |> Grid.fromRows |> getRegions
 
     let sizes = regions |> List.map List.length

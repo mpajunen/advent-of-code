@@ -1,8 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Func.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day11
 
 let getDigitCount =
     function
@@ -25,7 +21,7 @@ let countStone recur =
 
 let countStones = Func.memoizeRec2 countStone >> List.sumBy // :)
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let initial = input[0] |> Input.parseAllLongs
 
     let result1 = initial |> countStones 25

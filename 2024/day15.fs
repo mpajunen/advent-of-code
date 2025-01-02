@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day15
 
 open Vec2
 
@@ -61,7 +58,7 @@ let scaleTile =
 
 let scaleMap = Array.map (Seq.map scaleTile >> String.concat "")
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let splitAt = input |> Array.findIndex ((=) "")
     let rawMap, rawMoves = input[.. splitAt - 1], input[splitAt + 1 ..]
 

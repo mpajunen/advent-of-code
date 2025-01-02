@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day3
 
 let rec getMults enabled =
     function
@@ -12,7 +9,7 @@ let rec getMults enabled =
         | _ -> (int a * int b, enabled) :: getMults enabled rest
     | _ -> []
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let mults = input |> String.concat "" |> getMults true
 
     let result1 = mults |> List.sumBy fst

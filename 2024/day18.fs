@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day18
 
 open Vec2
 
@@ -43,7 +40,7 @@ let binarySearch predicate low high =
 let getFirstBlockerIndex (bytes: Vec array) =
     binarySearch (fun i -> bytes[..i] |> getPathLength = 999_999) 1024 (bytes.Length - 1)
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let bytes = input |> Array.map Vec.fromString
 
     let result1 = bytes[..1024] |> getPathLength

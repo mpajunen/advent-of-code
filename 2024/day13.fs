@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day13
 
 type Vec = { X: int64; Y: int64 }
 
@@ -53,7 +50,7 @@ let fixTarget m =
             { X = m.Target.X + extraPosition
               Y = m.Target.Y + extraPosition } }
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let machines = input |> Array.chunkBySize 4 |> Array.map parseMachine
 
     let result1 = machines |> Array.sumBy machineCost

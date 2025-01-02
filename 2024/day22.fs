@@ -1,6 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
+module Year2024.Day22
 
 open System.Collections.Generic
 
@@ -49,7 +47,7 @@ let getCounts allSecrets =
 
     counts
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let allSecrets = input |> Array.map (int64 >> getSecrets)
 
     let result1 = allSecrets |> Array.sumBy Array.last

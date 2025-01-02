@@ -1,6 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
+module Year2024.Day9
 
 type File = { Id: int; Size: int }
 
@@ -62,7 +60,7 @@ let rec checksum index =
 let compactChecksum allowSplit =
     Array.mapi buildBlock >> compact allowSplit >> Array.toList >> checksum 0
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let blockSizes = input[0].ToCharArray() |> Array.map (string >> int)
 
     let result1 = blockSizes |> compactChecksum true

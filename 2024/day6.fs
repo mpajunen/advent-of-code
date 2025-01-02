@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day6
 
 open Vec2
 
@@ -33,7 +30,7 @@ let findBlockPositions map =
 
 let getPositions = List.pairwise >> List.collect (Line.points) >> List.distinct
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let map = input |> Grid.fromRows
 
     let corners = moveInside map None |> fst |> List.map _.Position

@@ -6,6 +6,7 @@
   </PropertyGroup>
   <ItemGroup>
       <ProjectReference Include="fs-common/fs-common.fsproj" />
+      <ProjectReference Include="2024/fs-2024.fsproj" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="2016/Assembunny.fs" />

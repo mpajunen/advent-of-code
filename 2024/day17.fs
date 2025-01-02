@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day17
 
 type Registers =
     { mutable A: int64
@@ -85,7 +82,7 @@ let findInitialValue program registers =
 
     findDigits [] |> List.head |> getA
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let registers, program = input |> parseComputer
 
     let result1 = registers |> run program |> List.map string |> String.concat ","

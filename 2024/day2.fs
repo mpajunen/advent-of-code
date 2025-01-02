@@ -1,7 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day2
 
 let isSafe level =
     let changes = level |> List.pairwise |> List.map (fun (a, b) -> b - a)
@@ -16,7 +13,7 @@ let dampenedOptions level =
 let isSafeDampened level =
     isSafe level || level |> dampenedOptions |> Seq.exists isSafe
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let levels = input |> Array.map Input.parseAllInts
 
     let result1 = levels |> Array.filter isSafe |> Array.length

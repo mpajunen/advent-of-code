@@ -1,12 +1,9 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
+module Year2024.Day1
 
 let countOf value =
     Map.tryFind value >> Option.defaultValue 0
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let numbers = input |> Array.map Input.parseAllInts |> array2D
 
     let left = numbers[*, 0] |> Array.sort

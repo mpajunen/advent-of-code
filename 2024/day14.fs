@@ -1,8 +1,4 @@
-#!/usr/bin/env -S dotnet fsi
-
-#load "../fs-common/DayUtils.fs"
-#load "../fs-common/Input.fs"
-#load "../fs-common/Vec2.fs"
+module Year2024.Day14
 
 open Vec2
 
@@ -58,7 +54,7 @@ let findChristmasTreeTime robots =
 
     findTime 1
 
-DayUtils.runDay (fun input ->
+let solve = DayUtils.solveDay (fun input ->
     let robots = input |> Array.map parseRobot
 
     let result1 = robots |> getPositionsAfter 100 |> getSafetyFactor
