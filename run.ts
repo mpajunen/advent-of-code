@@ -1,4 +1,5 @@
-import { readFileSync } from 'fs'
+import { execFileSync } from 'node:child_process'
+import { existsSync, readFileSync } from 'node:fs'
 import { List } from './common'
 
 type Answer = number | string
@@ -19,10 +20,7 @@ const printResult = (result: Answer, expected: Answer | undefined) => {
   }
 }
 
-const runDay = async (
-  day = new Date().getDate(),
-  year = new Date().getFullYear(),
-) => {
+const runTsDay = async (day: number, year: number) => {
   const input = readDayRows(year, day)
   const code = await getCode(year, day)
 
@@ -30,6 +28,31 @@ const runDay = async (
 
   printResult(result1, expected1)
   printResult(result2, expected2)
+}
+
+const runFsDay = async (day: number, year: number) => {
+  const output = execFileSync(`./${year}/day${day}.fsx`)
+
+  console.log(output.toString())
+}
+
+const solutionTypes = {
+  fsx: runFsDay,
+  js: runTsDay,
+  ts: runTsDay,
+}
+
+const runDay = async (
+  day = new Date().getDate(),
+  year = new Date().getFullYear(),
+) => {
+  for (const [type, run] of Object.entries(solutionTypes)) {
+    if (existsSync(`./${year}/day${day}.${type}`)) {
+      return run(day, year)
+    }
+  }
+
+  console.error('Solution not found!')
 }
 
 const runYear = async (year = new Date().getFullYear()) => {
