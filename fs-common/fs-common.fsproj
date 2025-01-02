@@ -1,0 +1,12 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="DayUtils.fs" />
+    <Compile Include="Func.fs" />
+    <Compile Include="Hash.fs" />
+    <Compile Include="Input.fs" />
+    <Compile Include="Vec2.fs" />
+  </ItemGroup>
+</Project>

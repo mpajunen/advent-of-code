@@ -5,11 +5,9 @@
     <RootNamespace>advent_of_code</RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="fs-common/DayUtils.fs" />
-    <Compile Include="fs-common/Func.fs" />
-    <Compile Include="fs-common/Hash.fs" />
-    <Compile Include="fs-common/Input.fs" />
-    <Compile Include="fs-common/Vec2.fs" />
+      <ProjectReference Include="fs-common/fs-common.fsproj" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="2016/Assembunny.fs" />
     <Compile Include="2019/IntCode.fs" />
     <Compile Include="Program.fs" />
