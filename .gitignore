@@ -1,3 +1,5 @@
+/.vscode/
+
 # Python
 __pycache__/
 /venv/
@@ -7,5 +9,5 @@ __pycache__/
 
 # F#
 /.config/
-/.vscode/
+/bin/
 /obj/

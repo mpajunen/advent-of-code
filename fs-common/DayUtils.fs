@@ -2,7 +2,7 @@ module DayUtils
 
 open System
 
-let readInput year day =
+let readInput (year, day) =
     System.IO.Path.Combine(__SOURCE_DIRECTORY__, "..", sprintf "%d/input/day%d.txt" year day)
     |> System.IO.File.ReadAllLines
 
@@ -21,13 +21,11 @@ let extractParams () =
 
 type SolveDay<'A1, 'A2> = array<string> -> 'A1 * 'A2 * 'A1 * 'A2
 
-let runDay (solve: SolveDay<_, _>) =
+let solveDay (solve: SolveDay<_, _>) input =
     let stopwatch = new Diagnostics.Stopwatch()
     stopwatch.Start()
 
-    let year, day = extractParams ()
-
-    let result1, result2, expected1, expected2 = readInput year day |> solve
+    let result1, result2, expected1, expected2 = solve input
 
     stopwatch.Stop()
 
@@ -42,3 +40,6 @@ let runDay (solve: SolveDay<_, _>) =
         printfn "Expected %A in part 2, got %A!" expected2 result2
 
     printfn "Elapsed Time: %d milliseconds" stopwatch.ElapsedMilliseconds
+
+let runDay (solve: SolveDay<_, _>) =
+    extractParams () |> readInput |> solveDay solve
