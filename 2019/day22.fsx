@@ -16,26 +16,18 @@ let parseTechnique (row: string) : Technique =
     | "deal", "with" -> Deal(int parts[3])
     | _ -> failwith "Unknown shuffle"
 
-let applyTechnique (cards: int array) =
-    function
-    | Cut n ->
-        let cutIndex = if n < 0 then cards.Length + n else n
+let modulo a b = (a % b + b) % b
 
-        Array.append cards[cutIndex..] cards[.. cutIndex - 1]
-    | Deal n ->
-        cards
-        |> Array.mapi (fun i v -> (i * n) % cards.Length, v)
-        |> Array.sortBy fst
-        |> Array.map snd
-    | Reverse -> cards |> Array.rev
+let findIndexAfterTechnique cardCount n =
+    function
+    | Cut m -> modulo (n - m) cardCount
+    | Deal m -> modulo (n * m) cardCount
+    | Reverse -> modulo (n * -1 - 1) cardCount
 
 let solve (input: string array) =
-    let techniques = input |> Array.map parseTechnique
-    let cards = [| 0 .. 10_007 - 1 |]
+    let techniques = input |> Array.map parseTechnique |> Array.toList
 
-    let result1 =
-        techniques |> Array.fold applyTechnique cards |> Array.findIndex ((=) 2019)
-
+    let result1 = techniques |> List.fold (findIndexAfterTechnique 10_007) 2019
     let result2 = 0
 
     result1, result2, 6978, 0
