@@ -18,16 +18,24 @@ let parseTechnique (row: string) : Technique =
 
 let modulo a b = (a % b + b) % b
 
-let findIndexAfterTechnique cardCount n =
+type Operation =
+    { Mul: int64
+      Add: int64 }
+
+    static member inline apply modBase n op = modulo (n * op.Mul + op.Add) modBase
+
+let techniqueToOp =
     function
-    | Cut m -> modulo (n - m) cardCount
-    | Deal m -> modulo (n * m) cardCount
-    | Reverse -> modulo (n * -1L - 1L) cardCount
+    | Cut m -> { Mul = 1L; Add = -m }
+    | Deal m -> { Mul = m; Add = 0L }
+    | Reverse -> { Mul = -1L; Add = -1L }
 
 let solve (input: string array) =
     let techniques = input |> Array.map parseTechnique |> Array.toList
 
-    let result1 = techniques |> List.fold (findIndexAfterTechnique 10_007L) 2019L
+    let ops = techniques |> List.map techniqueToOp
+    let result1 = ops |> List.fold (Operation.apply 10_007L) 2019L
+
     let result2 = 0
 
     result1, result2, 6978L, 0
