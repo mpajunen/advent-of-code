@@ -11,11 +11,14 @@ let parseRow (row: string) =
 
 let rotate dial rotation = (dial + rotation) % SIZE
 
+// Signed integer XOR is non-negative if both have the same sign
+let sameSign x y = x ^^^ y >= 0
+
 let rotationPasses dial rotation =
     match dial + rotation with
-    | n when n > 0 -> n / SIZE + if dial < 0 then 1 else 0
-    | n when n < 0 -> -n / SIZE + if dial > 0 then 1 else 0
-    | _ -> 1
+    | 0 -> 1
+    | n ->
+        abs (n / SIZE) + if dial = 0 || sameSign dial n then 0 else 1
 
 let totalPasses (dial, passes) rotation =
     rotate dial rotation, passes + rotationPasses dial rotation
