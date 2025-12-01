@@ -7,7 +7,7 @@ let isSafe level =
     || changes |> List.forall (fun c -> c <= -1 && c >= -3)
 
 let dampenedOptions level =
-    { 0 .. List.length level - 1 }
+    seq { 0 .. List.length level - 1 }
     |> Seq.map (fun i -> level[.. i - 1] @ level[i + 1 ..])
 
 let isSafeDampened level =
