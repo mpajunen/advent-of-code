@@ -4,9 +4,9 @@ let START = 50
 let SIZE = 100
 
 let parseRow (row: string) =
-    match row[0], row[1..] with
-    | 'L', clicks -> -(clicks |> int)
-    | 'R', clicks -> clicks |> int
+    match row[0], row[1..] |> int with
+    | 'L', clicks -> -clicks
+    | 'R', clicks -> clicks
     | _ -> failwith $"Invalid row: {row}"
 
 let rotate dial rotation = (dial + rotation) % SIZE
@@ -18,7 +18,7 @@ let rotationPasses dial rotation =
     match dial + rotation with
     | 0 -> 1
     | n ->
-        abs (n / SIZE) + if dial = 0 || sameSign dial n then 0 else 1
+        abs n / SIZE + if dial = 0 || sameSign dial n then 0 else 1
 
 let totalPasses (dial, passes) rotation =
     rotate dial rotation, passes + rotationPasses dial rotation
