@@ -135,6 +135,9 @@ module Move =
     let adjacent (point: Vec) =
         Vec.unitsCardinal |> List.map ((+) point)
 
+    let adjacentAll (point: Vec) =
+        Vec.unitsAll |> List.map ((+) point)
+
 type Actor = { Position: Vec; Facing: Dir }
 
 module Actor =
@@ -236,6 +239,9 @@ module Grid =
 
     let tryGet (grid: Grid<'a>) (p: Vec) =
         if isWithin grid p then Some grid.[p.Y, p.X] else None
+
+    let adjacentAll (grid: Grid<'a>) (p: Vec) =
+        Move.adjacentAll p |> List.filter (isWithin grid) |> List.map (get grid)
 
     let adjacentPositions (grid: Grid<'a>) (p: Vec) =
         Move.adjacent p |> List.filter (isWithin grid)
