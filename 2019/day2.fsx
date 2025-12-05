@@ -23,7 +23,7 @@ let runModified (program: IntCode.Program) (input: int64 * int64) =
     program |> modifyProgram input |> runProgram
 
 let findInput (program: IntCode.Program) =
-    let inputRange = { 0L..99L }
+    let inputRange = seq { 0L..99L }
 
     allPairs inputRange inputRange
     |> Seq.find (fun pair -> runModified program pair = 19690720)
