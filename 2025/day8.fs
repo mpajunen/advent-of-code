@@ -22,7 +22,7 @@ type Connection =
       B: int
       DistanceSquared: int64 }
 
-let getShortestConnections (points: Vec[]) =
+let getConnections (points: Vec[]) =
     [ for i in 0 .. points.Length - 1 do
           for j in i + 1 .. points.Length - 1 do
               yield
@@ -30,9 +30,8 @@ let getShortestConnections (points: Vec[]) =
                     B = j
                     DistanceSquared = Vec.distanceSquared points[i] points[j] } ]
     |> List.sortBy _.DistanceSquared
-    |> List.take 1000
 
-let connectCircuits connections =
+let groupPoints connections =
     let mutable circuits = Array.init 1000 (fun n -> n)
 
     let connect connection =
@@ -43,19 +42,35 @@ let connectCircuits connections =
             if circuits[i] = bCircuit then
                 circuits[i] <- aCircuit
 
-    connections |> List.iter connect
+    let rec connectTillComplete =
+        function
+        | [] -> List.last connections // Dummy value for part 1
+        | next :: rest ->
+            connect next
 
-    circuits
+            if circuits |> Array.distinct |> Array.length = 1 then
+                next
+            else
+                connectTillComplete rest
+
+    let final = connections |> connectTillComplete
+
+    circuits, final
 
 let getCounts = Array.countBy id >> Array.map snd >> Array.sortDescending
 
 let combineLargest = getCounts >> Array.take 3 >> Array.reduce (*)
 
+let getConnectionCombo (points: Vec[]) connection =
+    points[connection.A].X * points[connection.B].X
+
 let solve =
     DayUtils.solveDay (fun input ->
         let points = input |> Array.map Vec.parse
 
-        let result1 = points |> getShortestConnections |> connectCircuits |> combineLargest
-        let result2 = 0L
+        let connections = getConnections points
 
-        result1, result2, 181584, 0L)
+        let result1 = connections |> List.take 1000 |> groupPoints |> fst |> combineLargest
+        let result2 = connections |> groupPoints |> snd |> getConnectionCombo points
+
+        result1, result2, 181584, 8465902405L)
