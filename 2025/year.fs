@@ -9,4 +9,5 @@ let solvers =
        Day4.solve
        Day5.solve
        Day6.solve
-       Day7.solve |]
+       Day7.solve
+       Day8.solve |]
