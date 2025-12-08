@@ -20,9 +20,8 @@ type Vec =
 let getConnections (points: Vec[]) =
     [ for i in 0 .. points.Length - 1 do
           for j in i + 1 .. points.Length - 1 do
-              yield (i, j), Vec.distanceSquared points[i] points[j] ]
-    |> List.sortBy snd
-    |> List.map fst
+              yield i, j ]
+    |> List.sortBy (fun (a, b) -> Vec.distanceSquared points[a] points[b])
 
 let groupPoints connections =
     let mutable circuits = Array.init 1000 (fun n -> n)
@@ -41,10 +40,9 @@ let groupPoints connections =
         | next :: rest ->
             connect next
 
-            if circuits |> Array.distinct |> Array.length = 1 then
-                next
-            else
-                connectTillComplete rest
+            match circuits |> Array.distinct |> Array.length with
+            | 1 -> next
+            | _ -> connectTillComplete rest
 
     circuits, connections |> connectTillComplete
 
