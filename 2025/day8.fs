@@ -17,26 +17,19 @@ type Vec =
 
         dx * dx + dy * dy + dz * dz
 
-type Connection =
-    { A: int
-      B: int
-      DistanceSquared: int64 }
-
 let getConnections (points: Vec[]) =
     [ for i in 0 .. points.Length - 1 do
           for j in i + 1 .. points.Length - 1 do
-              yield
-                  { A = i
-                    B = j
-                    DistanceSquared = Vec.distanceSquared points[i] points[j] } ]
-    |> List.sortBy _.DistanceSquared
+              yield (i, j), Vec.distanceSquared points[i] points[j] ]
+    |> List.sortBy snd
+    |> List.map fst
 
 let groupPoints connections =
     let mutable circuits = Array.init 1000 (fun n -> n)
 
-    let connect connection =
-        let aCircuit = circuits[connection.A]
-        let bCircuit = circuits[connection.B]
+    let connect (a, b) =
+        let aCircuit = circuits[a]
+        let bCircuit = circuits[b]
 
         for i in 0 .. circuits.Length - 1 do
             if circuits[i] = bCircuit then
@@ -53,16 +46,13 @@ let groupPoints connections =
             else
                 connectTillComplete rest
 
-    let final = connections |> connectTillComplete
-
-    circuits, final
+    circuits, connections |> connectTillComplete
 
 let getCounts = Array.countBy id >> Array.map snd >> Array.sortDescending
 
 let combineLargest = getCounts >> Array.take 3 >> Array.reduce (*)
 
-let getConnectionCombo (points: Vec[]) connection =
-    points[connection.A].X * points[connection.B].X
+let getConnectionCombo (points: Vec[]) (a, b) = points[a].X * points[b].X
 
 let solve =
     DayUtils.solveDay (fun input ->
