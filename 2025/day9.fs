@@ -22,7 +22,7 @@ let areaIntersects a b =
     && a.Max.Y >= b.Min.Y
 
 let noIntersects edges area =
-    edges |> Array.forall (areaIntersects area >> not)
+    edges |> Array.exists (areaIntersects area) |> not
 
 let getRectangles =
     Array.map toArea >> Array.distinct >> Array.sortByDescending areaSize
