@@ -11,8 +11,6 @@ let toArea (a, b) =
 let areaSize a =
     int64 (a.Max.X - a.Min.X + 1) * int64 (a.Max.Y - a.Min.Y + 1)
 
-let getLargestSize = Array.map areaSize >> Array.max
-
 let innerArea a =
     { Min = { X = a.Min.X + 1; Y = a.Min.Y + 1 }
       Max = { X = a.Max.X - 1; Y = a.Max.Y - 1 } }
@@ -26,16 +24,17 @@ let areaIntersects a b =
 let noIntersects edges area =
     edges |> Array.forall (areaIntersects area >> not)
 
+let getRectangles =
+    Array.map toArea >> Array.distinct >> Array.sortByDescending areaSize
+
 let solve =
     DayUtils.solveDay (fun input ->
         let tiles = input |> Array.map Vec.fromString
 
-        let rectangles = Array.allPairs tiles tiles |> Array.map toArea |> Array.distinct
+        let rectangles = Array.allPairs tiles tiles |> getRectangles
         let edges = Array.append tiles [| tiles[0] |] |> Array.pairwise |> Array.map toArea
 
-        let result1 = rectangles |> getLargestSize
-
-        let result2 =
-            rectangles |> Array.filter (innerArea >> noIntersects edges) |> getLargestSize
+        let result1 = rectangles[0] |> areaSize
+        let result2 = rectangles |> Array.find (innerArea >> noIntersects edges) |> areaSize
 
         result1, result2, 4767418746L, 1461987144L)
