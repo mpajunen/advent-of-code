@@ -28,6 +28,7 @@ let solve =
         let edges = Array.append tiles [| tiles[0] |] |> Array.pairwise |> Array.map toArea
 
         let result1 = rectangles[0] |> areaSize
+        // General solution would require checking that the area is actually inside the shape
         let result2 = rectangles |> Array.find (noIntersects edges) |> areaSize
 
         result1, result2, 4767418746L, 1461987144L)
