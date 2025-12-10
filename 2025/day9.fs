@@ -11,18 +11,11 @@ let toArea (a, b) =
 let areaSize a =
     int64 (a.Max.X - a.Min.X + 1) * int64 (a.Max.Y - a.Min.Y + 1)
 
-let innerArea a =
-    { Min = { X = a.Min.X + 1; Y = a.Min.Y + 1 }
-      Max = { X = a.Max.X - 1; Y = a.Max.Y - 1 } }
-
-let areaIntersects a b =
-    a.Min.X <= b.Max.X
-    && a.Max.X >= b.Min.X
-    && a.Min.Y <= b.Max.Y
-    && a.Max.Y >= b.Min.Y
+let intersectsInside a b =
+    a.Min.X < b.Max.X && a.Max.X > b.Min.X && a.Min.Y < b.Max.Y && a.Max.Y > b.Min.Y
 
 let noIntersects edges area =
-    edges |> Array.exists (areaIntersects area) |> not
+    edges |> Array.exists (intersectsInside area) |> not
 
 let getRectangles =
     Array.map toArea >> Array.distinct >> Array.sortByDescending areaSize
@@ -35,6 +28,6 @@ let solve =
         let edges = Array.append tiles [| tiles[0] |] |> Array.pairwise |> Array.map toArea
 
         let result1 = rectangles[0] |> areaSize
-        let result2 = rectangles |> Array.find (innerArea >> noIntersects edges) |> areaSize
+        let result2 = rectangles |> Array.find (noIntersects edges) |> areaSize
 
         result1, result2, 4767418746L, 1461987144L)
