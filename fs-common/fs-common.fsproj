@@ -3,6 +3,7 @@
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="Collection.fs" />
     <Compile Include="DayUtils.fs" />
     <Compile Include="Func.fs" />
     <Compile Include="Hash.fs" />

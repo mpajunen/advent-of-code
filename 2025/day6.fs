@@ -1,17 +1,5 @@
 module Year2025.Day6
 
-let splitOn (predicate: 'a -> bool) (source: 'a array) =
-    let loop item =
-        function
-        | [] -> [ [ item ] ]
-        | head :: tail ->
-            if predicate item then
-                [] :: head :: tail
-            else
-                (item :: head) :: tail
-
-    Array.foldBack loop source [] |> List.map List.toArray |> List.toArray
-
 let parseNumber = Array.filter ((<>) ' ') >> System.String >> int64
 
 let parseOperator =
@@ -30,7 +18,7 @@ let parseProblem (cols: char[][]) =
 let parseInput =
     array2D
     >> Vec2.Grid.cols
-    >> splitOn (Seq.forall ((=) ' '))
+    >> Collection.splitOn (Seq.forall ((=) ' '))
     >> Array.map parseProblem
 
 let solve =
