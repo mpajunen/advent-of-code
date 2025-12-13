@@ -9,16 +9,25 @@ let parseRegion =
 let parseInput input =
     let parts = input |> Collection.splitOn ((=) "")
 
-    parts |> Array.last |> Array.map parseRegion
+    parts[0 .. parts.Length - 2] |> Array.map (fun s -> s[1..] |> array2D), parts |> Array.last |> Array.map parseRegion
 
-// For some reason, the shapes don't actually matter :(
-let getRegionFitsBoxes (x, y, shapeCounts) =
-    List.sum shapeCounts <= (x / 3) * (y / 3)
+let getBoxFit (x, y, counts) = counts |> List.sum <= (x / 3) * (y / 3)
+
+let getTightlyPackedFit (shapeSizes: int[]) (x, y, counts) =
+    counts |> List.mapi (fun i count -> count * shapeSizes[i]) |> List.sum <= x * y
 
 let solve =
     DayUtils.solveDay (fun input ->
-        let regions = input |> parseInput
+        let shapes, regions = input |> parseInput
 
-        let result1 = regions |> Array.filter getRegionFitsBoxes |> Array.length
+        let sizes = shapes |> Array.map (Vec2.Grid.countOf ((=) '#'))
+
+        let minimumFit = regions |> Array.filter getBoxFit |> Array.length
+        let maximumFit = regions |> Array.filter (getTightlyPackedFit sizes) |> Array.length
+
+        if minimumFit <> maximumFit then
+            failwithf "Min and max fits don't match: %d vs %d. Conclusive answer not available." minimumFit maximumFit
+
+        let result1 = minimumFit
 
         result1, (), 454, ())
